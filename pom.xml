@@ -33,6 +33,13 @@
 			<version>12.1.0.2</version>
 		</dependency>
 
+		<!-- jjwt -->
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>0.9.1</version>
+		</dependency>
+
 		<!-- security -->
  		<dependency>
 			<groupId>org.springframework.boot</groupId>
