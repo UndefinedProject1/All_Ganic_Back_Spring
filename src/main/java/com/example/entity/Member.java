@@ -26,8 +26,8 @@ import lombok.ToString;
 public class Member {
 
     @Id
-    @Column(name = "USERID")
-    private String userid = null;
+    @Column(name = "USEREMAIL", length = 100)
+    private String useremail;
 
     @Column(name = "USERPW")
     @JsonProperty(access = Access.WRITE_ONLY)
@@ -49,6 +49,12 @@ public class Member {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(updatable = false, name = "USERDATE")
     private Date userdate = null;
+
+    @Column(name = "POST")
+    private Number post = 0;
+
+    @Column(name = "ADDRESS")
+    private String address = null;
 
     // 1 : N의 관계이고, Address 엔티티의 member변수명
     // @OneToMany(mappedBy = "member")
