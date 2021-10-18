@@ -35,5 +35,10 @@ public class MemberServiceImpl implements MemberServiece {
         mRepository.save(member);
     }
 
-    //
+    // 회원탈퇴
+    @Override
+    public void deleteMember(String email) {
+
+    }
+
 }
