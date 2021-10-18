@@ -38,7 +38,7 @@ public class Member {
 
     @Column(name = "USERNAME")
     private String username = null;
-
+ 
     @Column(name = "USERTEL")
     private String usertel = null;
 
