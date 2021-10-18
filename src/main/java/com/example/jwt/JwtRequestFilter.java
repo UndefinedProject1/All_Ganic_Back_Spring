@@ -1,4 +1,4 @@
-package main.java.com.example.jwt;
+package com.example.jwt;
 
 public class JwtRequestFilter {
 

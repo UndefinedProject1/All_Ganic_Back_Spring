@@ -1,4 +1,4 @@
-package main.java.com.example.security;
+package com.example.security;
 
 public class SecurityConfig {
 

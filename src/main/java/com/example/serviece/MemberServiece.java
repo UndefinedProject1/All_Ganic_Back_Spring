@@ -1,4 +1,4 @@
-package main.java.com.example.serviece;
+package com.example.serviece;
 
 public class MemberServiece {
 
