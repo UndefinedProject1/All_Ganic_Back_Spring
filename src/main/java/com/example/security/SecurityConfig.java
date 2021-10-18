@@ -1,13 +1,27 @@
 package com.example.security;
 
+import com.example.jwt.JwtRequestFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+    
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     //db 연동을 위해 만든 service
     @Autowired
     private MemberDetailService mService;
@@ -49,5 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
             //접근 불가 보여질 페이지 주소 설정
             .exceptionHandling().accessDeniedPage("/page403").and();
+
+            //필터 추가하기(@controller 전에 수행됨)
+            http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
