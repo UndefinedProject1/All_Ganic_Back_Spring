@@ -36,7 +36,7 @@ public class MemberDetailService implements UserDetailsService{
         Collection<GrantedAuthority> roles = AuthorityUtils.createAuthorityList(userRoles);
 
         //아이디, 암호 권한
-        User user = new User(member.getUserid(), member.getUserpw(), roles);
+        User user = new User(member.getUseremail(), member.getUserpw(), roles);
         return user;
     }
 }
