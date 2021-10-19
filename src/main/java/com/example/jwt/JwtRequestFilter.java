@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.security.MemberDetailService;
+import com.example.security.MemberDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,12 +27,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     JwtUtil jwtUtil;
 
     @Autowired
-    MemberDetailService mService;
+    MemberDetailsService mService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // const headers = {"Content-Type":"application/json", "token":'123456_aaa'}
+        try{
+            // const headers = {"Content-Type":"application/json", "token":'123456_aaa'}
         String headerToken = request.getHeader("token");
         String token = null;
         String username = null;
@@ -57,5 +58,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         // 컨트롤러로 넘어가는 시점
         filterChain.doFilter(request, response);
+        }
+        catch(Exception e){
+            response.sendError(578, "토큰오류");
+        }   
     }
 }

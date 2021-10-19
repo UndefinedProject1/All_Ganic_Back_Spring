@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 //security를 제공해주는
 //UserDetailsService 인터페이스를 통해 구현되는 메소드
 @Service
-public class MemberDetailService implements UserDetailsService{
+public class MemberDetailsService implements UserDetailsService{
     @Autowired
     private MemberRepository mRepository;
     

@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     // db 연동을 위해 만든 service
     @Autowired
-    private MemberDetailService mService;
+    private MemberDetailsService mService;
 
     // 환경설정 파일에서 객체 만들기(회원가입 시 암호화 방법)
     @Bean
@@ -71,5 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 필터 추가하기(@controller 전에 수행됨)
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+         //session 저장 방법
+         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
