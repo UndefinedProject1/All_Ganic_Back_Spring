@@ -32,7 +32,7 @@ public class MemberController {
     AuthenticationManager authenticationManager;
 
     // 회원가입
-    // 127.0.0.1:8080/ROOT/api/member/join
+    // 127.0.0.1:8080/REST/api/member/join
     // {"email":"", "passwd":"","name":"","role":"" }
     @RequestMapping(value = "/member/join", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,7 +50,7 @@ public class MemberController {
     }
 
     // 로그인
-    // 127.0.0.1.8080/ROOT/api/member/login
+    // 127.0.0.1.8080/REST/api/member/login
     @RequestMapping(value = "/member/login", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
@@ -67,7 +67,7 @@ public class MemberController {
     }
 
     // 비밀번호 변경
-    // 127.0.0.1.8080/ROOT/api/member/passwd
+    // 127.0.0.1.8080/REST/api/member/passwd
     @RequestMapping(value = "/member/passwd", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj,
