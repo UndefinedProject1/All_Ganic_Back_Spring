@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.example.entity.Member;
 import com.example.jwt.JwtUtil;
-import com.example.serviece.MemberServiece;
+import com.example.service.MemberServiece;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
