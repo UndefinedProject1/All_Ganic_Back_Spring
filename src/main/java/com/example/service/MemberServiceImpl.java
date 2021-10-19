@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Member;

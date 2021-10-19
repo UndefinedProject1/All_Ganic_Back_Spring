@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,11 @@ public class MemberController {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @GetMapping
+    public String index() {
+        return "1";
+    }
+
     // 회원가입
     // 127.0.0.1:8080/REST/api/member/join
     // {"email":"", "passwd":"","name":"","role":"" }
@@ -42,7 +48,7 @@ public class MemberController {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
             member.setUserpw(bcpe.encode(member.getUserpw()));
             mServiece.joinMember(member);
-            map.put("result", 1L);
+            map.put("result", 1);
         } catch (Exception e) {
             map.put("result", e.hashCode());
         }
