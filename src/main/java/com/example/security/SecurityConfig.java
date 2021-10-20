@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 권한 설정(등급)
         http.authorizeRequests()
                 // 관리자 로그인
-                .antMatchers("/admin", "/admin/*").hasAuthority("ADMIN")
+                .antMatchers("/api/admin", "/api/admin/*").hasAuthority("ADMIN")
                 // 회원 로그인
                 .antMatchers("/api/member/passwd").hasAnyAuthority("ADMIN", "MEMBER").anyRequest().permitAll().and();
 

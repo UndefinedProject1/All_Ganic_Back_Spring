@@ -62,6 +62,7 @@ public class MemberController {
             map.put("result", 1L);
             map.put("token", jwtUtil.generateToken(member.getUseremail()));
         } catch (Exception e) {
+            e.printStackTrace();
             map.put("result", e.hashCode());
         }
         return map;
