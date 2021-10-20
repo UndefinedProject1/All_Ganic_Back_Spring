@@ -77,7 +77,7 @@ public class MemberController {
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
             // @RequestBody Map<>으로 데이터 받는부분
-            String useremail = (String) mapobj.get("useremail");
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
             String userpw = (String) mapobj.get("userpw"); // 원래 비밀번호
             String usernewpw = (String) mapobj.get("usernewpw"); // 새비밀번호
 
