@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductServiceImpl {
+public class ProductServiceImpl implements ProductService{
     
     @Autowired
     EntityManagerFactory emf;
@@ -18,7 +18,14 @@ public class ProductServiceImpl {
     ProductRepository pRepository;
 
     //물품등록
-    public void joinProduct(Product product){
+    public void insertProduct(Product product){
         pRepository.save(product);
     }
+
+    //제품 삭제
+    @Override
+    public void deleteProduct(Long product) {
+        pRepository.deleteById(product);
+    }
+    
 }

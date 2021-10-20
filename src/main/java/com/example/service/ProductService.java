@@ -5,6 +5,10 @@ import com.example.entity.Product;
 public interface ProductService {
 
     //제품 추가
-    public void joinProduct(Product product);
+    public void insertProduct(Product product);
+
+    //제품 삭제
+    public void deleteProduct(Long product);
+    
     
 }
