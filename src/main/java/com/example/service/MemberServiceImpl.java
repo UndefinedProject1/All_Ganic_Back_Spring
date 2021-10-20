@@ -2,7 +2,6 @@ package com.example.service;
 
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Member;
@@ -39,7 +38,7 @@ public class MemberServiceImpl implements MemberServiece {
     // 회원탈퇴
     @Override
     public void deleteMember(String email) {
-
+        mRepository.deleteById(email);
     }
 
 }

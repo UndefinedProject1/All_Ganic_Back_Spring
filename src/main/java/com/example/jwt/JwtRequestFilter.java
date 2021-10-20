@@ -37,6 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String headerToken = request.getHeader("token");
         String token = null;
         String username = null;
+        System.out.println("JwtRequestFilter : "+headerToken);
 
         if (headerToken != null && headerToken.startsWith("123456_")) { // 토큰 시작 문구 확인!
             // 실제 토큰
@@ -60,6 +61,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         }
         catch(Exception e){
+            e.printStackTrace();
             response.sendError(578, "토큰오류");
         }   
     }

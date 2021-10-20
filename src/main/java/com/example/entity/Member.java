@@ -53,14 +53,8 @@ public class Member {
     private Date userdate = null;
 
     @Column(name = "POST")
-    private Number post = 0;
+    private Long post = 0L;
 
     @Column(name = "ADDRESS")
     private String address = null;
-
-    // 1 : N의 관계이고, Address 엔티티의 member변수명
-    // @OneToMany(mappedBy = "member")
-    // @OrderBy("no asc")
-    // private List<Address> addressList = new ArrayList<>();
-    // Address에서 외래키만 걸리면 되는거고 해당 엔티티에는 딱히 안해줘도 됨.(Address Repository에 추가했음)
 }

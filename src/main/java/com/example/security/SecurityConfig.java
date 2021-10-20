@@ -50,29 +50,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 관리자 로그인
                 .antMatchers("/admin", "/admin/*").hasAuthority("ADMIN")
                 // 회원 로그인
-                .antMatchers("/member", "/member/*").hasAnyAuthority("ADMIN", "MEMBER").anyRequest().permitAll().and();
+                .antMatchers("/api/member/passwd").hasAnyAuthority("ADMIN", "MEMBER").anyRequest().permitAll().and();
 
-        // 로그인 페이지
-        http.formLogin()
-                // form action="/member/login">
-                .loginPage("/member/login").loginProcessingUrl("/member/login")
-                // <input type="text" name="userid">
-                .usernameParameter("userid")
-                // <input type="text" name="userid">
-                .passwordParameter("userpw").permitAll().successHandler(new MemberLoginSuccessHandler()).and()
-                // 로그인 성공 시 home 으로 이동한다.
+        // // 로그인 페이지
+        // http.formLogin()
+        //         // form action="/member/login">
+        //         .loginPage("/member/login").loginProcessingUrl("/member/login")
+        //         // <input type="text" name="userid">
+        //         .usernameParameter("userid")
+        //         // <input type="text" name="userid">
+        //         .passwordParameter("userpw").permitAll().successHandler(new MemberLoginSuccessHandler()).and()
+        //         // 로그인 성공 시 home 으로 이동한다.
 
-                // 로그아웃
-                .logout().logoutUrl("/member/logout").logoutSuccessHandler(new MemberLogoutSuccessHandler())// 로그아웃 성공 시
-                                                                                                            // 이동 페이지
-                .invalidateHttpSession(true).clearAuthentication(true).permitAll().and()
+        //         // 로그아웃
+        //         .logout().logoutUrl("/member/logout").logoutSuccessHandler(new MemberLogoutSuccessHandler())// 로그아웃 성공 시
+        //                                                                                                     // 이동 페이지
+        //         .invalidateHttpSession(true).clearAuthentication(true).permitAll().and()
 
-                // 접근 불가 보여질 페이지 주소 설정
-                .exceptionHandling().accessDeniedPage("/page403").and();
+        //         // 접근 불가 보여질 페이지 주소 설정
+        //         .exceptionHandling().accessDeniedPage("/page403").and();
 
         // 필터 추가하기(@controller 전에 수행됨)
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-         //session 저장 방법
-         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //session 저장 방법
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.csrf().disable();
+        http.headers().frameOptions().sameOrigin();
     }
 }
