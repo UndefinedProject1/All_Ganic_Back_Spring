@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.example.entity.Brand;
 import com.example.entity.Category;
-import com.example.entity.Member;
 import com.example.entity.Product;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
@@ -42,125 +41,73 @@ public class AdminController {
 
     @Autowired
     ProductService pService;
-    
-    //브랜드 추가
-    //127.0.0.1:8080/REST/api/admin/brand_insert
+
+    // 브랜드 추가
+    // 127.0.0.1:8080/REST/api/admin/brand_insert
     @RequestMapping(value = "/admin/brand_insert", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> brandInsertPOST(
-            @ModelAttribute Brand brand,
-            @RequestParam("file")MultipartFile file,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<String, Object>();
-            try{
-                // 관리자 이메일 가져오기
-                String adminId = jwtUtil.extractUsername(token.substring(7));
-                Member member = mServiece.getMemberOne(adminId);
-                brand.setImage(file.getBytes());
-                brand.setImagename(file.getOriginalFilename());
-                brand.setImagetype(file.getContentType());
-                brand.setMember(member);
-                bService.insertBrand(brand);
-                
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
+            @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            brand.setImage(file.getBytes());
+            brand.setImagename(file.getOriginalFilename());
+            brand.setImagetype(file.getContentType());
+            bService.insertBrand(brand);
+            map.put("result", 1);
+        } catch (Exception e) {
+            map.put("result", e.hashCode());
         }
+        return map;
+    }
 
-    //카테고리 추가
-    //127.0.0.1:8080/REST/api/admin/category_insert
+    // 카테고리 추가
+    // 127.0.0.1:8080/REST/api/admin/category_insert
     @RequestMapping(value = "/admin/category_insert", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> brandInsertPOST(@RequestBody Category category,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<String, Object>();
-            try{
-                // 관리자 이메일 가져오기
-                String adminId = jwtUtil.extractUsername(token.substring(7));
-                Member member = mServiece.getMemberOne(adminId);
-                category.setMember(member);
-                cService.insertCategory(category);
-                
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            cService.insertCategory(category);
+            map.put("result", 1);
+        } catch (Exception e) {
+            map.put("result", e.hashCode());
         }
+        return map;
+    }
 
-    //제품 추가
-    //127.0.0.1:8080/REST/api/admin/product_insert
+    // 제품 추가
+    // 127.0.0.1:8080/REST/api/admin/product_insert
     @RequestMapping(value = "/admin/product_insert", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> productInsertPOST(
-            @ModelAttribute Product product,
-            @RequestParam("file")MultipartFile file,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<String, Object>();
-            try{
-                // 관리자 이메일 가져오기
-                String adminId = jwtUtil.extractUsername(token.substring(7));
-                Member member = mServiece.getMemberOne(adminId);
-                product.setImage(file.getBytes());
-                product.setImagename(file.getOriginalFilename());
-                product.setImagetype(file.getContentType());
-                product.setMember(member);
-                pService.insertProduct(product);
-                
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
-        }
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
+            @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            product.setImage(file.getBytes());
+            product.setImagename(file.getOriginalFilename());
+            product.setImagetype(file.getContentType());
+            pService.insertProduct(product);
 
-    //물품 삭제
-    //127.0.0.1:8080/REST/api/admin/product_delete
+            map.put("result", 1);
+        } catch (Exception e) {
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 제품 삭제
+    // 127.0.0.1:8080/REST/api/admin/product_delete
     @RequestMapping(value = "/admin/product_delete", method = {
-        RequestMethod.DELETE}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> productDelete(@RequestBody Product product,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<>();
-            try{
-                // 관리자 이메일 가져오기
-                String adminId = jwtUtil.extractUsername(token.substring(7));
-                Member member = mServiece.getMemberOne(adminId);
-                product.setMember(member);
-                
-                pService.deleteProduct(product.getProductcode());
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
+            RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            pService.deleteProduct(product.getProductcode());
+            map.put("result", 1);
+        } catch (Exception e) {
+            map.put("result", e.hashCode());
         }
-
-    //물품 수정
-    //127.0.0.1:8080/REST/api/admin/product_update
-    @RequestMapping(value = "/admin/product_update", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> productUpdate(@RequestBody Product product,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<>();
-            try{
-                // 관리자 이메일 가져오기
-                String adminId = jwtUtil.extractUsername(token.substring(7));
-                Member member = mServiece.getMemberOne(adminId);
-                product.setMember(member);
-                
-                pService.deleteProduct(product.getProductcode());
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
-        }
-
+        return map;
+    }
 }
