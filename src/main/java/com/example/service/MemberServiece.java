@@ -7,8 +7,11 @@ public interface MemberServiece {
     // 회원가입
     public void joinMember(Member member);
 
-    // 회원정보 가져오기
+    // 로그인
     public Member getMemberOne(String email);
+
+    // 회원정보 수정하기
+    public void updateMember(Member member);
 
     // 비밀번호 변경
     public void updatePassword(Member member);

@@ -24,10 +24,17 @@ public class MemberServiceImpl implements MemberServiece {
         mRepository.save(member);
     }
 
-    // 회원정보 가져오기
+    // 로그인
     public Member getMemberOne(String email) {
         Optional<Member> member = mRepository.findById(email);
         return member.orElse(null); // 없으면 null리턴
+    }
+
+    // 회원정보 수정
+    @Override
+    public void updateMember(Member member) {
+        mRepository.save(member);
+
     }
 
     // 비밀번호 변경

@@ -34,8 +34,8 @@ public class MemberController {
 
     // 회원가입
     // 127.0.0.1:8080/REST/api/member/join
-    // {"useremail":"a@gmail.com", "userpw":"a","username":"a1","userrole":"member",
-    // "post": 4112, "address":"부산진구"}
+    // {"useremail":"a@gmail.com", "userpw":"a","username":"a1","userrole":"MEMBER",
+    // "post": 4112, "address":"부산진구", "usertel":"010-111-2222"}
     @PostMapping(value = "/member/join", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberJoinPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -69,8 +69,42 @@ public class MemberController {
         return map;
     }
 
+    // 회원정보 수정(이름, 전화번호, 우편번호, 주소)
+    // 127.0.0.1:8080/REST/api/member/update
+    @RequestMapping(value = "/member/update", method = {
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> memberUpdate(@RequestBody Map<String, Object> mapobj,
+            @RequestHeader("token") String token) {
+
+        Map<String, Object> map = new HashMap<>();
+        try {
+            // @RequestBody Map<>으로 데이터 받는부분
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            String username = (String) mapobj.get("username"); // 이름
+            String usertel = (String) mapobj.get("usertel"); // 전화번호
+            Long post = Long.parseLong(String.valueOf(mapobj.get("post"))); // 우편번호
+            String address = (String) mapobj.get("address"); // 주소
+
+            // 토큰과 사용자 아이디 일치 시점
+            if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+                // 아이디를 이용해 기존 정보 가져오기
+                Member member = mServiece.getMemberOne(useremail);
+                member.setUsername(username);
+                member.setUsertel(usertel);
+                member.setPost(post);
+                member.setAddress(address);
+                mServiece.updateMember(member);
+                map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 비밀번호 변경
-    // 127.0.0.1.8080/REST/api/member/passwd
+    // 127.0.0.1:8080/REST/api/member/passwd
     @RequestMapping(value = "/member/passwd", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj,
@@ -90,12 +124,9 @@ public class MemberController {
                 Member member = mServiece.getMemberOne(useremail);
                 // 기존암호와 전달된 암호가 같으면 새로운 암호로 변경
                 if (bcpe.matches(userpw, member.getUserpw())) {
-                    Member member1 = new Member();
-                    member1.setUseremail(useremail);
-                    member1.setUserpw(bcpe.encode(usernewpw));
-
+                    member.setUserpw(bcpe.encode(usernewpw));
                     // 아이디, 암호를 새로운 기본값으로 대체
-                    mServiece.updatePassword(member1);
+                    mServiece.updatePassword(member);
                     map.put("result", 1L);
                 }
             }
@@ -117,7 +148,7 @@ public class MemberController {
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
             // @RequestBody Map<>으로 데이터 받는부분
-            String useremail = (String) mapobj.get("useremail");
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
             String userpw = (String) mapobj.get("userpw");
 
             // 토큰과 사용자 아이디 일치 시점
