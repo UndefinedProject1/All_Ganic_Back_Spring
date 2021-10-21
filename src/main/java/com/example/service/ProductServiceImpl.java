@@ -35,6 +35,7 @@ public class ProductServiceImpl implements ProductService{
     public void updteProduct(Product product) {
         pRepository.save(product);
     }
+<<<<<<< Updated upstream
 
     //제품정보 가져오기
     @Override
@@ -42,5 +43,7 @@ public class ProductServiceImpl implements ProductService{
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
     }
+=======
+>>>>>>> Stashed changes
     
 }
