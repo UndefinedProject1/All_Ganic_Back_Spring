@@ -20,7 +20,7 @@ import lombok.ToString;
 @ToString
 @Table(name = "BRAND")
 public class Brand {
-    
+
     @Id
     @Column(name = "BRANDCODE")
     private Long brandcode = 0L;
@@ -38,9 +38,5 @@ public class Brand {
 
     @Column(name = "IMAGETYPE")
     private String imagetype = null;
-
-    @ManyToOne //관리자 정보
-    @JoinColumn(name = "ADMIN")
-    private Member member;
 
 }

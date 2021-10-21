@@ -34,7 +34,8 @@ public class MemberController {
 
     // 회원가입
     // 127.0.0.1:8080/REST/api/member/join
-    // {"email":"", "passwd":"","name":"","role":"" }
+    // {"useremail":"a@gmail.com", "userpw":"a","username":"a1","userrole":"member",
+    // "post": 4112, "address":"부산진구"}
     @PostMapping(value = "/member/join", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberJoinPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -72,7 +73,8 @@ public class MemberController {
     // 127.0.0.1.8080/REST/api/member/passwd
     @RequestMapping(value = "/member/passwd", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj, @RequestHeader("token") String token) {
+    public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj,
+            @RequestHeader("token") String token) {
 
         Map<String, Object> map = new HashMap<>();
         try {
@@ -107,15 +109,16 @@ public class MemberController {
     // 회원탈퇴
     // 127.0.0.1.8080/REST/api/member/leave
     @RequestMapping(value = "/member/leave", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> memberLeave(@RequestBody Map<String, Object> mapobj, @RequestHeader("token") String token) {
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> memberLeave(@RequestBody Map<String, Object> mapobj,
+            @RequestHeader("token") String token) {
 
         Map<String, Object> map = new HashMap<>();
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
             // @RequestBody Map<>으로 데이터 받는부분
             String useremail = (String) mapobj.get("useremail");
-            String userpw = (String) mapobj.get("userpw"); 
+            String userpw = (String) mapobj.get("userpw");
 
             // 토큰과 사용자 아이디 일치 시점
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
