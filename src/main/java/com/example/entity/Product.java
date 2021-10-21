@@ -54,15 +54,11 @@ public class Product {
     @Column(updatable = false, name = "PRODUCTDATE")
     private Date userdate = null;
 
-    @ManyToOne //관리자 정보
-    @JoinColumn(name = "ADMIN")
-    private Member member;
-
-    @ManyToOne //브랜드 정보
+    @ManyToOne // 브랜드 정보
     @JoinColumn(name = "BRAND")
     private Brand brand;
 
-    @ManyToOne //관리자 정보
+    @ManyToOne // 관리자 정보
     @JoinColumn(name = "CATEGORY")
     private Category category;
 
