@@ -96,8 +96,13 @@ public class AdminController {
         return map;
     }
 
+<<<<<<< Updated upstream
     // 제품 삭제
     // 127.0.0.1:8080/REST/api/admin/product_delete
+=======
+    //물품 삭제
+    //127.0.0.1:8080/REST/api/admin/product_delete
+>>>>>>> Stashed changes
     @RequestMapping(value = "/admin/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
@@ -108,6 +113,32 @@ public class AdminController {
         } catch (Exception e) {
             map.put("result", e.hashCode());
         }
+<<<<<<< Updated upstream
         return map;
     }
+=======
+
+    //물품 수정
+    //127.0.0.1:8080/REST/api/admin/product_update
+    @RequestMapping(value = "/admin/product_update", method = {
+        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        public Map<String, Object> productUpdate(@RequestBody Product product,
+            @RequestHeader("token") String token) { 
+            Map<String, Object> map = new HashMap<>();
+            try{
+                // 관리자 이메일 가져오기
+                String adminId = jwtUtil.extractUsername(token.substring(7));
+                Member member = mServiece.getMemberOne(adminId);
+                product.setMember(member);
+                
+                pService.deleteProduct(product.getProductcode());
+                map.put("result",1);
+            }
+            catch(Exception e){
+                map.put("result",e.hashCode());
+            }
+            return map;
+        }
+
+>>>>>>> Stashed changes
 }
