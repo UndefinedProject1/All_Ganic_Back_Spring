@@ -22,10 +22,16 @@ public class ProductServiceImpl implements ProductService{
         pRepository.save(product);
     }
 
-    //제품 삭제
+    //물품 삭제
     @Override
     public void deleteProduct(Long product) {
         pRepository.deleteById(product);
+    }
+
+    //물품 수정
+    @Override
+    public void updteProduct(Product product) {
+        pRepository.save(product);
     }
     
 }
