@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.example.entity.Brand;
 import com.example.entity.Category;
-import com.example.entity.Member;
 import com.example.entity.Product;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
@@ -97,10 +96,10 @@ public class AdminController {
         return map;
     }
 
-    // 제품 삭제
-    // 127.0.0.1:8080/REST/api/admin/product_delete
-    // 물품 삭제
-    // 127.0.0.1:8080/REST/api/admin/product_delete
+
+    //물품 삭제
+    //127.0.0.1:8080/REST/api/admin/product_delete
+
     @RequestMapping(value = "/admin/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
@@ -111,21 +110,64 @@ public class AdminController {
         } catch (Exception e) {
             map.put("result", e.hashCode());
         }
+
         return map;
     }
 
-    // 물품 수정
-    // 127.0.0.1:8080/REST/api/admin/product_update
+
+    //물품 수정
+    //127.0.0.1:8080/REST/api/admin/product_update
     @RequestMapping(value = "/admin/product_update", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productUpdate(@RequestBody Product product, @RequestHeader("token") String token) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            pService.deleteProduct(product.getProductcode());
-            map.put("result", 1);
-        } catch (Exception e) {
-            map.put("result", e.hashCode());
+        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        public Map<String, Object> productUpdate(@ModelAttribute Product product,
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader("token") String token) { 
+            Map<String, Object> map = new HashMap<>();
+            try{ 
+                Product product2 = pService.getProductOne(product.getProductcode());
+                product2.setProductname(product.getProductname());
+                product2.setProductcontent(product.getProductcontent());
+                product2.setProductprice(product.getProductprice());
+                product2.setImage(file.getBytes());
+                product2.setImagename(file.getOriginalFilename());
+                product2.setImagetype(file.getContentType());
+
+                pService.updteProduct(product2);
+                map.put("result",1);
+            }
+            catch(Exception e){
+                map.put("result",e.hashCode());
+            }
+            return map;
         }
-        return map;
-    }
+
+    //     @RequestMapping(value = "/admin/product_update", method = {
+    //         RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //     public Map<String, Object> memberUpdate(@RequestBody Map<String, Object> mapobj,
+    //         @RequestHeader("token") String token) {
+
+    //     Map<String, Object> map = new HashMap<>();
+    //     try {
+    //         // @RequestBody Map<>으로 데이터 받는부분
+    //         Long productcode =(long) mapobj.get("productcode"); // token을 통해 회원정보(이메일) 찾기
+    //         String productname = (String) mapobj.get("productname"); // 이름
+    //         String productcontent = (String) mapobj.get("productcontent"); // 내용
+    //         Long productprice = Long.parseLong(String.valueOf(mapobj.get("post"))); // 가격
+
+    //         // 아이디를 이용해 기존 정보 가져오기
+    //         Product product = pService.getProductOne(productcode);
+    //         product.setProductname(productname);
+    //         product.setProductcontent(productcontent);
+    //         product.setProductprice(productprice);
+            
+    //         pService.updteProduct(product);
+    //         map.put("result", 1L);
+            
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         map.put("result", e.hashCode());
+    //     }
+    //     return map;
+    // }
+
 }

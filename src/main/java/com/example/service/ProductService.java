@@ -12,4 +12,8 @@ public interface ProductService {
     
     //제품 수정
     public void updteProduct(Product product);
+
+    //제품정보 가져오기
+    public Product getProductOne(long code);
+
 }

@@ -60,11 +60,11 @@ public class Product {
     private Date userdate = null;
 
     @ManyToOne // 브랜드 정보
-    @JoinColumn(name = "BRAND")
+    @JoinColumn(updatable = false, name = "BRAND")
     private Brand brand;
 
-    @ManyToOne // 관리자 정보
-    @JoinColumn(name = "CATEGORY")
+    @ManyToOne // 카테고리 정보
+    @JoinColumn(updatable = false, name = "CATEGORY")
     private Category category;
 
 }

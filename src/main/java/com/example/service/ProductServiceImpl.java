@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Product;
@@ -32,6 +34,13 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void updteProduct(Product product) {
         pRepository.save(product);
+    }
+
+    //제품정보 가져오기
+    @Override
+    public Product getProductOne(long code) {
+        Optional<Product> product = pRepository.findById(code);
+        return product.orElse(null);
     }
     
 }
