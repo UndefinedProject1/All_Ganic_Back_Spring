@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Brand;
@@ -19,5 +21,11 @@ public class BrandServiceImpl implements BrandService{
     //브랜드 추가
     public void insertBrand(Brand brand){
         bRepository.save(brand);
+    }
+
+    @Override
+    public Brand selectBrand(Long no) {
+        Optional<Brand> brand = bRepository.findById(no);
+        return brand.orElse(null);
     }
 }

@@ -33,15 +33,7 @@ public class Brand {
     @Column(name = "BRANDNAME")
     private String brandname = null;
 
-    // 이미지
-    @Lob
     @Column(name = "BRANDIMAGE")
-    private byte[] image = null;
-
-    @Column(name = "IMAGENAME")
-    private String imagename = null; // 파일명
-
-    @Column(name = "IMAGETYPE")
-    private String imagetype = null;
+    private String brandimage = null;
 
 }
