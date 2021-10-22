@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService{
 
     //제품정보 가져오기
     @Override
-    public Product getProductOne(long code) {
+    public Product selectProduct(long code) {
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
     }

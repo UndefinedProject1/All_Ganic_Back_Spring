@@ -75,7 +75,7 @@ public class AdminController {
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
-            System.out.println(brand.toString());
+            //System.out.println(brand.toString());
             if (brand.getBrandimage() != null) {
                 HttpHeaders headers = new HttpHeaders();
                 InputStream is = resourceLoader.getResource(brand.getBrandimage()).getInputStream();
@@ -93,6 +93,7 @@ public class AdminController {
     
     // 카테고리 추가
     // 127.0.0.1:8080/REST/admin/category_insert
+    // {"categorycode":400425, "categoryname":"핸드워시"}
     @RequestMapping(value = "/category_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
@@ -106,19 +107,17 @@ public class AdminController {
         return map;
     }
 
-    // 제품 추가
+    // 물품 추가
     // 127.0.0.1:8080/REST/admin/product_insert
+    // 
     @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
-            @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
+    public Map<String, Object> productInsertPOST(@RequestBody Product product,
+            @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            product.setImage(file.getBytes());
-            product.setImagename(file.getOriginalFilename());
-            product.setImagetype(file.getContentType());
+            product.setProductimage("classpath:/static/product/" + product.getProductimage());
             pService.insertProduct(product);
-
             map.put("result", 1);
         } catch (Exception e) {
             map.put("result", e.hashCode());
@@ -154,13 +153,11 @@ public class AdminController {
             @RequestHeader("token") String token) { 
             Map<String, Object> map = new HashMap<>();
             try{ 
-                Product product2 = pService.getProductOne(product.getProductcode());
+                Product product2 = pService.selectProduct(product.getProductcode());
                 product2.setProductname(product.getProductname());
                 product2.setProductcontent(product.getProductcontent());
                 product2.setProductprice(product.getProductprice());
-                product2.setImage(file.getBytes());
-                product2.setImagename(file.getOriginalFilename());
-                product2.setImagetype(file.getContentType());
+                
 
                 pService.updteProduct(product2);
                 map.put("result",1);
