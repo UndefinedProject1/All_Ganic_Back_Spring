@@ -8,6 +8,6 @@ public interface BrandService {
     public void insertBrand(Brand brand);
 
     //브랜드 찾기
-    //public brand selectBrand(long no);
+    public  selectBrand(long no);
     
 }
