@@ -114,9 +114,13 @@ public class AdminController {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestBody Product product,
             @RequestHeader("token") String token) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         try {
+            //브랜드, 카테고리 코드 가져오기
+            //Brand brand = bService.selectBrand(brandcode);
+            
             product.setProductimage("classpath:/static/product/" + product.getProductimage());
+            
             pService.insertProduct(product);
             map.put("result", 1);
         } catch (Exception e) {
