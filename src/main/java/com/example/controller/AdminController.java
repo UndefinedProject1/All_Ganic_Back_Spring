@@ -13,7 +13,9 @@ import com.example.service.MemberServiece;
 import com.example.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -26,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(value = "/api")
 public class AdminController {
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -46,13 +50,11 @@ public class AdminController {
     // 127.0.0.1:8080/REST/api/admin/brand_insert
     @RequestMapping(value = "/admin/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
+    public Map<String, Object> brandInsertPOST(@RequestBody Brand brand,
             @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            // brand.setImage(file.getBytes());
-            // brand.setImagename(file.getOriginalFilename());
-            // brand.setImagetype(file.getContentType());
+            brand.setBrandimage("classpath:/static/brand/"+ brand.getBrandimage());
             bService.insertBrand(brand);
             map.put("result", 1);
         } catch (Exception e) {
@@ -60,6 +62,23 @@ public class AdminController {
         }
         return map;
     }
+
+    // 브랜드 이미지 찾기
+    // 127.0.0.1:8080/REST/admin/select_image?no=번호
+    // <img src="/admin/select_image?no=번호" />
+    // @RequestMapping(value = "/admin/select_image", method = 
+    //     RequestMethod.GET)
+    // public ResponseEntity<byte[]> selectImage(@RequestParam("no") Long no) {
+    // Map<String, Object> map = new HashMap<String, Object>();
+    //     try {
+    //         brand.setBrandimage("classpath:/static/brand/"+ brand.getBrandimage());
+    //         bService.insertBrand(brand);
+    //         map.put("result", 1);
+    //     } catch (Exception e) {
+    //         map.put("result", e.hashCode());
+    //     }
+    //     return map;
+    // }
 
     // 카테고리 추가
     // 127.0.0.1:8080/REST/api/admin/category_insert
