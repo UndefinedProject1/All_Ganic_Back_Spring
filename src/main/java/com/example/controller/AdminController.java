@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import com.example.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,6 +51,7 @@ public class AdminController {
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
+    //{"brandname":"오틀리", "brandimage":"오틀리.PNG"}
     @RequestMapping(value = "/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Brand brand,
@@ -64,9 +68,32 @@ public class AdminController {
     }
 
     
+    // 브랜드 이미지 찾기
+    // 127.0.0.1:8080/REST/admin/select_image?no=번호
+    // <img src="/admin/select_image?no=12" />
+    @RequestMapping(value = "/select_image", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
+        try {
+            Brand brand = bService.selectBrand(no);
+            System.out.println(brand.toString());
+            if (brand.getBrandimage() != null) {
+                HttpHeaders headers = new HttpHeaders();
+                InputStream is = resourceLoader.getResource(brand.getBrandimage()).getInputStream();
+
+                headers.setContentType(MediaType.IMAGE_PNG);
+                ResponseEntity<byte[]> response = new ResponseEntity<>(is.readAllBytes(), headers, HttpStatus.OK);
+                return response;
+            }
+            return null;
+        } catch (Exception e) { 
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     // 카테고리 추가
-    // 127.0.0.1:8080/REST/api/admin/category_insert
-    @RequestMapping(value = "/admin/category_insert", method = {
+    // 127.0.0.1:8080/REST/admin/category_insert
+    @RequestMapping(value = "/category_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -80,8 +107,8 @@ public class AdminController {
     }
 
     // 제품 추가
-    // 127.0.0.1:8080/REST/api/admin/product_insert
-    @RequestMapping(value = "/admin/product_insert", method = {
+    // 127.0.0.1:8080/REST/admin/product_insert
+    @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
@@ -101,9 +128,9 @@ public class AdminController {
 
 
     //물품 삭제
-    //127.0.0.1:8080/REST/api/admin/product_delete
+    //127.0.0.1:8080/REST/admin/product_delete
 
-    @RequestMapping(value = "/admin/product_delete", method = {
+    @RequestMapping(value = "/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
@@ -119,8 +146,8 @@ public class AdminController {
 
 
     //물품 수정
-    //127.0.0.1:8080/REST/api/admin/product_update
-    @RequestMapping(value = "/admin/product_update", method = {
+    //127.0.0.1:8080/REST/admin/product_update
+    @RequestMapping(value = "/product_update", method = {
         RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         public Map<String, Object> productUpdate(@ModelAttribute Product product,
             @RequestParam("file") MultipartFile file,
@@ -143,34 +170,5 @@ public class AdminController {
             }
             return map;
         }
-
-    //     @RequestMapping(value = "/admin/product_update", method = {
-    //         RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    //     public Map<String, Object> memberUpdate(@RequestBody Map<String, Object> mapobj,
-    //         @RequestHeader("token") String token) {
-
-    //     Map<String, Object> map = new HashMap<>();
-    //     try {
-    //         // @RequestBody Map<>으로 데이터 받는부분
-    //         Long productcode =(long) mapobj.get("productcode"); // token을 통해 회원정보(이메일) 찾기
-    //         String productname = (String) mapobj.get("productname"); // 이름
-    //         String productcontent = (String) mapobj.get("productcontent"); // 내용
-    //         Long productprice = Long.parseLong(String.valueOf(mapobj.get("post"))); // 가격
-
-    //         // 아이디를 이용해 기존 정보 가져오기
-    //         Product product = pService.getProductOne(productcode);
-    //         product.setProductname(productname);
-    //         product.setProductcontent(productcontent);
-    //         product.setProductprice(productprice);
-            
-    //         pService.updteProduct(product);
-    //         map.put("result", 1L);
-            
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         map.put("result", e.hashCode());
-    //     }
-    //     return map;
-    // }
 
 }
