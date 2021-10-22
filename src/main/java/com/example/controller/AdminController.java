@@ -120,6 +120,7 @@ public class AdminController {
             pService.insertProduct(product);
             map.put("result", 1);
         } catch (Exception e) {
+            e.printStackTrace();
             map.put("result", e.hashCode());
         }
         return map;
