@@ -126,7 +126,6 @@ public class AdminController {
             try{ 
                 Product product2 = pService.getProductOne(product.getProductcode());
                 product2.setProductname(product.getProductname());
-                product2.setProductcontent(product.getProductcontent());
                 product2.setProductprice(product.getProductprice());
                 product2.setImage(file.getBytes());
                 product2.setImagename(file.getOriginalFilename());

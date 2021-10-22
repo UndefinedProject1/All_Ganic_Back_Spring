@@ -40,9 +40,6 @@ public class Product {
     @Column(name = "PRODCUTPRICE")
     private long productprice = 0L;
 
-    @Column(name = "PRODCUTCONTENT")
-    private String productcontent = null;
-
     // 이미지
     @Lob
     @Column(name = "PRODUCTIMAGE")
