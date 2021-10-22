@@ -50,9 +50,9 @@ public class AdminController {
             @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            brand.setImage(file.getBytes());
-            brand.setImagename(file.getOriginalFilename());
-            brand.setImagetype(file.getContentType());
+            // brand.setImage(file.getBytes());
+            // brand.setImagename(file.getOriginalFilename());
+            // brand.setImagetype(file.getContentType());
             bService.insertBrand(brand);
             map.put("result", 1);
         } catch (Exception e) {
