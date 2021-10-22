@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/admin")
 public class AdminController {
     @Autowired
     private ResourceLoader resourceLoader;
@@ -47,8 +47,8 @@ public class AdminController {
     ProductService pService;
 
     // 브랜드 추가
-    // 127.0.0.1:8080/REST/api/admin/brand_insert
-    @RequestMapping(value = "/admin/brand_insert", method = {
+    // 127.0.0.1:8080/REST/admin/brand_insert
+    @RequestMapping(value = "/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Brand brand,
             @RequestHeader("token") String token) {
@@ -63,23 +63,7 @@ public class AdminController {
         return map;
     }
 
-    // 브랜드 이미지 찾기
-    // 127.0.0.1:8080/REST/admin/select_image?no=번호
-    // <img src="/admin/select_image?no=번호" />
-    // @RequestMapping(value = "/admin/select_image", method = 
-    //     RequestMethod.GET)
-    // public ResponseEntity<byte[]> selectImage(@RequestParam("no") Long no) {
-    // Map<String, Object> map = new HashMap<String, Object>();
-    //     try {
-    //         brand.setBrandimage("classpath:/static/brand/"+ brand.getBrandimage());
-    //         bService.insertBrand(brand);
-    //         map.put("result", 1);
-    //     } catch (Exception e) {
-    //         map.put("result", e.hashCode());
-    //     }
-    //     return map;
-    // }
-
+    
     // 카테고리 추가
     // 127.0.0.1:8080/REST/api/admin/category_insert
     @RequestMapping(value = "/admin/category_insert", method = {
