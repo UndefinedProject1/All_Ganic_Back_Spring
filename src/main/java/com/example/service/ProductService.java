@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.entity.Brand;
 import com.example.entity.Product;
 
 public interface ProductService {
@@ -15,5 +16,10 @@ public interface ProductService {
 
     //제품정보 가져오기
     public Product selectProduct(long code);
+
+    //브랜드 찾기
+    public Brand selectBrand(long no);
+
+
 
 }

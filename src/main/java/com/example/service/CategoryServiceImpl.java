@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Category;
@@ -19,6 +21,13 @@ public class CategoryServiceImpl implements CategoryService{
     //카테고리 추가
     public void insertCategory(Category category){
         cRepository.save(category);
+    }
+
+    //카테고리 찾기
+    @Override
+    public Category selectCategory(long cno) {
+        Optional<Category> category = cRepository.findById(cno);
+        return category.orElse(null);
     }
     
 }

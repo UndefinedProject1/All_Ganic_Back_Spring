@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Spring;
+
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
@@ -109,18 +111,19 @@ public class AdminController {
 
     // 물품 추가
     // 127.0.0.1:8080/REST/admin/product_insert
-    // 
+    // {"productname":"a", "productprice":123, "productcontent":"내용", "productimage":"aaa", "brand":1, "category":100101}
     @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestBody Product product,
             @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
-            //브랜드, 카테고리 코드 가져오기
-            //Brand brand = bService.selectBrand(brandcode);
-            
+            // Brand brand = bService.selectBrand(no);
+            // product.setBrand(brand);
+            // Category category = cService.selectCategory(no);
+            // product.setCategory(category);
+            product.setBrand(product.getBrand());
             product.setProductimage("classpath:/static/product/" + product.getProductimage());
-            
             pService.insertProduct(product);
             map.put("result", 1);
         } catch (Exception e) {
