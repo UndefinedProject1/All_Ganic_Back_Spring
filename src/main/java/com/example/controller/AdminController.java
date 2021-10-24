@@ -118,13 +118,14 @@ public class AdminController {
     @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestBody Product product,
-            //@RequestParam("brand")long no,
+            //@RequestParam("no")long no,
             @RequestHeader("token") String token) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<String, Object>();
         //Brand brand = bService.selectBrand(2);
         try {
-            Brand bno = bService.selectBrand(2);
-            product.setBrand(bno);
+            // Optional<Brand> brand = bRepository.findById(no);
+            //Brand brand = bService.selectBrand(no);
+            //product.setBrand(brand);
             product.setProductimage("classpath:/static/product/" + product.getProductimage());
             pService.insertProduct(product);
             map.put("result", 1);

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
-import com.example.entity.Brand;
 import com.example.entity.Product;
 import com.example.repository.BrandRepository;
 import com.example.repository.ProductRepository;
@@ -48,10 +47,4 @@ public class ProductServiceImpl implements ProductService{
         return product.orElse(null);
     }
 
-    @Override
-    public Brand selectBrand(long no) {
-        Optional<Brand> brand = bRepository.findById(no);
-        return brand.orElse(null);
-    }
-    
 }
