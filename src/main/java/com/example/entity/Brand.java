@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -38,5 +39,8 @@ public class Brand {
 
     @Column(name = "BRANDIMAGE")
     private String brandimage = null;
+
+    @OneToMany(mappedBy = "brand")
+    private List<Product> productList = new ArrayList<>();
 
 }

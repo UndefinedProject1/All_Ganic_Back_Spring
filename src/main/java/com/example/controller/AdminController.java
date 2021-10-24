@@ -3,13 +3,13 @@ package com.example.controller;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Spring;
+import java.util.Optional;
 
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
 import com.example.jwt.JwtUtil;
+import com.example.repository.BrandRepository;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
@@ -41,6 +41,9 @@ public class AdminController {
 
     @Autowired
     BrandService bService;
+
+    @Autowired
+    BrandRepository bRepository;
 
     @Autowired
     CategoryService cService;
@@ -115,14 +118,13 @@ public class AdminController {
     @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestBody Product product,
+            //@RequestParam("brand")long no,
             @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
+        //Brand brand = bService.selectBrand(2);
         try {
-            // Brand brand = bService.selectBrand(no);
-            // product.setBrand(brand);
-            // Category category = cService.selectCategory(no);
-            // product.setCategory(category);
-            product.setBrand(product.getBrand());
+            Brand bno = bService.selectBrand(2);
+            product.setBrand(bno);
             product.setProductimage("classpath:/static/product/" + product.getProductimage());
             pService.insertProduct(product);
             map.put("result", 1);
