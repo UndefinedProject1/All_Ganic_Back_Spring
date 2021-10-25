@@ -32,9 +32,8 @@ public class MemberServiceImpl implements MemberServiece {
 
     // 아이디 중복체크
     @Override
-    public Long checkMemberEmail(String email) {
-        Long result = mRepository.queryCheckEmail(email);
-        return result;
+    public int checkMemberEmail(String email) {
+        return mRepository.queryCheckEmail(email);
     }
 
     // 회원정보 수정
@@ -55,5 +54,4 @@ public class MemberServiceImpl implements MemberServiece {
         mRepository.deleteById(email);
     }
 
-    
 }

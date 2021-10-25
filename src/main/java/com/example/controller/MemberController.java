@@ -70,16 +70,20 @@ public class MemberController {
         return map;
     }
 
+    // 이메일 중복 체크
+    // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
     @RequestMapping(value = "/member/checkemail", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckEmailPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            Long count = mServiece.checkMemberEmail(member.getUseremail());
-            if(count > 0){
+            int count = mServiece.checkMemberEmail(member.getUseremail());
+            System.out.println(count);
+            if (count == 0) {
                 map.put("result", 0L);
+            } else {
+                map.put("result", 1L);
             }
-            map.put("result", 1L);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());

@@ -11,7 +11,7 @@ public interface MemberServiece {
     public Member getMemberOne(String email);
 
     // 아이디 중복체크
-    public Long checkMemberEmail(String email);
+    public int checkMemberEmail(String email);
 
     // 회원정보 수정하기
     public void updateMember(Member member);
