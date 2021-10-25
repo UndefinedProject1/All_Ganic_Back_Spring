@@ -33,9 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdminController {
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
@@ -54,10 +51,13 @@ public class AdminController {
     // 127.0.0.1:8080/REST/admin/brand_insert
     @RequestMapping(value = "/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> brandInsertPOST(@RequestBody Brand brand, @RequestHeader("token") String token) {
+    public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
+    @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            brand.setBrandimage("classpath:/static/brand/"+brand.getBrandimage());
+            brand.setBrandimage(file.getBytes());
+            brand.setImagename(file.getOriginalFilename());
+            brand.setImagetype(file.getContentType());
             bService.insertBrand(brand);
             map.put("result", 1);
         } catch (Exception e) {
@@ -73,13 +73,16 @@ public class AdminController {
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
-            System.out.println(brand.toString());
             if (brand.getBrandimage() != null) {
                 HttpHeaders headers = new HttpHeaders();
-                InputStream is = resourceLoader.getResource(brand.getBrandimage()).getInputStream();
-
-                headers.setContentType(MediaType.IMAGE_PNG);
-                ResponseEntity<byte[]> response = new ResponseEntity<>(is.readAllBytes(), headers, HttpStatus.OK);
+                if (brand.getImagetype().equals("image/jpeg")) {
+                    headers.setContentType(MediaType.IMAGE_JPEG);
+                } else if (brand.getImagetype().equals("image/png")) {
+                    headers.setContentType(MediaType.IMAGE_PNG);
+                } else if (brand.getImagetype().equals("image/git")) {
+                    headers.setContentType(MediaType.IMAGE_GIF);
+                }
+                ResponseEntity<byte[]> response = new ResponseEntity<>(brand.getBrandimage(), headers, HttpStatus.OK);
                 return response;
             }
             return null;
@@ -146,26 +149,26 @@ public class AdminController {
     //127.0.0.1:8080/REST/admin/product_update
     @RequestMapping(value = "/product_update", method = {
         RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> productUpdate(@ModelAttribute Product product,
-            @RequestParam("file") MultipartFile file,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<>();
-            try{ 
-                Product product2 = pService.getProductOne(product.getProductcode());
-                product2.setProductname(product.getProductname());
-                product2.setProductprice(product.getProductprice());
-                product2.setImage(file.getBytes());
-                product2.setImagename(file.getOriginalFilename());
-                product2.setImagetype(file.getContentType());
+    public Map<String, Object> productUpdate(@ModelAttribute Product product,
+        @RequestParam("file") MultipartFile file,
+        @RequestHeader("token") String token) { 
+        Map<String, Object> map = new HashMap<>();
+        try{ 
+            Product product2 = pService.getProductOne(product.getProductcode());
+            product2.setProductname(product.getProductname());
+            product2.setProductprice(product.getProductprice());
+            product2.setImage(file.getBytes());
+            product2.setImagename(file.getOriginalFilename());
+            product2.setImagetype(file.getContentType());
 
-                pService.updteProduct(product2);
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
+            pService.updteProduct(product2);
+            map.put("result",1);
         }
+        catch(Exception e){
+            map.put("result",e.hashCode());
+        }
+        return map;
+    }
 
     
 
