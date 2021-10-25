@@ -52,7 +52,7 @@ public class MemberController {
     }
 
     // 로그인
-    // 127.0.0.1.8080/REST/api/member/login
+    // 127.0.0.1:8080/REST/api/member/login
     @RequestMapping(value = "/member/login", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {

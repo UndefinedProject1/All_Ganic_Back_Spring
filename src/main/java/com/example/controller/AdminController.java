@@ -56,14 +56,13 @@ public class AdminController {
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
-    //{"brandname":"오틀리", "brandimage":"오틀리.PNG"}
+    // {"brandname":"오틀리", "brandimage":"오틀리.PNG"}
     @RequestMapping(value = "/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> brandInsertPOST(@RequestBody Brand brand,
-            @RequestHeader("token") String token) {
+    public Map<String, Object> brandInsertPOST(@RequestBody Brand brand, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            brand.setBrandimage("classpath:/static/brand/"+ brand.getBrandimage());
+            brand.setBrandimage("classpath:/static/brand/" + brand.getBrandimage());
             bService.insertBrand(brand);
             map.put("result", 1);
         } catch (Exception e) {
@@ -72,7 +71,6 @@ public class AdminController {
         return map;
     }
 
-    
     // 브랜드 이미지 찾기
     // 127.0.0.1:8080/REST/admin/select_image?no=번호
     // <img src="/admin/select_image?no=12" />
@@ -80,7 +78,7 @@ public class AdminController {
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
-            //System.out.println(brand.toString());
+            // System.out.println(brand.toString());
             if (brand.getBrandimage() != null) {
                 HttpHeaders headers = new HttpHeaders();
                 InputStream is = resourceLoader.getResource(brand.getBrandimage()).getInputStream();
@@ -90,12 +88,12 @@ public class AdminController {
                 return response;
             }
             return null;
-        } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-    
+
     // 카테고리 추가
     // 127.0.0.1:8080/REST/admin/category_insert
     // {"categorycode":400425, "categoryname":"핸드워시"}
@@ -114,18 +112,17 @@ public class AdminController {
 
     // 물품 추가
     // 127.0.0.1:8080/REST/admin/product_insert
-    // {"productname":"a", "productprice":123, "productcontent":"내용", "productimage":"aaa", "brand":1, "category":100101}
+    // {"productname":"a", "productprice":123, "productcontent":"내용",
+    // "productimage":"이미지.PNG",
+    // "brand":{"brandcode":1}, "category":{"categorycode":100101}}
     @RequestMapping(value = "/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productInsertPOST(@RequestBody Product product,
-            //@RequestParam("no")long no,
-            @RequestHeader("token") String token) {
+    public Map<String, Object> productInsertPOST(@RequestBody Product product, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
-        //Brand brand = bService.selectBrand(2);
         try {
-            // Optional<Brand> brand = bRepository.findById(no);
-            //Brand brand = bService.selectBrand(no);
-            //product.setBrand(brand);
+            // 브랜드, 카테고리 id 확인
+            // System.out.println(product.getBrand().getBrandcode());
+            // System.out.println(product.getCategory().getCategorycode());
             product.setProductimage("classpath:/static/product/" + product.getProductimage());
             pService.insertProduct(product);
             map.put("result", 1);
@@ -136,10 +133,33 @@ public class AdminController {
         return map;
     }
 
+    // 물품 이미지 찾기
+    // 127.0.0.1:8080/REST/admin/select_product?no=번호
+    // <img src="/admin/select_image?no=12" />
+    @RequestMapping(value = "/select_product", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> selectProductImage(@RequestParam("no") long no) throws Exception {
+        try {
+            Product product = pService.selectProduct(no);
+            // Brand brand = bService.selectBrand(no);
+            // System.out.println(brand.toString());
+            if (product.getProductimage() != null) {
+                HttpHeaders headers = new HttpHeaders();
+                InputStream is = resourceLoader.getResource(product.getProductimage()).getInputStream();
 
-    //물품 삭제
-    //127.0.0.1:8080/REST/admin/product_delete
+                headers.setContentType(MediaType.IMAGE_PNG);
+                ResponseEntity<byte[]> response = new ResponseEntity<>(is.readAllBytes(), headers, HttpStatus.OK);
+                return response;
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    // 물품 삭제
+    // 127.0.0.1:8080/REST/admin/product_delete
+    // {"productcode":1}
     @RequestMapping(value = "/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
@@ -150,33 +170,40 @@ public class AdminController {
         } catch (Exception e) {
             map.put("result", e.hashCode());
         }
-
         return map;
     }
 
-
-    //물품 수정
-    //127.0.0.1:8080/REST/admin/product_update
+    // 물품 수정
+    // 127.0.0.1:8080/REST/admin/product_update
+    // {"productcode":2, "productname":"수정", "productprice":1000,
+    // "productcontent":"수정", "productimage":"Nukak.PNG"}
     @RequestMapping(value = "/product_update", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Map<String, Object> productUpdate(@ModelAttribute Product product,
-            @RequestParam("file") MultipartFile file,
-            @RequestHeader("token") String token) { 
-            Map<String, Object> map = new HashMap<>();
-            try{ 
-                Product product2 = pService.selectProduct(product.getProductcode());
-                product2.setProductname(product.getProductname());
-                product2.setProductcontent(product.getProductcontent());
-                product2.setProductprice(product.getProductprice());
-                
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productUpdate(@RequestBody Map<String, Object> mapobj,
+            @RequestHeader("token") String token) {
 
-                pService.updteProduct(product2);
-                map.put("result",1);
-            }
-            catch(Exception e){
-                map.put("result",e.hashCode());
-            }
-            return map;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            // @RequestBody Map<>으로 데이터 받는부분
+            Long productcode = Long.parseLong(String.valueOf(mapobj.get("productcode"))); // 코드
+            String productname = (String) mapobj.get("productname"); // 이름
+            String productcontent = (String) mapobj.get("productcontent"); // 내용
+            Long productprice = Long.parseLong(String.valueOf(mapobj.get("productprice"))); // 가격
+            String productimage = (String) mapobj.get("productimage"); // 이미지
+
+            // 물품 코드를 이용해 기존 정보 가져오기
+            Product product = pService.selectProduct(productcode);
+            product.setProductname(productname);
+            product.setProductcontent(productcontent);
+            product.setProductprice(productprice);
+            product.setProductimage("classpath:/static/product/" + productimage);
+            pService.updteProduct(product);
+            map.put("result", 1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
         }
+        return map;
+    }
 
 }
