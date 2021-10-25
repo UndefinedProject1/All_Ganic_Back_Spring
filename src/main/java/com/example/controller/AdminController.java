@@ -8,12 +8,14 @@ import java.util.Optional;
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
+import com.example.entity.SubImage;
 import com.example.jwt.JwtUtil;
 import com.example.repository.BrandRepository;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
+import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -53,6 +55,9 @@ public class AdminController {
 
     @Autowired
     ProductService pService;
+
+    @Autowired
+    SubImageService sService;
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
@@ -199,6 +204,26 @@ public class AdminController {
             product.setProductimage("classpath:/static/product/" + productimage);
             pService.updteProduct(product);
             map.put("result", 1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 서브이미지 등록
+    // 127.0.0.1:8080/REST/admin/subimg_insert
+    // {"subcode":"1_1","subimg":"이미지.PNG","product":{"productcode":1}}
+    @RequestMapping(value = "/subimg_insert", method = {
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> subimgInsertPOST(@RequestBody SubImage subimage, @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            // 물품 id 확인
+            System.out.println(subimage.getProduct().getProductcode());
+            subimage.setSubimg("classpath:/static/subimg/" + subimage.getSubimg());
+            sService.insertSubimg(subimage);
+            map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
