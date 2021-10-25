@@ -29,17 +29,17 @@ import lombok.ToString;
 @SequenceGenerator(name = "SEQ_PRODUCT_NO", sequenceName = "SEQ_PRODUCT_NO", initialValue = 1, allocationSize = 1)
 public class Product {
     @Id
-    @Column(name = "PRODCUTCODE")
+    @Column(name = "PRODUCTCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PRODUCT_NO")
     private long productcode = 0L;
 
-    @Column(name = "PRODCUTNAME")
+    @Column(name = "PRODUCTNAME")
     private String productname = null;
 
-    @Column(name = "PRODCUTPRICE")
+    @Column(name = "PRODUCTPRICE")
     private long productprice = 0L;
 
-    @Column(name = "PRODCUTCONTENT")
+    @Column(name = "PRODUCTCONTENT")
     private String productcontent = null;
 
     @Column(name = "PRODUCTIMAGE")
