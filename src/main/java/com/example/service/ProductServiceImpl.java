@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> getListProduct() {
+    public List<ProductProjection> getListProduct() {
         return pRepository.queryListProduct();
     }
     

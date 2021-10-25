@@ -26,6 +26,6 @@ public interface ProductService {
     public List<Product> getBrandProduct(long code);
 
     //해당 브랜드 제품들 가져오기
-    public List<Product> getListProduct();
+    public List<ProductProjection> getListProduct();
 
 }

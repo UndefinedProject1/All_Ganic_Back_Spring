@@ -21,7 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,7 +55,7 @@ public class AdminController {
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
-    @RequestMapping(value = "/brand_insert", method = {
+    @RequestMapping(value = "/admin/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
     @RequestHeader("token") String token) {
@@ -101,7 +100,7 @@ public class AdminController {
 
     // 카테고리 추가
     // 127.0.0.1:8080/REST/admin/category_insert
-    @RequestMapping(value = "/category_insert", method = {
+    @RequestMapping(value = "/admin/category_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -116,7 +115,7 @@ public class AdminController {
 
     // 제품 추가
     // 127.0.0.1:8080/REST/admin/product_insert
-    @RequestMapping(value = "/product_insert", method = {
+    @RequestMapping(value = "/admin/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
@@ -137,7 +136,7 @@ public class AdminController {
 
     //물품 삭제
     //127.0.0.1:8080/REST/admin/product_delete
-    @RequestMapping(value = "/product_delete", method = {
+    @RequestMapping(value = "/admin/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
@@ -145,6 +144,7 @@ public class AdminController {
             pService.deleteProduct(product.getProductcode());
             map.put("result", 1);
         } catch (Exception e) {
+            e.printStackTrace();
             map.put("result", e.hashCode());
         }
 
@@ -154,7 +154,7 @@ public class AdminController {
 
     //물품 수정
     //127.0.0.1:8080/REST/admin/product_update
-    @RequestMapping(value = "/product_update", method = {
+    @RequestMapping(value = "/admin/product_update", method = {
         RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productUpdate(@ModelAttribute Product product,
         @RequestParam("file") MultipartFile file,
@@ -203,19 +203,19 @@ public class AdminController {
     //     return "board_select";
     // }
 
-    @RequestMapping(value = "/list/product", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> ListProductGET() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            List<Product> list = pService.getListProduct();
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
+    // @RequestMapping(value = "/list/product", method = {
+    //     RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    // public Map<String, Object> ListProductGET() {
+    //     Map<String, Object> map = new HashMap<String, Object>();
+    //     try {
+    //         List<ProductProjection> list = pService.getListProduct();
+    //         map.put("list", list);
+    //         map.put("result", 1);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         map.put("result", e.hashCode());
+    //     }
+    //     return map;
+    // }
 
 }

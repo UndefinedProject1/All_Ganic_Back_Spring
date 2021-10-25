@@ -70,6 +70,23 @@ public class MemberController {
         return map;
     }
 
+    @RequestMapping(value = "/member/checkemail", method = {
+        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckEmailPOST(@RequestBody Member member) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            Long count = mServiece.checkMemberEmail(member.getUseremail());
+            if(count > 0){
+                map.put("result", 0L);
+            }
+            map.put("result", 1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 회원정보 수정(이름, 전화번호, 우편번호, 주소, 상세주소)
     // 127.0.0.1:8080/REST/api/member/update
     @RequestMapping(value = "/member/update", method = {

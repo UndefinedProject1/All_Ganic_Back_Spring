@@ -16,5 +16,5 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
     //List<Product> findByBrandOrderByNoDesc(String brand);
 
     @Query(value = "SELECT PRODUCTNAME, PRODUCTPRICE FROM PRODUCT", nativeQuery = true)
-    public List<Product> queryListProduct();
+    public List<ProductProjection> queryListProduct();
 }

@@ -802,3 +802,11 @@ org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "productcode" not found [42122-2
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:829)
+2021-10-25 20:27:48 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT  COUNT(*) FROM MEMBER WHERE MEMBEREMAIL = #{a@gmail.com}[*]" [42000-200]
+2021-10-25 20:28:57 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT  COUNT(*) FROM MEMBER WHERE USEREMAIL= #{a@gmail.com}[*]" [42000-200]
+2021-10-25 21:19:07 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT COUNT(USEREMAIL) FROM MEMBER WHERE USEREMAIL= #{useremail}[*]" [42000-200]
+2021-10-25 21:20:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT COUNT(USEREMAIL) FROM MEMBER WHERE USEREMAIL= #{email}[*]" [42000-200]
