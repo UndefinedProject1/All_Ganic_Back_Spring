@@ -1,10 +1,12 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Product;
+import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,17 @@ public class ProductServiceImpl implements ProductService{
     public Product getProductOne(long code) {
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
+    }
+
+    @Override
+    public List<Product> getBrandProduct(long code) {
+
+        return null;
+    }
+
+    @Override
+    public List<Product> getListProduct() {
+        return pRepository.queryListProduct();
     }
     
 }

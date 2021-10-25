@@ -1,12 +1,13 @@
 package com.example.controller;
 
-import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
+import com.example.entity.ProductProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
@@ -14,11 +15,13 @@ import com.example.service.MemberServiece;
 import com.example.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(value = "/admin")
+@RequestMapping(value = "/api")
 public class AdminController {
 
     @Autowired
@@ -46,6 +49,10 @@ public class AdminController {
 
     @Autowired
     ProductService pService;
+
+    // // 상수
+    // @Value("${board.page.count}")
+    // private int PAGECNT;
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
@@ -170,6 +177,45 @@ public class AdminController {
         return map;
     }
 
-    
+    // // 127.0.0.1:8080/ROOT/board/select => title=
+    // // 127.0.0.1:8080/ROOT/board/select?title=dkdjd&page=1
+    // @RequestMapping(value = "/select", method = RequestMethod.GET)
+    // public String select(Model model, @RequestParam(name = "title", required = false, defaultValue = "") String title,
+    //         @RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+
+    //     if (page == 0) {
+    //         // 강제로 페이지 전환
+    //         return "redirect:select?page=1";
+    //     }
+    //     // 글번호 최신순으로
+    //     // List<Board> list1 = bRepository.findAll(Sort.by(Sort.Direction.DESC, "no"));
+
+    //     // 페이지숫자(0부터), 개수
+    //     PageRequest pageRequest = PageRequest.of(page - 1, PAGECNT);
+    //     List<Board> list1 = bRepository.findByTitleContainingOrderByNoDesc(title, pageRequest);
+
+    //     long cnt = bRepository.countByTitleContaining(title);
+    //     // 11개 1 2
+    //     // 23개 1 2 3
+    //     model.addAttribute("cnt", (cnt - 1) / PAGECNT + 1);
+
+    //     model.addAttribute("list", list1);
+    //     return "board_select";
+    // }
+
+    @RequestMapping(value = "/list/product", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> ListProductGET() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<Product> list = pService.getListProduct();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 
 }
