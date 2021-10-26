@@ -23,9 +23,8 @@ public class BrandServiceImpl implements BrandService{
         bRepository.save(brand);
     }
 
-    //브랜드 찾기
     @Override
-    public Brand selectBrand(long no) {
+    public Brand selectBrand(Long no) {
         Optional<Brand> brand = bRepository.findById(no);
         return brand.orElse(null);
     }

@@ -1,11 +1,12 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Product;
-import com.example.repository.BrandRepository;
+import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,6 @@ public class ProductServiceImpl implements ProductService{
 
     @Autowired
     ProductRepository pRepository;
-
-    @Autowired
-    BrandRepository bRepository;
 
     //물품등록
     public void insertProduct(Product product){
@@ -42,9 +40,20 @@ public class ProductServiceImpl implements ProductService{
 
     //제품정보 가져오기
     @Override
-    public Product selectProduct(long code) {
+    public Product getProductOne(long code) {
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
     }
 
+    @Override
+    public List<Product> getBrandProduct(long code) {
+
+        return null;
+    }
+
+    @Override
+    public List<ProductProjection> getListProduct() {
+        return pRepository.queryListProduct();
+    }
+    
 }

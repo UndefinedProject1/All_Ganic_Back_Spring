@@ -1,24 +1,22 @@
 package com.example.controller;
 
-import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
-import com.example.entity.SubImage;
+import com.example.entity.ProductProjection;
 import com.example.jwt.JwtUtil;
-import com.example.repository.BrandRepository;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
-import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,19 +31,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(value = "/admin")
+@RequestMapping(value = "/api")
 public class AdminController {
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
     BrandService bService;
-
-    @Autowired
-    BrandRepository bRepository;
 
     @Autowired
     CategoryService cService;
@@ -56,18 +49,21 @@ public class AdminController {
     @Autowired
     ProductService pService;
 
-    @Autowired
-    SubImageService sService;
+    // // 상수
+    // @Value("${board.page.count}")
+    // private int PAGECNT;
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/admin/brand_insert
-    // {"brandname":"오틀리", "brandimage":"오틀리.PNG"}
-    @RequestMapping(value = "/brand_insert", method = {
+    @RequestMapping(value = "/admin/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> brandInsertPOST(@RequestBody Brand brand, @RequestHeader("token") String token) {
+    public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
+    @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            brand.setBrandimage("classpath:/static/brand/" + brand.getBrandimage());
+            brand.setBrandimage(file.getBytes());
+            brand.setImagename(file.getOriginalFilename());
+            brand.setImagetype(file.getContentType());
             bService.insertBrand(brand);
             map.put("result", 1);
         } catch (Exception e) {
@@ -83,17 +79,20 @@ public class AdminController {
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
-            // System.out.println(brand.toString());
             if (brand.getBrandimage() != null) {
                 HttpHeaders headers = new HttpHeaders();
-                InputStream is = resourceLoader.getResource(brand.getBrandimage()).getInputStream();
-
-                headers.setContentType(MediaType.IMAGE_PNG);
-                ResponseEntity<byte[]> response = new ResponseEntity<>(is.readAllBytes(), headers, HttpStatus.OK);
+                if (brand.getImagetype().equals("image/jpeg")) {
+                    headers.setContentType(MediaType.IMAGE_JPEG);
+                } else if (brand.getImagetype().equals("image/png")) {
+                    headers.setContentType(MediaType.IMAGE_PNG);
+                } else if (brand.getImagetype().equals("image/git")) {
+                    headers.setContentType(MediaType.IMAGE_GIF);
+                }
+                ResponseEntity<byte[]> response = new ResponseEntity<>(brand.getBrandimage(), headers, HttpStatus.OK);
                 return response;
             }
             return null;
-        } catch (Exception e) {
+        } catch (Exception e) { 
             e.printStackTrace();
             return null;
         }
@@ -101,8 +100,7 @@ public class AdminController {
 
     // 카테고리 추가
     // 127.0.0.1:8080/REST/admin/category_insert
-    // {"categorycode":400425, "categoryname":"핸드워시"}
-    @RequestMapping(value = "/category_insert", method = {
+    @RequestMapping(value = "/admin/category_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -115,57 +113,30 @@ public class AdminController {
         return map;
     }
 
-    // 물품 추가
+    // 제품 추가
     // 127.0.0.1:8080/REST/admin/product_insert
-    // {"productname":"a", "productprice":123, "productcontent":"내용",
-    // "productimage":"이미지.PNG",
-    // "brand":{"brandcode":1}, "category":{"categorycode":100101}}
-    @RequestMapping(value = "/product_insert", method = {
+    @RequestMapping(value = "/admin/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productInsertPOST(@RequestBody Product product, @RequestHeader("token") String token) {
+    public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
+            @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            // 브랜드, 카테고리 id 확인
-            // System.out.println(product.getBrand().getBrandcode());
-            // System.out.println(product.getCategory().getCategorycode());
-            product.setProductimage("classpath:/static/product/" + product.getProductimage());
+            product.setImage(file.getBytes());
+            product.setImagename(file.getOriginalFilename());
+            product.setImagetype(file.getContentType());
             pService.insertProduct(product);
+
             map.put("result", 1);
         } catch (Exception e) {
-            e.printStackTrace();
             map.put("result", e.hashCode());
         }
         return map;
     }
 
-    // 물품 이미지 찾기
-    // 127.0.0.1:8080/REST/admin/select_product?no=번호
-    // <img src="/admin/select_image?no=12" />
-    @RequestMapping(value = "/select_product", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> selectProductImage(@RequestParam("no") long no) throws Exception {
-        try {
-            Product product = pService.selectProduct(no);
-            // Brand brand = bService.selectBrand(no);
-            // System.out.println(brand.toString());
-            if (product.getProductimage() != null) {
-                HttpHeaders headers = new HttpHeaders();
-                InputStream is = resourceLoader.getResource(product.getProductimage()).getInputStream();
 
-                headers.setContentType(MediaType.IMAGE_PNG);
-                ResponseEntity<byte[]> response = new ResponseEntity<>(is.readAllBytes(), headers, HttpStatus.OK);
-                return response;
-            }
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // 물품 삭제
-    // 127.0.0.1:8080/REST/admin/product_delete
-    // {"productcode":1}
-    @RequestMapping(value = "/product_delete", method = {
+    //물품 삭제
+    //127.0.0.1:8080/REST/admin/product_delete
+    @RequestMapping(value = "/admin/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
@@ -173,62 +144,78 @@ public class AdminController {
             pService.deleteProduct(product.getProductcode());
             map.put("result", 1);
         } catch (Exception e) {
+            e.printStackTrace();
             map.put("result", e.hashCode());
         }
+
         return map;
     }
 
-    // 물품 수정
-    // 127.0.0.1:8080/REST/admin/product_update
-    // {"productcode":2, "productname":"수정", "productprice":1000,
-    // "productcontent":"수정", "productimage":"Nukak.PNG"}
-    @RequestMapping(value = "/product_update", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productUpdate(@RequestBody Map<String, Object> mapobj,
-            @RequestHeader("token") String token) {
 
+    //물품 수정
+    //127.0.0.1:8080/REST/admin/product_update
+    @RequestMapping(value = "/admin/product_update", method = {
+        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productUpdate(@ModelAttribute Product product,
+        @RequestParam("file") MultipartFile file,
+        @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
-        try {
-            // @RequestBody Map<>으로 데이터 받는부분
-            Long productcode = Long.parseLong(String.valueOf(mapobj.get("productcode"))); // 코드
-            String productname = (String) mapobj.get("productname"); // 이름
-            String productcontent = (String) mapobj.get("productcontent"); // 내용
-            Long productprice = Long.parseLong(String.valueOf(mapobj.get("productprice"))); // 가격
-            String productimage = (String) mapobj.get("productimage"); // 이미지
+        try{ 
+            Product product2 = pService.getProductOne(product.getProductcode());
+            product2.setProductname(product.getProductname());
+            product2.setProductprice(product.getProductprice());
+            product2.setImage(file.getBytes());
+            product2.setImagename(file.getOriginalFilename());
+            product2.setImagetype(file.getContentType());
 
-            // 물품 코드를 이용해 기존 정보 가져오기
-            Product product = pService.selectProduct(productcode);
-            product.setProductname(productname);
-            product.setProductcontent(productcontent);
-            product.setProductprice(productprice);
-            product.setProductimage("classpath:/static/product/" + productimage);
-            pService.updteProduct(product);
-            map.put("result", 1L);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
+            pService.updteProduct(product2);
+            map.put("result",1);
+        }
+        catch(Exception e){
+            map.put("result",e.hashCode());
         }
         return map;
     }
 
-    // 서브이미지 등록
-    // 127.0.0.1:8080/REST/admin/subimg_insert
-    // {"subcode":"1_1","subimg":"이미지.PNG","product":{"productcode":1}}
-    @RequestMapping(value = "/subimg_insert", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> subimgInsertPOST(@RequestBody SubImage subimage, @RequestHeader("token") String token) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            // 물품 id 확인
-            System.out.println(subimage.getProduct().getProductcode());
-            subimage.setSubimg("classpath:/static/subimg/" + subimage.getSubimg());
-            sService.insertSubimg(subimage);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
+    // // 127.0.0.1:8080/ROOT/board/select => title=
+    // // 127.0.0.1:8080/ROOT/board/select?title=dkdjd&page=1
+    // @RequestMapping(value = "/select", method = RequestMethod.GET)
+    // public String select(Model model, @RequestParam(name = "title", required = false, defaultValue = "") String title,
+    //         @RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+
+    //     if (page == 0) {
+    //         // 강제로 페이지 전환
+    //         return "redirect:select?page=1";
+    //     }
+    //     // 글번호 최신순으로
+    //     // List<Board> list1 = bRepository.findAll(Sort.by(Sort.Direction.DESC, "no"));
+
+    //     // 페이지숫자(0부터), 개수
+    //     PageRequest pageRequest = PageRequest.of(page - 1, PAGECNT);
+    //     List<Board> list1 = bRepository.findByTitleContainingOrderByNoDesc(title, pageRequest);
+
+    //     long cnt = bRepository.countByTitleContaining(title);
+    //     // 11개 1 2
+    //     // 23개 1 2 3
+    //     model.addAttribute("cnt", (cnt - 1) / PAGECNT + 1);
+
+    //     model.addAttribute("list", list1);
+    //     return "board_select";
+    // }
+
+    // @RequestMapping(value = "/list/product", method = {
+    //     RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    // public Map<String, Object> ListProductGET() {
+    //     Map<String, Object> map = new HashMap<String, Object>();
+    //     try {
+    //         List<ProductProjection> list = pService.getListProduct();
+    //         map.put("list", list);
+    //         map.put("result", 1);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         map.put("result", e.hashCode());
+    //     }
+    //     return map;
+    // }
 
 }

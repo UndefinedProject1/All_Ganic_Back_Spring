@@ -53,6 +53,7 @@ public class MemberController {
 
     // 로그인
     // 127.0.0.1:8080/REST/api/member/login
+    // {"useremail":"a@gmail.com", "userpw":"a"}
     @RequestMapping(value = "/member/login", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
@@ -69,7 +70,28 @@ public class MemberController {
         return map;
     }
 
-    // 회원정보 수정(이름, 전화번호, 우편번호, 주소)
+    // 이메일 중복 체크
+    // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
+    @RequestMapping(value = "/member/checkemail", method = {
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckEmailPOST(@RequestBody Member member) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            int count = mServiece.checkMemberEmail(member.getUseremail());
+            System.out.println(count);
+            if (count == 0) {
+                map.put("result", 0L);
+            } else {
+                map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 회원정보 수정(이름, 전화번호, 우편번호, 주소, 상세주소)
     // 127.0.0.1:8080/REST/api/member/update
     @RequestMapping(value = "/member/update", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -129,6 +151,8 @@ public class MemberController {
                     mServiece.updatePassword(member);
                     map.put("result", 1L);
                 }
+                // 기존암호와 전달된 암호가 같지않을 시
+                map.put("result", 0L);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,7 +162,7 @@ public class MemberController {
     }
 
     // 회원탈퇴
-    // 127.0.0.1.8080/REST/api/member/leave
+    // 127.0.0.1:8080/REST/api/member/leave
     @RequestMapping(value = "/member/leave", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLeave(@RequestBody Map<String, Object> mapobj,
@@ -160,6 +184,8 @@ public class MemberController {
                     mServiece.deleteMember(useremail);
                     map.put("result", 1L);
                 }
+                // 기존암호와 전달된 암호가 같지않을 시
+                map.put("result", 0L);
             }
         } catch (Exception e) {
             map.put("result", e.hashCode());

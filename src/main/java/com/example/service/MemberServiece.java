@@ -10,6 +10,9 @@ public interface MemberServiece {
     // 로그인
     public Member getMemberOne(String email);
 
+    // 아이디 중복체크
+    public int checkMemberEmail(String email);
+
     // 회원정보 수정하기
     public void updateMember(Member member);
 

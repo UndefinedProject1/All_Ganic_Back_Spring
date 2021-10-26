@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,16 +40,21 @@ public class Product {
     @Column(name = "PRODUCTPRICE")
     private long productprice = 0L;
 
-    @Column(name = "PRODUCTCONTENT")
-    private String productcontent = null;
-
+    // 이미지
+    @Lob
     @Column(name = "PRODUCTIMAGE")
-    private String productimage = null;
+    private byte[] image = null;
+
+    @Column(name = "IMAGENAME")
+    private String imagename = null; // 파일명
+
+    @Column(name = "IMAGETYPE")
+    private String imagetype = null;
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(updatable = false, name = "PRODUCTDATE")
-    private Date productdate = null;
+    private Date userdate = null;
 
     @ManyToOne // 브랜드 정보
     @JoinColumn(updatable = false, name = "BRAND")

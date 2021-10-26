@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,7 +31,15 @@ public class Brand {
     @Column(name = "BRANDNAME")
     private String brandname = null;
 
+    // 이미지
+    @Lob
     @Column(name = "BRANDIMAGE")
-    private String brandimage = null;
+    private byte[] brandimage = null;
+
+    @Column(name = "IMAGENAME")
+    private String imagename = null; // 파일명
+
+    @Column(name = "IMAGETYPE")
+    private String imagetype = null;
 
 }

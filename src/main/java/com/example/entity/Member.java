@@ -57,4 +57,7 @@ public class Member {
 
     @Column(name = "ADDRESS")
     private String address = null;
+
+    @Column(name = "DETAILEADDRESS")
+    private String detaileaddress = null;
 }
