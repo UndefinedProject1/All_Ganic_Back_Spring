@@ -59,6 +59,10 @@ public class MemberController {
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
+            System.out.println("---------------");
+            System.out.println(member.getUseremail());
+            System.out.println(member.getUserpw());
+            System.out.println("---------------");
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
             map.put("result", 1L);
