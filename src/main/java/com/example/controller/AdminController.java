@@ -272,11 +272,23 @@ public class AdminController {
         return map;
     }
 
-    //카테고리 목록 조회
+    //카테고리 목록 조회 cate_select
+    //127.0.0.1:8080/REST/api/admin/cate_select
     @RequestMapping(value = "/admin/cate_select", method = {
-        RequestMethod.GET}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String,Object>map = new HashMap<>();
-    })
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> cateSelectGET() {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<Category> list = cService.querySelectcate();
+            map.put("result", 1);
+            map.put("category", list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+
+        return map;
+    }
 
 
 

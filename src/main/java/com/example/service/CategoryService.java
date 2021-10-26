@@ -14,4 +14,8 @@ public interface CategoryService {
     //카테고리 찾기
     public Category selectCategory(long cno);
 
+    //카테고리 목록
+    @Query(value = "SELECT * FROM CATEGORY", nativeQuery = true)
+    public List<Category> querySelectcate();
+
 }

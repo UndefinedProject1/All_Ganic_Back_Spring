@@ -18,6 +18,8 @@ public class CategoryServiceImpl implements CategoryService{
     EntityManagerFactory emf;
     @Autowired
     CategoryRepository cRepository;
+    @Autowired
+    CategoryService cService;
 
     //카테고리 추가
     public void insertCategory(Category category){
@@ -32,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     //카테고리 목록 조회
-    public List<Category> querySelectcateList() {
+    public List<Category> querySelectcate() {
         
-        return cRepository.querySelectcate();
+        return cService.querySelectcate();
     }
     
 }

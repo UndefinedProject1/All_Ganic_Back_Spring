@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface CategoryRepository extends JpaRepository<Category, Long>{
     
     //카테고리 목록
-    @Query(value = "SELECT * FROM CATEGORY", nativeQuery = true)
-    public List<Category> querySelectcate();
+    // @Query(value = "SELECT * FROM CATEGORY", nativeQuery = true)
+    // public List<Category> querySelectcate();
 }
