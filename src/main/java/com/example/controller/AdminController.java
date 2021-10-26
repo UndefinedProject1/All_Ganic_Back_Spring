@@ -272,6 +272,12 @@ public class AdminController {
         return map;
     }
 
+    //카테고리 목록 조회
+    @RequestMapping(value = "/admin/cate_select", method = {
+        RequestMethod.GET}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String,Object>map = new HashMap<>();
+    })
+
 
 
     

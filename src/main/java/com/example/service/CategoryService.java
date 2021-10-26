@@ -1,6 +1,10 @@
 package com.example.service;
 
+import java.util.List;
+
 import com.example.entity.Category;
+
+import org.springframework.data.jpa.repository.Query;
 
 public interface CategoryService {
 
@@ -9,5 +13,5 @@ public interface CategoryService {
 
     //카테고리 찾기
     public Category selectCategory(long cno);
-    
+
 }
