@@ -54,11 +54,11 @@ public class AdminController {
     // private int PAGECNT;
 
     // 브랜드 추가
-    // 127.0.0.1:8080/REST/admin/brand_insert
+    // 127.0.0.1:8080/REST/api/admin/brand_insert
     @RequestMapping(value = "/admin/brand_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
-    @RequestHeader("token") String token) {
+            @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             brand.setBrandimage(file.getBytes());
@@ -92,14 +92,14 @@ public class AdminController {
                 return response;
             }
             return null;
-        } catch (Exception e) { 
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
     // 카테고리 추가
-    // 127.0.0.1:8080/REST/admin/category_insert
+    // 127.0.0.1:8080/REST/api/admin/category_insert
     @RequestMapping(value = "/admin/category_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
@@ -114,7 +114,7 @@ public class AdminController {
     }
 
     // 제품 추가
-    // 127.0.0.1:8080/REST/admin/product_insert
+    // 127.0.0.1:8080/REST/api/admin/product_insert
     @RequestMapping(value = "/admin/product_insert", method = {
             RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
@@ -133,9 +133,8 @@ public class AdminController {
         return map;
     }
 
-
-    //물품 삭제
-    //127.0.0.1:8080/REST/admin/product_delete
+    // 물품 삭제
+    // 127.0.0.1:8080/REST/admin/product_delete
     @RequestMapping(value = "/admin/product_delete", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
@@ -151,16 +150,14 @@ public class AdminController {
         return map;
     }
 
-
-    //물품 수정
-    //127.0.0.1:8080/REST/admin/product_update
+    // 물품 수정
+    // 127.0.0.1:8080/REST/admin/product_update
     @RequestMapping(value = "/admin/product_update", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productUpdate(@ModelAttribute Product product,
-        @RequestParam("file") MultipartFile file,
-        @RequestHeader("token") String token) { 
+            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productUpdate(@ModelAttribute Product product, @RequestParam("file") MultipartFile file,
+            @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
-        try{ 
+        try {
             Product product2 = pService.getProductOne(product.getProductcode());
             product2.setProductname(product.getProductname());
             product2.setProductprice(product.getProductprice());
@@ -169,10 +166,9 @@ public class AdminController {
             product2.setImagetype(file.getContentType());
 
             pService.updteProduct(product2);
-            map.put("result",1);
-        }
-        catch(Exception e){
-            map.put("result",e.hashCode());
+            map.put("result", 1);
+        } catch (Exception e) {
+            map.put("result", e.hashCode());
         }
         return map;
     }
@@ -180,42 +176,47 @@ public class AdminController {
     // // 127.0.0.1:8080/ROOT/board/select => title=
     // // 127.0.0.1:8080/ROOT/board/select?title=dkdjd&page=1
     // @RequestMapping(value = "/select", method = RequestMethod.GET)
-    // public String select(Model model, @RequestParam(name = "title", required = false, defaultValue = "") String title,
-    //         @RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+    // public String select(Model model, @RequestParam(name = "title", required =
+    // false, defaultValue = "") String title,
+    // @RequestParam(name = "page", required = false, defaultValue = "0") int page)
+    // {
 
-    //     if (page == 0) {
-    //         // 강제로 페이지 전환
-    //         return "redirect:select?page=1";
-    //     }
-    //     // 글번호 최신순으로
-    //     // List<Board> list1 = bRepository.findAll(Sort.by(Sort.Direction.DESC, "no"));
+    // if (page == 0) {
+    // // 강제로 페이지 전환
+    // return "redirect:select?page=1";
+    // }
+    // // 글번호 최신순으로
+    // // List<Board> list1 = bRepository.findAll(Sort.by(Sort.Direction.DESC,
+    // "no"));
 
-    //     // 페이지숫자(0부터), 개수
-    //     PageRequest pageRequest = PageRequest.of(page - 1, PAGECNT);
-    //     List<Board> list1 = bRepository.findByTitleContainingOrderByNoDesc(title, pageRequest);
+    // // 페이지숫자(0부터), 개수
+    // PageRequest pageRequest = PageRequest.of(page - 1, PAGECNT);
+    // List<Board> list1 = bRepository.findByTitleContainingOrderByNoDesc(title,
+    // pageRequest);
 
-    //     long cnt = bRepository.countByTitleContaining(title);
-    //     // 11개 1 2
-    //     // 23개 1 2 3
-    //     model.addAttribute("cnt", (cnt - 1) / PAGECNT + 1);
+    // long cnt = bRepository.countByTitleContaining(title);
+    // // 11개 1 2
+    // // 23개 1 2 3
+    // model.addAttribute("cnt", (cnt - 1) / PAGECNT + 1);
 
-    //     model.addAttribute("list", list1);
-    //     return "board_select";
+    // model.addAttribute("list", list1);
+    // return "board_select";
     // }
 
     // @RequestMapping(value = "/list/product", method = {
-    //     RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    // RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces =
+    // MediaType.APPLICATION_JSON_VALUE)
     // public Map<String, Object> ListProductGET() {
-    //     Map<String, Object> map = new HashMap<String, Object>();
-    //     try {
-    //         List<ProductProjection> list = pService.getListProduct();
-    //         map.put("list", list);
-    //         map.put("result", 1);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         map.put("result", e.hashCode());
-    //     }
-    //     return map;
+    // Map<String, Object> map = new HashMap<String, Object>();
+    // try {
+    // List<ProductProjection> list = pService.getListProduct();
+    // map.put("list", list);
+    // map.put("result", 1);
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // map.put("result", e.hashCode());
+    // }
+    // return map;
     // }
 
 }
