@@ -16,4 +16,7 @@ public interface SubImageService {
 
     //서브이미지 수정
     public void updateSubimg(List<SubImage> list);
+
+    //서브이미지 삭제
+    public void deleteSubimg(long no);
 }

@@ -218,51 +218,29 @@ public class AdminController {
         return map;
     }
 
-    //서브이미지 불러오기
-    // 127.0.0.1:8080/REST/api/admin/select_image?product=번호&subimg=번호
-    // <img src="/admin/select_image?no=12" />
-    // @RequestMapping(value = "/admin/subimage_select", method = RequestMethod.GET)
-    // public ResponseEntity<byte[]> selectsubImage(
-    //     @RequestParam(name = "product")long no,
-    //     @RequestParam(name = "subimg") long code) throws Exception {
-    //     try {
-    //         Product product = pService.selectProduct(no);
-    //         List<SubImage> list = 
-    //         SubImage subImage = sImageService.selectsubimg(code);
-    //         if (subImage.getImage() != null) {
-    //             HttpHeaders headers = new HttpHeaders();
-    //             if (subImage.getImagetype().equals("image/jpeg")) {
-    //                 headers.setContentType(MediaType.IMAGE_JPEG);
-    //             } else if (subImage.getImagetype().equals("image/png")) {
-    //                 headers.setContentType(MediaType.IMAGE_PNG);
-    //             } else if (subImage.getImagetype().equals("image/git")) {
-    //                 headers.setContentType(MediaType.IMAGE_GIF);
-    //             }
-    //             ResponseEntity<byte[]> response = new ResponseEntity<>(subImage.getImage(), headers, HttpStatus.OK);
-    //             return response;
-    //         }
-    //         return null;
-    //     } catch (Exception e) { 
-    //         e.printStackTrace();
-    //         return null;
-    //     }
-    // }
-
     //서브이미지 수정하기
-    //127.0.0.1:8080/REST/api/admin/subimg_update?product=1
+    //127.0.0.1:8080/REST/api/admin/subimg_update?product=1&subcode=34
     @RequestMapping(value = "/admin/subimg_update", method = {
         RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> subimgUpdate(
-        @RequestParam("file") MultipartFile file,
+        @RequestParam("file") MultipartFile[] files,
         @RequestParam(name = "product")long no,
+        @RequestParam(name = "subcode")long no1,
         @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
         
         try{
-            //물품 코드 가져오기
-            for (SubImage subImage:list){
-                Product product = pService.selectProduct(no);
-                subImage.setProduct(product);
+            //물품코드 가져오기
+            Product product = pService.selectProduct(no);
+            List<SubImage> list = new ArrayList<>();
+            for(int i=0; i<files.length; i++){
+                SubImage subImage2 = new SubImage();
+                subImage2.setProduct(product);
+                subImage2.setSubcode(no1);
+                subImage2.setImage(files[i].getBytes());
+                subImage2.setImagename(files[i].getOriginalFilename());
+                subImage2.setImagetype(files[i].getContentType());
+                list.add(subImage2);
             }
             //일괄 수정
             sImageService.updateSubimg(list);
@@ -274,6 +252,27 @@ public class AdminController {
         }
         return map;
     }
+
+    //서브이미지 삭제하기
+    //127.0.0.1:8080/REST/api/admin/subimg_delete
+    // {"subcode":33}
+    @RequestMapping(value = "/admin/subimg_delete", method = {
+        RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> subimgDelete(@RequestBody SubImage subImage, 
+    @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            sImageService.deleteSubimg(subImage.getSubcode());
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+
+        return map;
+    }
+
+
 
     
 

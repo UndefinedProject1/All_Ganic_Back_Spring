@@ -44,12 +44,18 @@ public class SubImageServiceImpl implements SubImageService {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();//트랜젝션 시작
          String sql = "UPDATE SubImage SET SUBIMG=:subimg, IMAGENAME=:imagename, IMAGETYPE=:imagetype "
-            + "WHERE PRODUCT=:product";
+            + "WHERE SUBCODE=:subcode";
         for(SubImage subImage:list){
             em.createNativeQuery(sql).setParameter("subimg", subImage.getImage()).setParameter("imagename", subImage.getImagename()).
-            setParameter("imagetype", subImage.getImagetype()).setParameter("product", subImage.getProduct()).executeUpdate();
+            setParameter("imagetype", subImage.getImagetype()).setParameter("subcode", subImage.getSubcode()).executeUpdate();
         }
         em.getTransaction().commit();
+        
+    }
+
+    @Override
+    public void deleteSubimg(long no) {
+        sRepository.deleteById(no);
         
     }
 
