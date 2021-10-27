@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Category;
+import com.example.entity.CategoryProjection;
 import com.example.repository.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ public class CategoryServiceImpl implements CategoryService{
     EntityManagerFactory emf;
     @Autowired
     CategoryRepository cRepository;
-    @Autowired
-    CategoryService cService;
 
     //카테고리 추가
     public void insertCategory(Category category){
@@ -33,10 +32,11 @@ public class CategoryServiceImpl implements CategoryService{
         return category.orElse(null);
     }
 
-    //카테고리 목록 조회
-    public List<Category> querySelectcate() {
-        
-        return cService.querySelectcate();
+    //카테고리 전체 조회
+    @Override
+    public List<CategoryProjection> selectCategoryList() {
+        return cRepository.findAllByOrderByCategorycodeAsc();
     }
+
     
 }

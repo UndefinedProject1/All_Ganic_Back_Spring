@@ -12,9 +12,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Long>{
     
-    // 브랜드코드가 정확하게 일치하는 + 글번호기준 내림차순 정렬
-    //List<Product> findByBrandOrderByNoDesc(String brand);
+    // 브랜드코드 별 제품 조회
+    List<ProductProjection> findByBrand_Brandcode(Long brandcode);
 
     @Query(value = "SELECT PRODUCTNAME, PRODUCTPRICE FROM PRODUCT", nativeQuery = true)
     public List<ProductProjection> queryListProduct();
+
+    //물품 전체 조회
+    List<ProductProjection> findAllByOrderByProductcodeAsc();
+
 }

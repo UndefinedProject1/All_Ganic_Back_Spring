@@ -55,5 +55,17 @@ public class ProductServiceImpl implements ProductService{
     public List<ProductProjection> getListProduct() {
         return pRepository.queryListProduct();
     }
+
+    //제품 전체 조회
+    @Override
+    public List<ProductProjection> selectProductList() {
+        return pRepository.findAllByOrderByProductcodeAsc();
+    }
+
+    //브랜드 코드 별 제품 조회
+    @Override
+    public List<ProductProjection> selectBProductList(long code) {
+        return pRepository.findByBrand_Brandcode(code);
+    }
     
 }

@@ -28,4 +28,10 @@ public interface ProductService {
     //해당 브랜드 제품들 가져오기
     public List<ProductProjection> getListProduct();
 
+    //제품 전체 조회
+    public List<ProductProjection> selectProductList();
+
+    //브랜드 코드 별 제품 조회
+    public List<ProductProjection> selectBProductList(long code);
+
 }
