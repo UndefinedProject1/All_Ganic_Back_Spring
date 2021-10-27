@@ -68,7 +68,7 @@ public class ReviewController {
     // 후기 삭제
     // 127.0.0.1:8080/REST/api/review/delete?no=13
     // 여기서 넘어오는 no는 리뷰 코드
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/review/delete", method = RequestMethod.DELETE)
     public String delete(@RequestParam(name = "no", defaultValue = "0") long no) {
         try {
             System.out.println(no);
@@ -90,7 +90,7 @@ public class ReviewController {
     @RequestMapping(value = "/review/update", method = {
             RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Integer> insertAllPost(@RequestParam("file") MultipartFile file,
-            @RequestParam(name = "no", defaultValue = "0") long no, @RequestBody Review review) throws IOException {
+            @RequestParam(name = "no", defaultValue = "0") long no, @ModelAttribute Review review) throws IOException {
 
         Map<String, Integer> map = new HashMap<>();
         try {
@@ -98,7 +98,8 @@ public class ReviewController {
                 map.put("result", 0);
             } else {
                 Review review1 = rService.getReviewOne(no);
-                review1.setReview(review.getReview());
+                System.out.println(review1);
+                review1.setReviewcontent(review.getReviewcontent());
                 review1.setReviewrating(review.getReviewrating());
                 review1.setReviewimg(file.getBytes());
                 review1.setReviewimgname(file.getOriginalFilename());

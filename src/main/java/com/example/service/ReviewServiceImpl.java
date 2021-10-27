@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Optional;
+
 import com.example.entity.Review;
 import com.example.repository.ReviewRepository;
 
@@ -19,8 +21,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review getReviewOne(long no) {
-        rRepository.findById(no);
-        return null;
+        Optional<Review> review = rRepository.findById(no);
+        return review.orElse(null);
     }
 
     @Override

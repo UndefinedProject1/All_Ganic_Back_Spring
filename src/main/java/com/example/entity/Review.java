@@ -34,11 +34,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REVIEW_NO")
     private long reviewcode = 0L;
 
-    @Column(name = "REVIEW")
-    private String review = null;
+    @Column(name = "REVIEWCONTENT")
+    private String reviewcontent = null;
 
     @Column(name = "REVIEWRATING", nullable = false)
-    private Long reviewrating = 0L;
+    private long reviewrating = 0L;
 
     @Lob
     @Column(name = "REVIEWIMAGE")
