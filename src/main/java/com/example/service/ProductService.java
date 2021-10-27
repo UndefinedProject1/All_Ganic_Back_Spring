@@ -34,4 +34,7 @@ public interface ProductService {
     //브랜드 코드 별 제품 조회
     public List<ProductProjection> selectBProductList(long code);
 
+    //카테고리 코드 별 제품 조회
+    public List<ProductProjection> selectCProductLsit(Long code);
+
 }

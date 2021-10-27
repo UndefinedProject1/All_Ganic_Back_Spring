@@ -358,6 +358,27 @@ public class AdminController {
         }
         return map;
     }
+
+    //카테고리 코드 별 제품 조회
+    // 127.0.0.1:8080/REST/api/admin/select_cproduct
+    @RequestMapping(value = "/admin/select_cproduct", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectCProductGET( Model model,
+    @RequestParam("code") long cno,
+    @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            //long code = cService.selectCategory(cno);
+            List<ProductProjection> list = pService.selectCProductLsit(cno);
+            model.addAttribute("list", list);
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
     
 
 
