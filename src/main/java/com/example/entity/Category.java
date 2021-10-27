@@ -22,7 +22,7 @@ public class Category {
 
     @Id
     @Column(name = "CATEGORYCODE")
-    private Long categorycode = 0L;
+    private String categorycode = null;
     
     @Column(name = "CATEGORYNAME")
     private String categoryname = null;

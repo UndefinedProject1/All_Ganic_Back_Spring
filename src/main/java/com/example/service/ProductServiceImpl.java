@@ -62,16 +62,28 @@ public class ProductServiceImpl implements ProductService{
         return pRepository.findAllByOrderByProductcodeAsc();
     }
 
-    //브랜드 코드 별 제품 조회
+    //브랜드 코드 별 제품 조회(jpa)
     @Override
     public List<ProductProjection> selectBProductList(long code) {
         return pRepository.findByBrand_Brandcode(code);
     }
 
-    //카테고리 코드 별 제품 조회
+    //브랜드 코드 별 제품 조회(sql)
+    @Override
+    public List<ProductProjection> selectBProductLsit2(Long code) {
+        return pRepository.queryListBProduct(code);
+    }
+
+    //카테고리 코드 별 제품 조회(sql)
     @Override
     public List<ProductProjection> selectCProductLsit(Long code) {
         return pRepository.queryListCProduct(code);
     }
-    
+
+    //카테고리 코드 별 제품 조회(jpa)
+    @Override
+    public List<ProductProjection> selectCProductLsit2(String code) {
+        return pRepository.findByCategory_CategorycodeStartingWith(code);
+    }
+
 }

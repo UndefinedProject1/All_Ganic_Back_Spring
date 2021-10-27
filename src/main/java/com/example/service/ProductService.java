@@ -31,10 +31,16 @@ public interface ProductService {
     //제품 전체 조회
     public List<ProductProjection> selectProductList();
 
-    //브랜드 코드 별 제품 조회
+    //브랜드 코드 별 제품 조회(jpa)
     public List<ProductProjection> selectBProductList(long code);
 
-    //카테고리 코드 별 제품 조회
+    //브랜드 코드 별 제품 조회(sql)
+    public List<ProductProjection> selectBProductLsit2(Long code);
+
+    //카테고리 코드 별 제품 조회(sql)
     public List<ProductProjection> selectCProductLsit(Long code);
+
+    //카테고리 코드 별 제품 조회(jpa)
+    public List<ProductProjection> selectCProductLsit2(String code);
 
 }
