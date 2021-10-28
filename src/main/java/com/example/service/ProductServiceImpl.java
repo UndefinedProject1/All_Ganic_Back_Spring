@@ -21,36 +21,37 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     ProductRepository pRepository;
 
-    //물품등록
+    //제품 추가
     public void insertProduct(Product product){
         pRepository.save(product);
     }
 
-    //물품 삭제
+    //제품 삭제
     @Override
     public void deleteProduct(Long product) {
         pRepository.deleteById(product);
     }
 
-    //물품 수정
+    //제품 수정
     @Override
     public void updteProduct(Product product) {
         pRepository.save(product);
     }
 
-    //제품정보 가져오기
+    //제품정보 가져오기, 제품 이미지 찾고 변환하기
     @Override
     public Product selectProduct(long code) {
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
     }
 
+    //해당 브랜드 제품들 가져오기
     @Override
     public List<Product> getBrandProduct(long code) {
-
         return null;
     }
 
+    //해당 브랜드 제품들 가져오기
     @Override
     public List<ProductProjection> getListProduct() {
         return pRepository.queryListProduct();
@@ -85,5 +86,4 @@ public class ProductServiceImpl implements ProductService{
     public List<ProductProjection> selectCProductLsit2(String code) {
         return pRepository.findByCategory_CategorycodeStartingWith(code);
     }
-
 }

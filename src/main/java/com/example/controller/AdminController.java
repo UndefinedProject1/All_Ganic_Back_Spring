@@ -6,15 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Brand;
-import com.example.entity.BrandProjection;
 import com.example.entity.Category;
-import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
-import com.example.entity.ProductProjection;
 import com.example.entity.SubImage;
-import com.example.entity.SubImageProjection;
 import com.example.jwt.JwtUtil;
-import com.example.repository.BrandRepository;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
@@ -22,13 +17,10 @@ import com.example.service.ProductService;
 import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -280,46 +272,6 @@ public class AdminController {
         }
         return map;
     }
-    
-    //브랜드 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/select_bproduct2?code=
-    @RequestMapping(value = "/select_bproduct2", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBProduct2GET( Model model,
-    @RequestParam("code") long code) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectBProductLsit2(code);
-            //System.out.println(list.get(0).getImage());
-            model.addAttribute("list", list);
-            // map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
-
-    //카테고리 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/select_cproduct?code=
-    @RequestMapping(value = "/select_cproduct", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCProductGET( Model model,
-    @RequestParam("code") long code) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectCProductLsit(code);
-            model.addAttribute("list", list);
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    } 
-
 
     // // 127.0.0.1:8080/ROOT/board/select => title=
     // // 127.0.0.1:8080/ROOT/board/select?title=dkdjd&page=1
