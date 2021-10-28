@@ -28,7 +28,7 @@ public class SubImage {
     @Id
     @Column(name = "SUBCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SUBIMAGE_NO")
-    private Long subcode = 0L;
+    private long subcode = 0L;
 
     // 이미지
     @Lob

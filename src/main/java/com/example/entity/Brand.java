@@ -26,7 +26,7 @@ public class Brand {
     @Id
     @Column(name = "BRANDCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_BRAND_NO")
-    private Long brandcode = 0L;
+    private long brandcode = 0L;
 
     @Column(name = "BRANDNAME")
     private String brandname = null;

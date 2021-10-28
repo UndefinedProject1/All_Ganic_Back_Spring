@@ -12,6 +12,7 @@ import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
 import com.example.entity.ProductProjection;
 import com.example.entity.SubImage;
+import com.example.entity.SubImageProjection;
 import com.example.jwt.JwtUtil;
 import com.example.repository.BrandRepository;
 import com.example.service.BrandService;
@@ -172,7 +173,7 @@ public class AdminController {
 
     //물품 수정
     //127.0.0.1:8080/REST/api/admin/product_update
-    // formdata => productname, productprice, file
+    // formdata =>productcode, productname, productprice, file
     @RequestMapping(value = "/admin/product_update", method = {
         RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productUpdate(@ModelAttribute Product product,
@@ -186,6 +187,8 @@ public class AdminController {
             product2.setImage(file.getBytes());
             product2.setImagename(file.getOriginalFilename());
             product2.setImagetype(file.getContentType());
+            product2.setBrand(product.getBrand());
+            product2.setCategory(product.getCategory());
             pService.updteProduct(product2);
             map.put("result",1);
         }
@@ -227,6 +230,53 @@ public class AdminController {
         return map;
     }
 
+    //서브이미지 찾기
+    //127.0.0.1:8080/REST/api/admin/select_subimage?product=1
+    @RequestMapping(value = "/select_subimage", method = {
+        RequestMethod.GET}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectSubImageGET(Model model,
+        @RequestParam("product") long product
+        ) throws Exception {
+            Map<String, Object> map = new HashMap<>();
+        try {
+            List<SubImageProjection> list = sImageService.selectSubcode(product);
+            model.addAttribute("list", list);
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) { 
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 서브 이미지 찾고 변환하기
+    // 127.0.0.1:8080/REST/api/select_subimage/find?no=번호
+    // <img src="/admin/select_image?no=12" />
+    // no = 서브이미지에서 찾은 subcode
+    @RequestMapping(value = "/select_subimage/find", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> selectSubImageFindGET(@RequestParam("no") long no) throws Exception {
+        try {
+            SubImage subImage = sImageService.selectSubimg(no);
+            if (subImage.getImage() != null) {
+                HttpHeaders headers = new HttpHeaders();
+                if (subImage.getImagetype().equals("image/jpeg")) {
+                    headers.setContentType(MediaType.IMAGE_JPEG);
+                } else if (subImage.getImagetype().equals("image/png")) {
+                    headers.setContentType(MediaType.IMAGE_PNG);
+                } else if (subImage.getImagetype().equals("image/git")) {
+                    headers.setContentType(MediaType.IMAGE_GIF);
+                }
+                ResponseEntity<byte[]> response = new ResponseEntity<>(subImage.getImage(), headers, HttpStatus.OK);
+                return response;
+            }
+            return null;
+        } catch (Exception e) { 
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //서브이미지 수정하기
     //127.0.0.1:8080/REST/api/admin/subimg_update?product=1&subcode=34
     //form-data => file
@@ -235,7 +285,7 @@ public class AdminController {
     public Map<String, Object> subimgUpdate(
         @RequestParam("file") MultipartFile[] files,
         @RequestParam(name = "product")long no,
-        @RequestParam(name = "subcode")long no1,
+        @RequestParam(name = "subcode")long subcode,
         @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
         
@@ -246,7 +296,7 @@ public class AdminController {
             for(int i=0; i<files.length; i++){
                 SubImage subImage2 = new SubImage();
                 subImage2.setProduct(product);
-                subImage2.setSubcode(no1);
+                subImage2.setSubcode(subcode);
                 subImage2.setImage(files[i].getBytes());
                 subImage2.setImagename(files[i].getOriginalFilename());
                 subImage2.setImagetype(files[i].getContentType());
@@ -283,11 +333,11 @@ public class AdminController {
     }
 
     //물품 전체 조회
-    //127.0.0.1:8080/REST/api/admin/select_product
-    @RequestMapping(value = "/admin/select_product", method = {
+    //127.0.0.1:8080/REST/api/select_product
+    @RequestMapping(value = "/select_product", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectProductGET( Model model,
-    @RequestHeader("token") String token) {
+    public Map<String, Object> selectProductGET( Model model
+    ) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectProductList();
@@ -302,11 +352,11 @@ public class AdminController {
     }
 
     //카테고리 전체 조회
-    //127.0.0.1:8080/REST/api/admin/select_cate
-    @RequestMapping(value = "/admin/select_cate", method = {
+    //127.0.0.1:8080/REST/api/select_cate
+    @RequestMapping(value = "/select_cate", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCateGET( Model model,
-    @RequestHeader("token") String token) {
+    public Map<String, Object> selectCateGET( Model model
+    ) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<CategoryProjection> list = cService.selectCategoryList();
@@ -321,11 +371,11 @@ public class AdminController {
     }
     
     // 브랜드 전체 조회
-    // 127.0.0.1:8080/REST/api/admin/select_brand
-    @RequestMapping(value = "/admin/select_brand", method = {
+    // 127.0.0.1:8080/REST/api/select_brand
+    @RequestMapping(value = "/select_brand", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBrandGET( Model model,
-    @RequestHeader("token") String token) {
+    public Map<String, Object> selectBrandGET( Model model
+    ) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<BrandProjection> list = bService.selectBrandList();
@@ -340,12 +390,11 @@ public class AdminController {
     }
 
     //브랜드 코드 별 제품 조회(jpa)
-    // 127.0.0.1:8080/REST/api/admin/select_bproduct?code=
-    @RequestMapping(value = "/admin/select_bproduct", method = {
+    // 127.0.0.1:8080/REST/api/select_bproduct?code=
+    @RequestMapping(value = "/select_bproduct", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectBProductGET( Model model,
-    @RequestParam(name = "code")long code,
-    @RequestHeader("token") String token) {
+    @RequestParam(name = "code")long code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectBProductList(code);
@@ -358,14 +407,35 @@ public class AdminController {
         }
         return map;
     }
-
-    //카테고리 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/admin/select_cproduct?code=
-    @RequestMapping(value = "/admin/select_cproduct", method = {
+    
+    //브랜드 코드 별 제품 조회(sql)
+    // 127.0.0.1:8080/REST/api/admin/select_bproduct2?code=
+    @RequestMapping(value = "/admin/select_bproduct2", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCProductGET( Model model,
+    public Map<String, Object> selectBProduct2GET( Model model,
     @RequestParam("code") long code,
     @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<ProductProjection> list = pService.selectBProductLsit2(code);
+            //System.out.println(list.get(0).getImage());
+            model.addAttribute("list", list);
+            // map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+   
+
+    //카테고리 코드 별 제품 조회(sql)
+    // 127.0.0.1:8080/REST/api/select_cproduct?code=
+    @RequestMapping(value = "/select_cproduct", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectCProductGET( Model model,
+    @RequestParam("code") long code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit(code);
@@ -380,12 +450,11 @@ public class AdminController {
     }
 
     //카테고리 코드 별 제품 조회(jpa)
-    // 127.0.0.1:8080/REST/api/admin/select_cproduct2?code=
-    @RequestMapping(value = "/admin/select_cproduct2", method = {
+    // 127.0.0.1:8080/REST/api/select_cproduct2?code=
+    @RequestMapping(value = "/select_cproduct2", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProduct2GET( Model model,
-    @RequestParam(name = "code")long code,
-    @RequestHeader("token") String token) {
+    @RequestParam(name = "code")long code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit2(code+"");
@@ -398,28 +467,7 @@ public class AdminController {
         }
         return map;
     }
-
-    //브랜드 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/admin/select_bproduct2?code=
-    @RequestMapping(value = "/admin/select_bproduct2", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBProduct2GET( Model model,
-    @RequestParam("code") long code,
-    @RequestHeader("token") String token) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectBProductLsit2(code);
-            System.out.println(list.get(0).getImage());
-            model.addAttribute("list", list);
-            // map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
-    
+ 
 
 
     // // 127.0.0.1:8080/ROOT/board/select => title=

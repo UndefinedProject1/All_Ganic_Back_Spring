@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.SubImage;
+import com.example.entity.SubImageProjection;
 import com.example.repository.SubImageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,16 @@ public class SubImageServiceImpl implements SubImageService {
         em.getTransaction().commit();
     }
 
-    //이미지 찾기
+    // 물품 코드에 따른 서브 이미지들 찾기
     @Override
-    public SubImage selectsubimg(Long no) {
-        Optional<SubImage> subimg = sRepository.findById(no);
+    public List<SubImageProjection> selectSubcode(long code) {
+        return sRepository.findByProduct_Productcode(code);
+    }
+
+    // 서브 이미지 찾고 변환하기
+    @Override
+    public SubImage selectSubimg(long code) {
+        Optional<SubImage> subimg = sRepository.findById(code);
         return subimg.orElse(null);
     }
 
@@ -59,10 +66,5 @@ public class SubImageServiceImpl implements SubImageService {
         
     }
 
-    // @Override
-    // public List<SubImage> findByProductcode(long no) {
-    //     Optional<SubImage> list = sRepository.findById(no);
-    //     return list.orElse(null);
-    // }
-
+ 
 }
