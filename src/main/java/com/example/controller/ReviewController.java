@@ -2,16 +2,21 @@ package com.example.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Review;
+import com.example.entity.ReviewProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
 import com.example.service.ReviewService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -113,5 +118,52 @@ public class ReviewController {
         }
         return map;
     }
+
+    // 리뷰 이미지 찾기
+    // 127.0.0.1:8080/REST/api/review_image?no=
+    // <img src="/admin/select_image?no=12" />
+    // 여기서 no는 리뷰코드
+    @RequestMapping(value = "/review_image", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
+        try {
+            Review review = rService.getReviewOne(no);
+            if (review.getReviewimg() != null) {
+                HttpHeaders headers = new HttpHeaders();
+                if (review.getReviewimgtype().equals("image/jpeg")) {
+                    headers.setContentType(MediaType.IMAGE_JPEG);
+                } else if (review.getReviewimgtype().equals("image/png")) {
+                    headers.setContentType(MediaType.IMAGE_PNG);
+                } else if (review.getReviewimgtype().equals("image/git")) {
+                    headers.setContentType(MediaType.IMAGE_GIF);
+                }
+                ResponseEntity<byte[]> response = new ResponseEntity<>(review.getReviewimg(), headers, HttpStatus.OK);
+                return response;
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 물품별 리뷰들 들고오기
+    // 127.0.0.1:8080/REST/api/review/list/product?code=14
+    // 여기서 code는 물품코드
+    @RequestMapping(value="/review/list/product", method=RequestMethod.GET)
+    public Map<String, Object> productListGET(@RequestParam(name = "code") long code) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            List<ReviewProjection> list = rService.selectProductList(code);
+            map.put("list", list);
+            map.put("result", 1);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+
+    }
+    
 
 }
