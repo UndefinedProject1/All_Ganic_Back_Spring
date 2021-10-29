@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.example.dto.ProductDto;
 import com.example.entity.BrandProjection;
@@ -26,13 +25,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -173,7 +169,6 @@ public class ProductController {
         }
         return map;
     }
-
             
     //브랜드 코드 별 제품 이름 순 조회(jpa)
     // 127.0.0.1:8080/REST/api/select_bproduct3?page=1&code=
@@ -206,7 +201,6 @@ public class ProductController {
         }
         return map;
     } 
-
 
     //브랜드 코드 별 제품 조회(sql)
     // 127.0.0.1:8080/REST/api/select_bproduct2?code= 브랜드 코드
