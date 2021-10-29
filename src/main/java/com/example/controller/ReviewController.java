@@ -56,13 +56,14 @@ public class ReviewController {
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
 
                 review.setMember(mService.getMemberOne(useremail)); // 회원정보를 통해 member를 찾아줌
-                review.setProduct(pService.getProductOne(no)); // 파라미터로 넘어온 물품코드를 통해 물품정보 찾기
+                review.setProduct(pService.selectProduct(no)); // 파라미터로 넘어온 물품코드를 통해 물품정보 찾기
                 review.setReviewimg(file.getBytes());
                 review.setReviewimgname(file.getOriginalFilename());
                 review.setReviewimgtype(file.getContentType());
                 rService.insertReview(review);
-                map.put("result", 1);
+                map.put("result", 1L);
             }
+            map.put("result", 0L);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
@@ -150,19 +151,40 @@ public class ReviewController {
     // 127.0.0.1:8080/REST/api/review/list/product?code=14
     // 여기서 code는 물품코드
     @RequestMapping(value="/review/list/product", method=RequestMethod.GET)
-    public Map<String, Object> productListGET(@RequestParam(name = "code") long code) {
+    public Map<String, Object> productReviewListGET(@RequestParam(name = "code") long code) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{
             List<ReviewProjection> list = rService.selectProductList(code);
             map.put("list", list);
-            map.put("result", 1);
+            map.put("result", 1L);
         }
         catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
         }
         return map;
-
+    }
+    
+    // 회원별 리뷰들 들고오기
+    // 127.0.0.1:8080/REST/api/member/review/list
+    // 여기서 회원확인 token값으로 확인
+    @RequestMapping(value="member/review/list", method=RequestMethod.GET)
+    public Map<String, Object> memberReviewListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            String useremail = jwtUtil.extractUsername(token.substring(7));
+            if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+                List<ReviewProjection> list = rService.selectMemberList(useremail);
+                map.put("list", list);
+                map.put("result", 1L);
+            }
+            map.put("result", 0L);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
     }
     
 

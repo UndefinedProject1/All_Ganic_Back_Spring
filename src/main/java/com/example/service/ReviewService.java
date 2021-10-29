@@ -24,4 +24,7 @@ public interface ReviewService {
 
     // 물품별 리뷰 출력
     public List<ReviewProjection> selectProductList(long code);
+
+    // 회원별 리뷰 출력
+    public List<ReviewProjection> selectMemberList(String email);
 }

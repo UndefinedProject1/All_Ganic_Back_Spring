@@ -42,4 +42,9 @@ public class ReviewServiceImpl implements ReviewService {
         return rRepository.findByProduct_Productcode(code);
     }
 
+    @Override
+    public List<ReviewProjection> selectMemberList(String email) {
+        return rRepository.findByMember_Useremail(email);
+    }
+
 }

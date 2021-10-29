@@ -16,4 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 물품별 리뷰 출력
     List<ReviewProjection> findByProduct_Productcode(long productcode);
+
+    // 회원별 리뷰 출력
+    List<ReviewProjection> findByMember_Useremail(String useremail);
 }
