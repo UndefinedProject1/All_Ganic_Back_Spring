@@ -30,18 +30,15 @@ import lombok.ToString;
 @SequenceGenerator(name = "SEQ_PRODUCT_NO", sequenceName = "SEQ_PRODUCT_NO", initialValue = 1, allocationSize = 1)
 public class Product {
     @Id
-    @Column(name = "PRODCUTCODE")
+    @Column(name = "PRODUCTCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_PRODUCT_NO")
     private long productcode = 0L;
 
-    @Column(name = "PRODCUTNAME")
+    @Column(name = "PRODUCTNAME")
     private String productname = null;
 
-    @Column(name = "PRODCUTPRICE")
+    @Column(name = "PRODUCTPRICE")
     private long productprice = 0L;
-
-    @Column(name = "PRODCUTCONTENT")
-    private String productcontent = null;
 
     // 이미지
     @Lob
@@ -57,14 +54,14 @@ public class Product {
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(updatable = false, name = "PRODUCTDATE")
-    private Date userdate = null;
+    private Date productdate = null;
 
     @ManyToOne // 브랜드 정보
-    @JoinColumn(updatable = false, name = "BRAND")
+    @JoinColumn( name = "BRAND")
     private Brand brand;
 
     @ManyToOne // 카테고리 정보
-    @JoinColumn(updatable = false, name = "CATEGORY")
+    @JoinColumn( name = "CATEGORY")
     private Category category;
 
 }

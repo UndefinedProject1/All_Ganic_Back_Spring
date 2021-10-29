@@ -16,5 +16,4 @@ public class AllganicSpringApplication {
 		SpringApplication.run(AllganicSpringApplication.class, args);
 		System.out.println("start");
 	}
-
 }

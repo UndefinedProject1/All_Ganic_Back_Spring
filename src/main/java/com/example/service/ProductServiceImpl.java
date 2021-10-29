@@ -1,10 +1,12 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Product;
+import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +40,50 @@ public class ProductServiceImpl implements ProductService{
 
     //제품정보 가져오기
     @Override
-    public Product getProductOne(long code) {
+    public Product selectProduct(long code) {
         Optional<Product> product = pRepository.findById(code);
         return product.orElse(null);
     }
-    
+
+    @Override
+    public List<Product> getBrandProduct(long code) {
+
+        return null;
+    }
+
+    @Override
+    public List<ProductProjection> getListProduct() {
+        return pRepository.queryListProduct();
+    }
+
+    //제품 전체 조회
+    @Override
+    public List<ProductProjection> selectProductList() {
+        return pRepository.findAllByOrderByProductcodeAsc();
+    }
+
+    //브랜드 코드 별 제품 조회(jpa)
+    @Override
+    public List<ProductProjection> selectBProductList(long code) {
+        return pRepository.findByBrand_Brandcode(code);
+    }
+
+    //브랜드 코드 별 제품 조회(sql)
+    @Override
+    public List<ProductProjection> selectBProductLsit2(Long code) {
+        return pRepository.queryListBProduct(code);
+    }
+
+    //카테고리 코드 별 제품 조회(sql)
+    @Override
+    public List<ProductProjection> selectCProductLsit(Long code) {
+        return pRepository.queryListCProduct(code);
+    }
+
+    //카테고리 코드 별 제품 조회(jpa)
+    @Override
+    public List<ProductProjection> selectCProductLsit2(String code) {
+        return pRepository.findByCategory_CategorycodeStartingWith(code);
+    }
+
 }

@@ -27,6 +27,13 @@
 
 	<dependencies>
 
+		<!--oracle-->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.2</version>
+		</dependency>
+
 		<!-- jpa-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -39,6 +46,13 @@
     		<artifactId>h2</artifactId>
     		<scope>runtime</scope>
 		</dependency>
+
+		<!-- oracle
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.2</version>
+		</dependency> -->
 
 		<!-- jjwt -->
 		<dependency>
