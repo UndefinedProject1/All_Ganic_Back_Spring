@@ -19,7 +19,7 @@ public interface ProductService {
     //제품 수정
     public void updteProduct(Product product);
 
-    //제품정보 가져오기
+    //제품정보 가져오기, 물품 이미지 찾고 변환하기
     public Product selectProduct(long code);
 
     //해당 브랜드 제품들 가져오기
@@ -42,5 +42,6 @@ public interface ProductService {
 
     //카테고리 코드 별 제품 조회(jpa)
     public List<ProductProjection> selectCProductLsit2(String code);
+
 
 }
