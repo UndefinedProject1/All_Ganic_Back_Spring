@@ -3,8 +3,6 @@ package com.example.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class Category {
 
     @Id
     @Column(name = "CATEGORYCODE")
-    private Long categorycode = 0L;
+    private String categorycode = null;
     
     @Column(name = "CATEGORYNAME")
     private String categoryname = null;

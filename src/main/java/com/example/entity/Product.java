@@ -54,14 +54,14 @@ public class Product {
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(updatable = false, name = "PRODUCTDATE")
-    private Date userdate = null;
+    private Date productdate = null;
 
     @ManyToOne // 브랜드 정보
-    @JoinColumn(updatable = false, name = "BRAND")
+    @JoinColumn( name = "BRAND")
     private Brand brand;
 
     @ManyToOne // 카테고리 정보
-    @JoinColumn(updatable = false, name = "CATEGORY")
+    @JoinColumn( name = "CATEGORY")
     private Category category;
 
 }

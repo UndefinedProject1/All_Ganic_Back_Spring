@@ -24,19 +24,24 @@ public class MemberDetailsService implements UserDetailsService{
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println(username);
+        try{
+            //이곳으로 아이디가 넘어오니
+            //아이디를 이용해 정보를 가져와서 User 객체 타입으로 리턴해서 로그인 성공 실패 알림
+            Optional<Member> obj = mRepository.findById(username); //저장소에 string인지 Long 인지 확인
+            Member member = obj.get();
+
+            //String의 권한을 Collection<GrantedAuthority>로 변환
+            String[] userRoles = {member.getUserrole()};
+            Collection<GrantedAuthority> roles = AuthorityUtils.createAuthorityList(userRoles);
+
+            //아이디, 암호 권한
+            User user = new User(member.getUseremail(), member.getUserpw(), roles);
+            return user;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
         
-         //이곳으로 아이디가 넘어오니
-        //아이디를 이용해 정보를 가져와서 User 객체 타입으로 리턴해서 로그인 성공 실패 알림
-        Optional<Member> obj = mRepository.findById(username); //저장소에 string인지 Long 인지 확인
-        Member member = obj.get();
-
-        //String의 권한을 Collection<GrantedAuthority>로 변환
-        String[] userRoles = {member.getUserrole()};
-        Collection<GrantedAuthority> roles = AuthorityUtils.createAuthorityList(userRoles);
-
-        //아이디, 암호 권한
-        User user = new User(member.getUseremail(), member.getUserpw(), roles);
-        return user;
     }
 }
