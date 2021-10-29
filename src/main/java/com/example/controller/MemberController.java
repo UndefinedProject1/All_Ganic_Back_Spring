@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.example.entity.Member;
 import com.example.jwt.JwtUtil;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,10 +62,6 @@ public class MemberController {
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            System.out.println("---------------");
-            System.out.println(member.getUseremail());
-            System.out.println(member.getUserpw());
-            System.out.println("---------------");
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
             map.put("result", 1L);
@@ -87,6 +86,33 @@ public class MemberController {
                 map.put("result", 0L);
             } else {
                 map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 토큰을 통한 권한 확인
+    // token값이 있으면 이를 통해 권한 찾기
+    // 127.0.0.1:8080/REST/api/member/role
+    @RequestMapping(value = "/member/role", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckRoleGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            Member member = mServiece.getMemberOne(useremail);
+            System.out.println("==============");
+            System.out.println(member);
+            if(member != null){
+                String role = member.getUserrole();
+                map.put("role", role);
+                map.put("result", 1L);
+            }
+            else{
+                map.put("result", 0L);
             }
         } catch (Exception e) {
             e.printStackTrace();
