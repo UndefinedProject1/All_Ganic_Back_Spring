@@ -10,6 +10,7 @@ import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,18 +46,6 @@ public class ProductServiceImpl implements ProductService{
         return product.orElse(null);
     }
 
-    //해당 브랜드 제품들 가져오기
-    @Override
-    public List<Product> getBrandProduct(long code) {
-        return null;
-    }
-
-    //해당 브랜드 제품들 가져오기
-    @Override
-    public List<ProductProjection> getListProduct() {
-        return pRepository.queryListProduct();
-    }
-
     //제품 전체 조회
     @Override
     public List<ProductProjection> selectProductList() {
@@ -77,7 +66,7 @@ public class ProductServiceImpl implements ProductService{
 
     //카테고리 코드 별 제품 조회(sql)
     @Override
-    public List<ProductProjection> selectCProductLsit(Long code) {
+    public List<ProductProjection> selectCProductLsit(String code) {
         return pRepository.queryListCProduct(code);
     }
 
@@ -86,4 +75,29 @@ public class ProductServiceImpl implements ProductService{
     public List<ProductProjection> selectCProductLsit2(String code) {
         return pRepository.findByCategory_CategorycodeStartingWith(code);
     }
+
+    //제품 1개 조회 (상세 페이지)
+    @Override
+    public ProductProjection selectProductOne(long code) {
+        return pRepository.findByProductcode(code);
+    }
+
+    //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
+    @Override
+    public List<ProductProjection> selectProductList2(String productname, Pageable pageable) {
+        return pRepository.findByProductnameIgnoreCaseContainingOrderByProductnameAsc(productname, pageable);
+    }
+
+    //카테고리 코드 별 제품 이름 순 조회(jpa)
+    @Override
+    public List<ProductProjection> selectCProductLsit3(String code, Pageable pageable) {
+        return pRepository.findByCategory_CategorycodeStartingWithOrderByProductnameAsc(code, pageable);
+    }
+
+    //브랜드 코드 별 제품 이름순 조회(jpa)
+    @Override
+    public List<ProductProjection> selectBProductLsit3(long code, Pageable pageable) {
+        return pRepository.findByBrand_BrandcodeOrderByProductnameAsc(code, pageable);
+    }
+
 }

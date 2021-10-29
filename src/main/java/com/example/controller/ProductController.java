@@ -1,9 +1,12 @@
 package com.example.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import com.example.dto.ProductDto;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
@@ -17,15 +20,19 @@ import com.example.service.ProductService;
 import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -73,6 +80,7 @@ public class ProductController {
     @RequestMapping(value = "/select_subimage/find", method = RequestMethod.GET)
     public ResponseEntity<byte[]> selectSubImageFindGET(@RequestParam("no") long no) throws Exception {
         try {
+            //서브이미지 코드 찾기
             SubImage subImage = sImageService.selectSubimg(no);
             if (subImage.getImage() != null) {
                 HttpHeaders headers = new HttpHeaders();
@@ -133,8 +141,7 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_brand
     @RequestMapping(value = "/select_brand", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBrandGET( Model model
-    ) {
+    public Map<String, Object> selectBrandGET( Model model) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<BrandProjection> list = bService.selectBrandList();
@@ -149,7 +156,7 @@ public class ProductController {
     }
 
     //브랜드 코드 별 제품 조회(jpa)
-    // 127.0.0.1:8080/REST/api/select_bproduct?code=
+    // 127.0.0.1:8080/REST/api/select_bproduct?code= 브랜드 코드
     @RequestMapping(value = "/select_bproduct", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectBProductGET( Model model,
@@ -167,8 +174,42 @@ public class ProductController {
         return map;
     }
 
-        //브랜드 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/select_bproduct2?code=
+            
+    //브랜드 코드 별 제품 이름 순 조회(jpa)
+    // 127.0.0.1:8080/REST/api/select_bproduct3?page=1&code=
+    @RequestMapping(value = "/select_bproduct3", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectBProduct3GET( Model model,
+    @RequestParam(value = "page", defaultValue = "1")int page,
+    @RequestParam("code") Long code) {
+        //페이지 네이션 처리
+        PageRequest pageable = PageRequest.of(page-1, 16);
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<ProductProjection> list = pService.selectBProductLsit3(code, pageable);
+            List<ProductDto> list1 = new ArrayList<>();
+            for(ProductProjection tmp: list){
+                ProductDto dto = new ProductDto();
+                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
+                dto.setProductcode(tmp.getProductcode());
+                dto.setProductname(tmp.getProductname());
+                dto.setProductprice(tmp.getProductprice());
+                dto.setProductdate(tmp.getProductdate());
+                list1.add(dto);
+            }
+            model.addAttribute("list", list1);
+            map.put("list", list1);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    } 
+
+
+    //브랜드 코드 별 제품 조회(sql)
+    // 127.0.0.1:8080/REST/api/select_bproduct2?code= 브랜드 코드
     @RequestMapping(value = "/select_bproduct2", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectBProduct2GET( Model model,
@@ -178,7 +219,7 @@ public class ProductController {
             List<ProductProjection> list = pService.selectBProductLsit2(code);
             //System.out.println(list.get(0).getImage());
             model.addAttribute("list", list);
-            // map.put("list", list);
+            map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +229,7 @@ public class ProductController {
     }
     
     //카테고리 코드 별 제품 조회(jpa)
-    // 127.0.0.1:8080/REST/api/select_cproduct2?code=
+    // 127.0.0.1:8080/REST/api/select_cproduct2?code= 카테고리 코드
     @RequestMapping(value = "/select_cproduct2", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProduct2GET( Model model,
@@ -205,13 +246,45 @@ public class ProductController {
         }
         return map;
     }
+        
+    //카테고리 코드 별 제품 이름 순 조회(jpa)
+    // 127.0.0.1:8080/REST/api/select_cproduct3?page=1&code=
+    @RequestMapping(value = "/select_cproduct3", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectCProduct2GET( Model model,
+    @RequestParam(value = "page", defaultValue = "1")int page,
+    @RequestParam("code") String code) {
+        //페이지 네이션 처리
+        PageRequest pageable = PageRequest.of(page-1, 16);
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<ProductProjection> list = pService.selectCProductLsit3(code, pageable);
+            List<ProductDto> list1 = new ArrayList<>();
+            for(ProductProjection tmp: list){
+                ProductDto dto = new ProductDto();
+                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
+                dto.setProductcode(tmp.getProductcode());
+                dto.setProductname(tmp.getProductname());
+                dto.setProductprice(tmp.getProductprice());
+                dto.setProductdate(tmp.getProductdate());
+                list1.add(dto);
+            }
+            model.addAttribute("list", list1);
+            map.put("list", list1);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    } 
 
     //카테고리 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/select_cproduct?code=
+    // 127.0.0.1:8080/REST/api/select_cproduct?code= 카테고리 코드
     @RequestMapping(value = "/select_cproduct", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProductGET( Model model,
-    @RequestParam("code") long code) {
+    @RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit(code);
@@ -225,13 +298,14 @@ public class ProductController {
         return map;
     } 
 
-    //물품 이미지 찾고 변환하기
-    // 127.0.0.1:8080/REST/api/select_productimage?no=번호
-    // <img src="/admin/select_image?no=12" />
-    // no = 서브이미지에서 찾은 subcode
+    //제품 이미지 찾고 변환하기
+    // 127.0.0.1:8080/REST/api/select_productimage?no=제품코드
+    // <img src="/select_productimage?no=12" />
+    // no = Product에서 찾은 productcode
     @RequestMapping(value = "/select_productimage", method = RequestMethod.GET)
     public ResponseEntity<byte[]> selectProductimageFindGET(@RequestParam("no") long no) throws Exception {
         try {
+            //제품 코드 찾기
             Product product = pService.selectProduct(no);
             if (product.getImage() != null) {
                 HttpHeaders headers = new HttpHeaders();
@@ -250,5 +324,56 @@ public class ProductController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    //물품 목록 페이지
+    //127.0.0.1:8080/REST/api/select_product2?page=1&name=
+    @RequestMapping(value = "/select_product2", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectProductListGET(
+        @RequestParam(value = "page", defaultValue = "1")int page,
+        @RequestParam(value = "name", defaultValue = "")String productname) {
+        //페이지 네이션 처리
+        PageRequest pageable = PageRequest.of(page-1, 16);
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<ProductProjection> list = pService.selectProductList2(productname, pageable);
+            List<ProductDto> list1 = new ArrayList<>();
+            for(ProductProjection tmp: list){
+                ProductDto dto = new ProductDto();
+                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
+                dto.setProductcode(tmp.getProductcode());
+                dto.setProductname(tmp.getProductname());
+                dto.setProductprice(tmp.getProductprice());
+                dto.setProductdate(tmp.getProductdate());
+                list1.add(dto);
+            }
+            map.put("list", list1);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    //제품 1개 조회 (상세 페이지)
+    //127.0.0.1:8080/REST/api/product_one?code=
+    @RequestMapping(value = "/product_one", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productOneGET( Model model,
+    @RequestParam("code") long code) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            ProductProjection product = pService.selectProductOne(code);
+            model.addAttribute("product", product);
+            map.put("product", product);
+            map.put("imgurl", "/REST/api/select_productimage?no=" + code);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
     }
 }
