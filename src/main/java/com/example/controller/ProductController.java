@@ -134,8 +134,8 @@ public class ProductController {
     }
 
     //카테고리 코드 별 카테고리 조회(jpa)
-    // 127.0.0.1:8080/REST/api/select_cproductnum?code= 카테고리 코드
-    @RequestMapping(value = "/select_cproductnum", method = {
+    // 127.0.0.1:8080/REST/api/select_catenum?code= 카테고리 코드
+    @RequestMapping(value = "/select_catenum", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProductNumGET( Model model,
     @RequestParam(name = "code")String code) {
