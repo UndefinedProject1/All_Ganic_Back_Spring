@@ -16,4 +16,7 @@ public interface CategoryService {
     //카테고리 전체 조회
     public List<CategoryProjection> selectCategoryList();
 
+    //카테고리 코드 별 카테고리 조회(jpa)
+    public List<CategoryProjection> selectCategoryNum(String categorycode);
+
 }

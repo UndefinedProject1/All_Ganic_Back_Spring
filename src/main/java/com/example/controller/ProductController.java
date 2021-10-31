@@ -133,6 +133,25 @@ public class ProductController {
         return map;
     }
 
+    //카테고리 코드 별 카테고리 조회(jpa)
+    // 127.0.0.1:8080/REST/api/select_cproductnum?code= 카테고리 코드
+    @RequestMapping(value = "/select_cproductnum", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectCProductNumGET( Model model,
+    @RequestParam(name = "code")String code) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<CategoryProjection> list = cService.selectCategoryNum(code+ "");
+            model.addAttribute("list", list);
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 브랜드 전체 조회
     // 127.0.0.1:8080/REST/api/select_brand
     @RequestMapping(value = "/select_brand", method = {

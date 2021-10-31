@@ -38,5 +38,9 @@ public class CategoryServiceImpl implements CategoryService{
         return cRepository.findAllByOrderByCategorycodeAsc();
     }
 
-    
+    //카테고리 코드 별 카테고리 조회(jpa)
+    @Override
+    public List<CategoryProjection> selectCategoryNum(String categorycode) {
+        return  cRepository.findByCategorycodeStartingWith(categorycode);
+    }
 }
