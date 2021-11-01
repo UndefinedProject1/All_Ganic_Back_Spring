@@ -77,9 +77,9 @@ public class AdminController {
     }
 
     // 브랜드 이미지 찾기
-    // 127.0.0.1:8080/REST/api/admin/select_image?no=번호
-    // <img src="/admin/select_image?no=12" />
-    @RequestMapping(value = "/admin/select_image", method = RequestMethod.GET)
+    // 127.0.0.1:8080/REST/api/select_image?no=번호
+    // <img src="/select_image?no=12" />
+    @RequestMapping(value = "/select_image", method = RequestMethod.GET)
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
