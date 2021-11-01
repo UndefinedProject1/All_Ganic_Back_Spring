@@ -38,4 +38,10 @@ public class BrandServiceImpl implements BrandService{
     public List<BrandProjection> selectBrandList(){
         return bRepository.findAllByOrderByBrandcodeAsc();
     }
+
+    //브랜드 중복 체크
+    @Override
+    public int checkBrandCode(Long brandcode) {
+        return bRepository.queryCheckBrandcode(brandcode);
+    }
 }

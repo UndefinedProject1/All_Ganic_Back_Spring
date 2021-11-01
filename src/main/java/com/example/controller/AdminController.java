@@ -76,6 +76,28 @@ public class AdminController {
         return map;
     }
 
+    //브랜드 중복 체크
+    // {"brandcode":1} 있으면 1 리턴, 없으면 0 리턴
+    // 127.0.0.1:8080/REST/api/admin/checkbrand
+    @RequestMapping(value = "/admin/checkbrand", method = {
+        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckBrandPOST(@RequestBody Brand brand) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            int count = bService.checkBrandCode(brand.getBrandcode());
+            System.out.println(count);
+            if (count == 0) {
+                map.put("result", 0L);
+            } else {
+                map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 브랜드 이미지 찾기
     // 127.0.0.1:8080/REST/api/admin/select_image?no=번호
     // <img src="/admin/select_image?no=12" />

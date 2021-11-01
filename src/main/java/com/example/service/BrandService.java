@@ -16,4 +16,6 @@ public interface BrandService {
     //브랜드 전체 조회
     public List<BrandProjection> selectBrandList();
 
+    //브랜드 중복 체크
+    public int checkBrandCode(Long brandcode);
 }
