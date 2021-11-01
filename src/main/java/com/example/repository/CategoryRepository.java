@@ -18,9 +18,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long>{
     List<CategoryProjection> findAllByOrderByCategorycodeAsc();
 
     //카테고리 코드 별 카테고리 조회(jpa)
-    List<CategoryProjection>  findByCategorycodeStartingWith(String categorycode);
+    List<CategoryProjection>  findByCategorycodeStartingWithOrderByCategorycodeAsc(String categorycode);
 
     //카테고리 중복 체크
     @Query(value = "SELECT COUNT(CATEGORYCODE) FROM CATEGORY WHERE CATEGORYCODE = :categorycode", nativeQuery = true)
-    public int queryCheckCatecode(String categorycode);
+    public int queryCheckCatecode(long categorycode);
 }

@@ -85,7 +85,7 @@ public class AdminController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             int count = bService.checkBrandCode(brand.getBrandcode());
-            System.out.println(count);
+            //System.out.println(count);
             if (count == 0) {
                 map.put("result", 0L);
             } else {
@@ -149,7 +149,7 @@ public class AdminController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             int count = cService.checkCateCode(category.getCategorycode());
-            System.out.println(count);
+            //System.out.println(count);
             if (count == 0) {
                 map.put("result", 0L);
             } else {
@@ -171,12 +171,13 @@ public class AdminController {
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
+            
             product.setImage(file.getBytes());
             product.setImagename(file.getOriginalFilename());
             product.setImagetype(file.getContentType());
             pService.insertProduct(product);
-
             map.put("result", 1);
+            map.put("code", product.getProductcode());
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());

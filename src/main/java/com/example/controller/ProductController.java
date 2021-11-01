@@ -215,7 +215,7 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_catenum?code= 카테고리 코드
     @RequestMapping(value = "/select_catenum", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCProductNumGET( Model model,
+    public Map<String, Object> selectCateNumGET( Model model,
     @RequestParam(name = "code")String code) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -235,7 +235,7 @@ public class ProductController {
     @RequestMapping(value = "/select_cproduct2", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProduct2GET( Model model,
-    @RequestParam(name = "code")long code) {
+    @RequestParam(name = "code")String code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit2(code+"");

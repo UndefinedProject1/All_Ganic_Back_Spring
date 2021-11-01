@@ -20,6 +20,6 @@ public interface CategoryService {
     public List<CategoryProjection> selectCategoryNum(String categorycode);
 
     //카테고리 중복 체크
-    public int checkCateCode(String categorycode);
+    public int checkCateCode(long categorycode);
 
 }

@@ -41,12 +41,12 @@ public class CategoryServiceImpl implements CategoryService{
     //카테고리 코드 별 카테고리 조회(jpa)
     @Override
     public List<CategoryProjection> selectCategoryNum(String categorycode) {
-        return  cRepository.findByCategorycodeStartingWith(categorycode);
+        return  cRepository.findByCategorycodeStartingWithOrderByCategorycodeAsc(categorycode);
     }
 
     //카테고리 중복 체크
     @Override
-    public int checkCateCode(String categorycode) {
+    public int checkCateCode(long categorycode) {
         return cRepository.queryCheckCatecode(categorycode);
     }
 }

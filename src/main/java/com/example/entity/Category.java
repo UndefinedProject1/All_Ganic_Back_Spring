@@ -20,7 +20,7 @@ public class Category {
 
     @Id
     @Column(name = "CATEGORYCODE")
-    private String categorycode = null;
+    private long categorycode = 0L;
     
     @Column(name = "CATEGORYNAME")
     private String categoryname = null;
