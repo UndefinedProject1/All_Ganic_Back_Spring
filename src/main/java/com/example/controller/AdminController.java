@@ -171,7 +171,6 @@ public class AdminController {
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            
             product.setImage(file.getBytes());
             product.setImagename(file.getOriginalFilename());
             product.setImagetype(file.getContentType());
