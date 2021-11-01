@@ -63,7 +63,6 @@ public class SubImageServiceImpl implements SubImageService {
     @Override
     public void deleteSubimg(long no) {
         sRepository.deleteById(no);
-        
     }
 
  

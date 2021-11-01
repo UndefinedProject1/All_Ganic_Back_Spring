@@ -118,6 +118,28 @@ public class AdminController {
         return map;
     }
 
+    //카테고리 중복 체크
+    // {"categorycode":"100101"} 있으면 1 리턴, 없으면 0 리턴
+    // 127.0.0.1:8080/REST/api/admin/checkcate
+    @RequestMapping(value = "/admin/checkcate", method = {
+        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckCatePOST(@RequestBody Category category) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            int count = cService.checkCateCode(category.getCategorycode());
+            System.out.println(count);
+            if (count == 0) {
+                map.put("result", 0L);
+            } else {
+                map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 제품 추가
     // 127.0.0.1:8080/REST/api/admin/product_insert
     // form-data => productname, productprice, file, brand, category

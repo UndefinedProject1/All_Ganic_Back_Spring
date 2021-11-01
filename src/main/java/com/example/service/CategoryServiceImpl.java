@@ -43,4 +43,10 @@ public class CategoryServiceImpl implements CategoryService{
     public List<CategoryProjection> selectCategoryNum(String categorycode) {
         return  cRepository.findByCategorycodeStartingWith(categorycode);
     }
+
+    //카테고리 중복 체크
+    @Override
+    public int checkCateCode(String categorycode) {
+        return cRepository.queryCheckCatecode(categorycode);
+    }
 }

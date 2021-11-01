@@ -19,4 +19,7 @@ public interface CategoryService {
     //카테고리 코드 별 카테고리 조회(jpa)
     public List<CategoryProjection> selectCategoryNum(String categorycode);
 
+    //카테고리 중복 체크
+    public int checkCateCode(String categorycode);
+
 }
