@@ -133,12 +133,10 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_brand
     @RequestMapping(value = "/select_brand", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBrandGET( Model model
-    ) {
+    public Map<String, Object> selectBrandGET() {
         Map<String, Object> map = new HashMap<>();
         try {
             List<BrandProjection> list = bService.selectBrandList();
-            model.addAttribute("list", list);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
