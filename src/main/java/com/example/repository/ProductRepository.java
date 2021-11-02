@@ -45,4 +45,7 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
     List<ProductProjection> findByProductnameIgnoreCaseContainingOrderByProductnameAsc(String productname, Pageable pageable);
+
+    @Query(value = "SELECT BRAND, COUNT(*) FROM PRODUCT GROUP BY(BRAND)", nativeQuery = true)
+    List<ProductProjection> queryBrandCount();
 }

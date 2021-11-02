@@ -49,4 +49,7 @@ public interface ProductService {
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
     public List<ProductProjection> selectProductList2(String productname, Pageable pageable);
+
+    // 브랜드별 물품 개수
+    public List<ProductProjection> selectBrandCount();
 }

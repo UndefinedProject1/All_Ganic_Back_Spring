@@ -100,4 +100,9 @@ public class ProductServiceImpl implements ProductService{
         return pRepository.findByBrand_BrandcodeOrderByProductnameAsc(code, pageable);
     }
 
+    @Override
+    public List<ProductProjection> selectBrandCount() {
+        return pRepository.queryBrandCount();
+    }
+
 }
