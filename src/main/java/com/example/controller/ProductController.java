@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.dto.ProductDto;
+import com.example.entity.BrandCountProjection;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
@@ -348,6 +349,23 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectBProductLsit3(code, pageable);
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 브랜드별 물품 개수(list에 brand, 개수 리턴)
+    // 127.0.0.1:8080/REST/api/select/brand/count
+    @RequestMapping(value = "/select/brand/count", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> selectBrandCountGET() {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            List<BrandCountProjection> list = pService.selectBrandCount();
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {

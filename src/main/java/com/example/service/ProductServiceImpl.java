@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
+import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
 import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
@@ -101,8 +102,8 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<ProductProjection> selectBrandCount() {
-        return pRepository.queryBrandCount();
+    public List<BrandCountProjection> selectBrandCount() {
+        return pRepository.findGroupByProductWithNativeQuery();
     }
 
 }

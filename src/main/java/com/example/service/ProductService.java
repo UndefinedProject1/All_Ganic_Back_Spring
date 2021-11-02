@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.List;
 
+import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
 import com.example.entity.ProductProjection;
 
@@ -51,5 +52,5 @@ public interface ProductService {
     public List<ProductProjection> selectProductList2(String productname, Pageable pageable);
 
     // 브랜드별 물품 개수
-    public List<ProductProjection> selectBrandCount();
+    public List<BrandCountProjection> selectBrandCount();
 }
