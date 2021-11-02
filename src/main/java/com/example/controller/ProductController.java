@@ -126,17 +126,7 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectProductList2(productname, pageable);
-            List<ProductDto> list1 = new ArrayList<>();
-            for(ProductProjection tmp: list){
-                ProductDto dto = new ProductDto();
-                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
-                dto.setProductcode(tmp.getProductcode());
-                dto.setProductname(tmp.getProductname());
-                dto.setProductprice(tmp.getProductprice());
-                dto.setProductdate(tmp.getProductdate());
-                list1.add(dto);
-            }
-            map.put("list", list1);
+            map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,7 +244,7 @@ public class ProductController {
     @RequestMapping(value = "/select_cproduct", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProductGET( Model model,
-    @RequestParam("code") String code) {
+    @RequestParam("code") long code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit(code);
@@ -272,7 +262,7 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_cproduct3?page=1&code=
     @RequestMapping(value = "/select_cproduct3", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCProduct2GET( Model model,
+    public Map<String, Object> selectCProduct2GET(
     @RequestParam(value = "page", defaultValue = "1")int page,
     @RequestParam("code") String code) {
         //페이지 네이션 처리
@@ -280,18 +270,7 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit3(code, pageable);
-            List<ProductDto> list1 = new ArrayList<>();
-            for(ProductProjection tmp: list){
-                ProductDto dto = new ProductDto();
-                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
-                dto.setProductcode(tmp.getProductcode());
-                dto.setProductname(tmp.getProductname());
-                dto.setProductprice(tmp.getProductprice());
-                dto.setProductdate(tmp.getProductdate());
-                list1.add(dto);
-            }
-            model.addAttribute("list", list1);
-            map.put("list", list1);
+            map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -361,7 +340,7 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_bproduct3?page=1&code=
     @RequestMapping(value = "/select_bproduct3", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBProduct3GET( Model model,
+    public Map<String, Object> selectBProduct3GET(
     @RequestParam(value = "page", defaultValue = "1")int page,
     @RequestParam("code") Long code) {
         //페이지 네이션 처리
@@ -369,18 +348,7 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectBProductLsit3(code, pageable);
-            List<ProductDto> list1 = new ArrayList<>();
-            for(ProductProjection tmp: list){
-                ProductDto dto = new ProductDto();
-                dto.setImageurl("/REST/api/select_productimage?no=" + tmp.getProductcode());
-                dto.setProductcode(tmp.getProductcode());
-                dto.setProductname(tmp.getProductname());
-                dto.setProductprice(tmp.getProductprice());
-                dto.setProductdate(tmp.getProductdate());
-                list1.add(dto);
-            }
-            model.addAttribute("list", list1);
-            map.put("list", list1);
+            map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
