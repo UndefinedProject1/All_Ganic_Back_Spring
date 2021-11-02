@@ -36,7 +36,7 @@ public interface ProductService {
     public List<ProductProjection> selectBProductLsit2(Long code);
 
     //카테고리 코드 별 제품 조회(sql)
-    public List<ProductProjection> selectCProductLsit(long code);
+    public List<ProductProjection> selectCProductLsit(String code);
 
     //카테고리 코드 별 제품 조회(jpa)
     public List<ProductProjection> selectCProductLsit2(String code);

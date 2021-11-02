@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     //카테고리 중복 체크
     @Override
-    public int checkCateCode(long categorycode) {
+    public int checkCateCode(String categorycode) {
         return cRepository.queryCheckCatecode(categorycode);
     }
 }

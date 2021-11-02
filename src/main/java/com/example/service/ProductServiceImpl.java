@@ -66,7 +66,7 @@ public class ProductServiceImpl implements ProductService{
 
     //카테고리 코드 별 제품 조회(sql)
     @Override
-    public List<ProductProjection> selectCProductLsit(long code) {
+    public List<ProductProjection> selectCProductLsit(String code) {
         return pRepository.queryListCProduct(code);
     }
 

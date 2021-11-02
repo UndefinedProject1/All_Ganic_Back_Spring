@@ -244,7 +244,7 @@ public class ProductController {
     @RequestMapping(value = "/select_cproduct", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProductGET( Model model,
-    @RequestParam("code") long code) {
+    @RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit(code);
