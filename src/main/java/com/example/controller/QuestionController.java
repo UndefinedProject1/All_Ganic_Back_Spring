@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.example.entity.Question;
 import com.example.jwt.JwtUtil;
@@ -37,6 +38,7 @@ public class QuestionController {
     // 문의글 작성
     // 127.0.0.1:8080/REST/api/question/insert?no=14
     // 여기서 넘어오는 no는 물품 정보
+    // {"questiontitle":"냄새가", "questioncontent":"좋아요", "questionkind":1}
     @RequestMapping(value = "/question/insert", method = {
         RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestBody Question question,
@@ -51,7 +53,49 @@ public class QuestionController {
                 qService.insertQuestion(question);
                 map.put("result", 1L);
             }
-            map.put("result", 0L);
+            else{
+                map.put("result", 0L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 문의 삭제
+    // 127.0.0.1:8080/REST/api/question/delete?no=13
+    // 여기서 넘어오는 no는 문의 코드
+    @RequestMapping(value = "/question/delete", method = RequestMethod.DELETE)
+    public String delete(@RequestParam(name = "no", defaultValue = "0") long no) {
+        try {
+            if (no == 0) { // 파라미터가 전달되지 못했을 경우
+                return "0";
+            } else {
+                qService.deleteQuestion(no);
+                return "1";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Integer.toString(e.hashCode());
+        }
+    }
+
+    // 문의글 찾기
+    // 127.0.0.1:8080/REST/api/question/select?no=13
+    // 여기서 넘어오는 no는 문의 코드
+    @RequestMapping(value = "/question/select", method = RequestMethod.GET)
+    public Map<String, Object> questionSelectGET(@RequestParam(name = "no", defaultValue = "0") long no) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            Question question = qService.selectQuestion(no);
+            if(question != null){
+                map.put("result", 1L);
+                map.put("question", question);
+            }
+            else{
+                map.put("result", null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());

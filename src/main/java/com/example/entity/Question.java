@@ -40,7 +40,7 @@ public class Question {
     private String questioncontent = null;
 
     @Column(name = "QUESTIONKIND", nullable = false)
-    private long questionking = 0L;
+    private long questionkind = 0L;
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")

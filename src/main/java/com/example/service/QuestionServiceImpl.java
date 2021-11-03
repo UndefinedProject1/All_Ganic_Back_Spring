@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.entity.Question;
 import com.example.repository.QuestionRepository;
@@ -22,20 +23,18 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public Question selectQuestion(Long no) {
-        // TODO Auto-generated method stub
-        return null;
+        Optional<Question> question = qRepository.findById(no);
+        return question.orElse(null);
     }
 
     @Override
-    public Question deleteQuestion(Long no) {
-        // TODO Auto-generated method stub
-        return null;
+    public void deleteQuestion(Long no) {
+        qRepository.deleteById(no);
     }
 
     @Override
-    public Question updateQuestion(Question question) {
-        // TODO Auto-generated method stub
-        return null;
+    public void updateQuestion(Question question) {
+        qRepository.save(question);
     }
 
     @Override

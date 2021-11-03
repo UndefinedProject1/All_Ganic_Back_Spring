@@ -182,7 +182,9 @@ public class MemberController {
                     map.put("result", 1L);
                 }
                 // 기존암호와 전달된 암호가 같지않을 시
-                map.put("result", 0L);
+                else{
+                    map.put("result", 0L);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -215,7 +217,9 @@ public class MemberController {
                     map.put("result", 1L);
                 }
                 // 기존암호와 전달된 암호가 같지않을 시
-                map.put("result", 0L);
+                else{
+                    map.put("result", 0L);
+                }
             }
         } catch (Exception e) {
             map.put("result", e.hashCode());

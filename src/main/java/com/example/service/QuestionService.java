@@ -16,10 +16,10 @@ public interface QuestionService {
     public Question selectQuestion(Long no);
 
     //문의글 삭제
-    public Question deleteQuestion(Long no);
+    public void deleteQuestion(Long no);
 
     //문의글 수정
-    public Question updateQuestion(Question question);
+    public void updateQuestion(Question question);
 
     //문의글 전체 조회
     public List<Question> selectQuestionList();
