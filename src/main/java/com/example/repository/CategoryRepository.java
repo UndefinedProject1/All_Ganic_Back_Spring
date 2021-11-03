@@ -22,5 +22,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long>{
 
     //카테고리 중복 체크
     @Query(value = "SELECT COUNT(CATEGORYCODE) FROM CATEGORY WHERE CATEGORYCODE = :categorycode", nativeQuery = true)
-    public int queryCheckCatecode(long categorycode);
+    public int queryCheckCatecode(String categorycode);
 }

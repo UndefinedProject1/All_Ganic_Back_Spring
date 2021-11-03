@@ -2,7 +2,7 @@ package com.example.entity;
 
 public interface CategoryProjection {
     
-    long getCategorycode();
+    String getCategorycode();
     
     String getCategoryname();
 }

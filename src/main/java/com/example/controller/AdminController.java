@@ -171,6 +171,7 @@ public class AdminController {
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
+            System.out.println(product.toString());
             product.setImage(file.getBytes());
             product.setImagename(file.getOriginalFilename());
             product.setImagetype(file.getContentType());
@@ -192,6 +193,7 @@ public class AdminController {
     public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
+            System.out.println(product.getProductcode());
             pService.deleteProduct(product.getProductcode());
             map.put("result", 1);
         } catch (Exception e) {
