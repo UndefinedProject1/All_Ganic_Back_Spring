@@ -2,8 +2,10 @@ package com.example.repository;
 
 import java.util.List;
 
+import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
+import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 
 import org.springframework.data.domain.Pageable;
@@ -32,8 +34,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
     public List<ProductProjection> queryListBProduct(@Param("code") Long code);
 
     //카테고리 코드 별 제품 조회(sql)
-    @Query(value = "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, PRODUCTDATE FROM PRODUCT WHERE CATEGORY LIKE :code || '%'", nativeQuery = true)
-    public List<ProductProjection> queryListCProduct(@Param("code") String code);
+    @Query(value = "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE CATEGORY LIKE :code || '%'", nativeQuery = true)
+    public List<ProductListProjection> queryListCProduct(@Param("code") String code);
 
     //카테고리 코드 별 제품 조회(jpa)
     List<ProductProjection>  findByCategory_CategorycodeStartingWith(String categorycode);

@@ -11,6 +11,4 @@ public interface ProductProjection {
     Long getProductprice();
 
     Date getProductdate();
-
-
 }

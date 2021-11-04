@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
+import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
+import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 import com.example.repository.ProductRepository;
 
@@ -67,7 +69,7 @@ public class ProductServiceImpl implements ProductService{
 
     //카테고리 코드 별 제품 조회(sql)
     @Override
-    public List<ProductProjection> selectCProductLsit(String code) {
+    public List<ProductListProjection> selectCProductLsit(String code) {
         return pRepository.queryListCProduct(code);
     }
 

@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.dto.ProductDto;
+import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
+import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 import com.example.entity.SubImage;
 import com.example.entity.SubImageProjection;
@@ -248,7 +250,7 @@ public class ProductController {
     @RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<ProductProjection> list = pService.selectCProductLsit(code);
+            List<ProductListProjection> list = pService.selectCProductLsit(code);
             model.addAttribute("list", list);
             map.put("list", list);
             map.put("result", 1);

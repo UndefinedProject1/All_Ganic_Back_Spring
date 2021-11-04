@@ -2,8 +2,10 @@ package com.example.service;
 
 import java.util.List;
 
+import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
+import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 
 import org.springframework.data.domain.Pageable;
@@ -37,7 +39,7 @@ public interface ProductService {
     public List<ProductProjection> selectBProductLsit2(Long code);
 
     //카테고리 코드 별 제품 조회(sql)
-    public List<ProductProjection> selectCProductLsit(String code);
+    public List<ProductListProjection> selectCProductLsit(String code);
 
     //카테고리 코드 별 제품 조회(jpa)
     public List<ProductProjection> selectCProductLsit2(String code);
