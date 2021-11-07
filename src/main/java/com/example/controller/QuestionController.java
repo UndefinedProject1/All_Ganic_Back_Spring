@@ -1,8 +1,8 @@
 package com.example.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.example.entity.Question;
 import com.example.jwt.JwtUtil;
@@ -81,6 +81,34 @@ public class QuestionController {
         }
     }
 
+    // 문의글 수정
+    // 127.0.0.1:8080/REST/api/question/update?no=13
+    @RequestMapping(value = "/question/update", method = {
+        RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> questionUpdate(@RequestParam(name = "no", defaultValue = "0") long no ,@RequestBody Question question,
+            @RequestHeader("token") String token) {
+
+        Map<String, Object> map = new HashMap<>();
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+                Question question1 = qService.selectQuestion(no);
+                question1.setQuestiontitle(question.getQuestiontitle());
+                question1.setQuestioncontent(question.getQuestioncontent());
+                question1.setQuestionkind(question.getQuestionkind());
+                qService.updateQuestion(question1);
+                map.put("result", 1L);
+            }
+            else{
+                map.put("result", 0L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 문의글 찾기
     // 127.0.0.1:8080/REST/api/question/select?no=13
     // 여기서 넘어오는 no는 문의 코드
@@ -103,4 +131,25 @@ public class QuestionController {
         return map;
     }
 
+    // 회원별 문의글 리스트 찾기(날짜 기준으로 정렬)
+    // 127.0.0.1:8080/REST/api/question/member/selectlist
+    @RequestMapping(value = "/question/member/selectlist", method = RequestMethod.GET)
+    public Map<String, Object> MemberSelectListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+                List<Question> list = qService.selectMemberQuestionList(useremail);
+                map.put("list", list);
+                map.put("result", 1L);
+            }
+            else{
+                map.put("result", 0L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 }

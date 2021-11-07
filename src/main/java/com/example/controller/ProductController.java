@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.dto.ProductDto;
-import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;

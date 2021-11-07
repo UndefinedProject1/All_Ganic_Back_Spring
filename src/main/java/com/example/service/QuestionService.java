@@ -24,6 +24,9 @@ public interface QuestionService {
     //문의글 전체 조회
     public List<Question> selectQuestionList();
 
+    // 문의글 회원별리스트 조회
+    public List<Question> selectMemberQuestionList(String email);
+
     //문의글 중복 체크
     public int checkQuestionCode(Long questioncode);
 

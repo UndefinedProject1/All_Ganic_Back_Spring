@@ -20,33 +20,45 @@ public class QuestionServiceImpl implements QuestionService{
     public void insertQuestion(Question question) {
         qRepository.save(question);
     }
-
+    
+    // 문의글 찾기
     @Override
     public Question selectQuestion(Long no) {
         Optional<Question> question = qRepository.findById(no);
         return question.orElse(null);
     }
 
+    // 문의글 삭제
     @Override
     public void deleteQuestion(Long no) {
         qRepository.deleteById(no);
     }
 
+    // 문의글 수정
     @Override
     public void updateQuestion(Question question) {
         qRepository.save(question);
     }
 
+    // 문의글 전체 리스트 조회
     @Override
     public List<Question> selectQuestionList() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    // 문의글 회원별리스트 조회
+    @Override
+    public List<Question> selectMemberQuestionList(String email) {
+        return qRepository.findByMember_UseremailOrderByQuestiondateDesc(email);
+    }
+
+    // 문의글 중복 체크
     @Override
     public int checkQuestionCode(Long questioncode) {
         // TODO Auto-generated method stub
         return 0;
     }
+
     
 }

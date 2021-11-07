@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
-import com.example.dto.ProductListDto;
 import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
 import com.example.entity.ProductListProjection;
