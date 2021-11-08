@@ -47,7 +47,7 @@ public interface ProductService {
     public List<ProductProjection> selectCProductLsit3(String code, Pageable pageable);
 
     //제품 1개 조회 (상세 페이지)
-    public ProductProjection selectProductOne(long code);
+    public ProductListProjection selectProductOne(long code);
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
     public List<ProductProjection> selectProductList2(String productname, Pageable pageable);

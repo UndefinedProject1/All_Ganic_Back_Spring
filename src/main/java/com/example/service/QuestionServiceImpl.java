@@ -43,8 +43,7 @@ public class QuestionServiceImpl implements QuestionService{
     // 문의글 전체 리스트 조회
     @Override
     public List<Question> selectQuestionList() {
-        // TODO Auto-generated method stub
-        return null;
+        return qRepository.findAllByOrderByQuestiondateDesc();
     }
 
     // 문의글 회원별리스트 조회

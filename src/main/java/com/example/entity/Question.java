@@ -42,6 +42,9 @@ public class Question {
     @Column(name = "QUESTIONKIND", nullable = false)
     private long questionkind = 0L;
 
+    @Column(name = "QUESTIONREPLY")
+    private boolean questionreply = false;
+
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(updatable = false, name = "QUESTIONDATE")

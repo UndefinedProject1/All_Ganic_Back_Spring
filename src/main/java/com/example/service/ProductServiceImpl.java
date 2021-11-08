@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService{
 
     //제품 1개 조회 (상세 페이지)
     @Override
-    public ProductProjection selectProductOne(long code) {
+    public ProductListProjection selectProductOne(long code) {
         return pRepository.findByProductcode(code);
     }
 

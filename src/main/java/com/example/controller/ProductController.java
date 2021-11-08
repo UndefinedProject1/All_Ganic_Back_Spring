@@ -173,7 +173,7 @@ public class ProductController {
     @RequestParam("code") long code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            ProductProjection product = pService.selectProductOne(code);
+            ProductListProjection product = pService.selectProductOne(code);
             model.addAttribute("product", product);
             map.put("product", product);
             map.put("imgurl", "/REST/api/select_productimage?no=" + code);
