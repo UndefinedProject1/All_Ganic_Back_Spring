@@ -1,10 +1,12 @@
 package com.example.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
 import com.example.entity.Member;
+import com.example.mappers.MemberMapper;
 import com.example.repository.MemberRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ public class MemberServiceImpl implements MemberServiece {
 
     @Autowired
     EntityManagerFactory emf;
+
+    @Autowired
+    MemberMapper mMapper;
 
     @Autowired
     MemberRepository mRepository;
@@ -29,11 +34,17 @@ public class MemberServiceImpl implements MemberServiece {
         Optional<Member> member = mRepository.findById(email);
         return member.orElse(null); // 없으면 null리턴
     }
-
-    // 아이디 중복체크
+    
+    // 아이디 중복체크 (dto)
     @Override
-    public int checkMemberEmail(String email) {
-        return mRepository.queryCheckEmail(email);
+    public int checkEmailDTO(String email) {
+        return mMapper.selectCount(email);
+    }
+
+    // 회원정보 들고오기
+    @Override
+    public Map<String, Object> selectMemberOne(String email) {
+        return mMapper.selectMember(email);
     }
 
     // 회원정보 수정

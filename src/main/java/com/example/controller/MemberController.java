@@ -2,7 +2,6 @@ package com.example.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.example.entity.Member;
 import com.example.jwt.JwtUtil;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,14 +70,14 @@ public class MemberController {
         return map;
     }
 
-    // 이메일 중복 체크
+    // 이메일 중복 체크(dto)
     // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
     @RequestMapping(value = "/member/checkemail", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckEmailPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            int count = mServiece.checkMemberEmail(member.getUseremail());
+            int count = mServiece.checkEmailDTO(member.getUseremail());
             System.out.println(count);
             if (count == 0) {
                 map.put("result", 0L);
@@ -121,10 +118,28 @@ public class MemberController {
         return map;
     }
 
+    // 회원정보 찾기
+    // 127.0.0.1:8080/REST/api/member/find
+    @RequestMapping(value = "/member/find", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> memberFind(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7));
+            Map<String, Object> member = mServiece.selectMemberOne(useremail);
+            map.put("member", member);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 회원정보 수정(이름, 전화번호, 우편번호, 주소, 상세주소)
     // 127.0.0.1:8080/REST/api/member/update
     @RequestMapping(value = "/member/update", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberUpdate(@RequestBody Map<String, Object> mapobj,
             @RequestHeader("token") String token) {
 
@@ -158,7 +173,7 @@ public class MemberController {
     // 비밀번호 변경
     // 127.0.0.1:8080/REST/api/member/passwd
     @RequestMapping(value = "/member/passwd", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj,
             @RequestHeader("token") String token) {
 
@@ -196,7 +211,7 @@ public class MemberController {
     // 회원탈퇴
     // 127.0.0.1:8080/REST/api/member/leave
     @RequestMapping(value = "/member/leave", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLeave(@RequestBody Map<String, Object> mapobj,
             @RequestHeader("token") String token) {
 

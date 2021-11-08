@@ -1,7 +1,9 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
 import com.example.entity.QuestionProjection;
 
@@ -22,11 +24,8 @@ public interface QuestionService {
     //문의글 수정
     public void updateQuestion(Question question);
 
-    //문의글 답글여부, kind종류에 따라 리스트 출력
-    public List<QuestionProjection> selectQuestionList(Boolean reply, Long kind);
-
-    //문의글 답글여부에 따른 리스트 출력
-    public List<QuestionProjection> selectQuestionList1(Boolean reply);
+    //문의글 답글여부, kind에 따른 리스트 출력(dto)
+    public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind);
 
     // 문의글 회원별리스트 조회
     public List<Question> selectMemberQuestionList(String email);

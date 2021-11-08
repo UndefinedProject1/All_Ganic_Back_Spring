@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
 import com.example.entity.QuestionProjection;
 import com.example.jwt.JwtUtil;
@@ -162,13 +163,8 @@ public class QuestionController {
     @RequestParam(name = "kind", defaultValue = "0") long kind) {
         Map<String, Object> map = new HashMap<>();
         try {
-            if(kind == 0){ // 종류없이 조회 시 
-                List<QuestionProjection> list = qService.selectQuestionList1(reply);
-                map.put("list", list);
-            }else{
-                List<QuestionProjection> list = qService.selectQuestionList(reply, kind);
-                map.put("list", list);
-            }
+            List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind);
+            map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();

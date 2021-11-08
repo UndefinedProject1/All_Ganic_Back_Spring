@@ -17,14 +17,6 @@
 		<java.version>11</java.version>
 	</properties>
 
-	<!-- <repositories>
-		<repository>
-			<id>oracle</id>
-			<name>ORACLE JDBC Repository</name>
-			<url>http://maven.jahia.org/maven2</url>
-		</repository> 
-	</repositories> -->
-
 	<dependencies>
 
 		<!-- jsoup 크롤링을 위한 라이브러리 -->
@@ -32,6 +24,13 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.14.3</version>
+		</dependency>
+
+		<!-- mybatis : SQL문으로 처리 -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 
 		<!-- jpa-->
@@ -46,13 +45,6 @@
     		<artifactId>h2</artifactId>
     		<scope>runtime</scope>
 		</dependency>
-
-		<!-- oracle
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
-		</dependency> -->
 
 		<!-- jjwt -->
 		<dependency>

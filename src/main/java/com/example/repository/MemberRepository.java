@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, String> {
 
-    @Query(value = "SELECT COUNT(USEREMAIL) FROM MEMBER WHERE USEREMAIL = :email", nativeQuery = true)
-    public int queryCheckEmail(String email);
 }

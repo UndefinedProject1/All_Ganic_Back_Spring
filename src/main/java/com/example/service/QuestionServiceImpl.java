@@ -1,10 +1,13 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
 import com.example.entity.QuestionProjection;
+import com.example.mappers.QuestionMapper;
 import com.example.repository.QuestionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Autowired
     QuestionRepository qRepository;
+
+    @Autowired
+	QuestionMapper qMapper;
 
     // 문의글 추가
     @Override
@@ -41,16 +47,10 @@ public class QuestionServiceImpl implements QuestionService{
         qRepository.save(question);
     }
 
-    // 문의글 답글여부, kind종류에 따른 리스트 조회
+    // 문의글 답글여부, kind에 따른 리스트 조회(dto)
     @Override
-    public List<QuestionProjection> selectQuestionList(Boolean reply, Long kind) {
-        return qRepository.queryQuestionList(reply, kind);
-    }
-    
-    // 문의글 답글여부에 따른 리스트 조회
-    @Override
-    public List<QuestionProjection> selectQuestionList1(Boolean reply) {
-        return qRepository.queryQuestionList1(reply);
+    public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind) {
+        return qMapper.selectQuestionDTO(reply, kind);
     }
 
     // 문의글 회원별리스트 조회
@@ -65,6 +65,7 @@ public class QuestionServiceImpl implements QuestionService{
         // TODO Auto-generated method stub
         return 0;
     }
+
 
 
     
