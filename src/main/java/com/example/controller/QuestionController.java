@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Question;
+import com.example.entity.QuestionProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
@@ -153,14 +154,14 @@ public class QuestionController {
         return map;
     }
 
-    // 문의글 전체 조회(날짜 기준 정렬)
+    // 문의글 답글여부, 종류별 조회(날짜 기준 정렬)
     // 127.0.0.1:8080/REST/api/question/all/selectlist
     @RequestMapping(value = "/question/all/selectlist", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> AllSelectListGET() {
+    public Map<String, Object> AllSelectListGET(@RequestParam("code") Boolean code, @RequestParam("kind") long kind) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<Question> list = qService.selectQuestionList();
+            List<QuestionProjection> list = qService.selectQuestionList(code, kind);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {

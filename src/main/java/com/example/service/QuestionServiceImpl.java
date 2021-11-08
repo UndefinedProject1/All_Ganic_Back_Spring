@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.entity.Question;
+import com.example.entity.QuestionProjection;
 import com.example.repository.QuestionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class QuestionServiceImpl implements QuestionService{
 
     // 문의글 전체 리스트 조회
     @Override
-    public List<Question> selectQuestionList() {
-        return qRepository.findAllByOrderByQuestiondateDesc();
+    public List<QuestionProjection> selectQuestionList(Boolean code, Long kind) {
+        return qRepository.queryQuestionList(code, kind);
     }
 
     // 문의글 회원별리스트 조회

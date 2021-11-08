@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.List;
 
 import com.example.entity.Question;
+import com.example.entity.QuestionProjection;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public interface QuestionService {
     public void updateQuestion(Question question);
 
     //문의글 전체 조회
-    public List<Question> selectQuestionList();
+    public List<QuestionProjection> selectQuestionList(Boolean code, Long kind);
 
     // 문의글 회원별리스트 조회
     public List<Question> selectMemberQuestionList(String email);
