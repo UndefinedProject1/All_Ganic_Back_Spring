@@ -8,7 +8,7 @@ public interface QuestionProjection {
 
     String getQuestiontitle();
 
-    Long getQuestioncontent();
+    String getQuestioncontent();
 
     Date getQuestiondate();
 

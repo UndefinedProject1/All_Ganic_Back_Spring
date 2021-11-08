@@ -158,11 +158,17 @@ public class QuestionController {
     // 127.0.0.1:8080/REST/api/question/all/selectlist
     @RequestMapping(value = "/question/all/selectlist", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> AllSelectListGET(@RequestParam("code") Boolean code, @RequestParam("kind") long kind) {
+    public Map<String, Object> AllSelectListGET(@RequestParam(name = "reply") Boolean reply, 
+    @RequestParam(name = "kind", defaultValue = "0") long kind) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<QuestionProjection> list = qService.selectQuestionList(code, kind);
-            map.put("list", list);
+            if(kind == 0){ // 종류없이 조회 시 
+                List<QuestionProjection> list = qService.selectQuestionList1(reply);
+                map.put("list", list);
+            }else{
+                List<QuestionProjection> list = qService.selectQuestionList(reply, kind);
+                map.put("list", list);
+            }
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();

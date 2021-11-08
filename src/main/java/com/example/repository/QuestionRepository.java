@@ -14,11 +14,15 @@ import org.springframework.stereotype.Repository;
 public interface QuestionRepository extends JpaRepository<Question, Long>{
 
     // 문의글 답글여부, kind에 따라 리스트 조회
-    @Query(value = "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, PRODUCTCODE FROM QUESTIONLIST  WHERE QUESTIONREPLY =:code AND QUESTIONKIND =:kind ORDER BY QUESTIONDATE ASC", nativeQuery = true)
-    public List<QuestionProjection> queryQuestionList(@Param("code") Boolean code, @Param("kind")Long kind);
+    @Query(value = "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, PRODUCTCODE FROM QUESTIONLIST  WHERE QUESTIONREPLY =:reply AND QUESTIONKIND =:kind ORDER BY QUESTIONDATE DESC", nativeQuery = true)
+    public List<QuestionProjection> queryQuestionList(@Param("reply") Boolean reply, @Param("kind")Long kind);
+    
+    // 문의글 답글여부 리스트 조회(kind값 없을 때)
+    @Query(value = "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, PRODUCTCODE FROM QUESTIONLIST  WHERE QUESTIONREPLY =:reply ORDER BY QUESTIONDATE DESC", nativeQuery = true)
+    public List<QuestionProjection> queryQuestionList1(@Param("reply") Boolean reply);
 
-    // //문의글 전체 조회(답글 여부, kind종류)
-    // List<Question> findAllByOrderByQuestiondateDesc();
+    // 물품별 문의글 출력
+    List<Question> findByProduct_ProductcodeOrderByQuestiondateDesc(Long Productcode);
     
     // 회원별 문의글 출력
     List<Question> findByMember_UseremailOrderByQuestiondateDesc(String useremail);

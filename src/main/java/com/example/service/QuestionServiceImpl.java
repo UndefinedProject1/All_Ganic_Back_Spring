@@ -41,10 +41,16 @@ public class QuestionServiceImpl implements QuestionService{
         qRepository.save(question);
     }
 
-    // 문의글 전체 리스트 조회
+    // 문의글 답글여부, kind종류에 따른 리스트 조회
     @Override
-    public List<QuestionProjection> selectQuestionList(Boolean code, Long kind) {
-        return qRepository.queryQuestionList(code, kind);
+    public List<QuestionProjection> selectQuestionList(Boolean reply, Long kind) {
+        return qRepository.queryQuestionList(reply, kind);
+    }
+    
+    // 문의글 답글여부에 따른 리스트 조회
+    @Override
+    public List<QuestionProjection> selectQuestionList1(Boolean reply) {
+        return qRepository.queryQuestionList1(reply);
     }
 
     // 문의글 회원별리스트 조회
@@ -59,6 +65,7 @@ public class QuestionServiceImpl implements QuestionService{
         // TODO Auto-generated method stub
         return 0;
     }
+
 
     
 }

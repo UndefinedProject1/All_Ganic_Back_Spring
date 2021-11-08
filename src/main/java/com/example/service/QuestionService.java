@@ -22,8 +22,11 @@ public interface QuestionService {
     //문의글 수정
     public void updateQuestion(Question question);
 
-    //문의글 전체 조회
-    public List<QuestionProjection> selectQuestionList(Boolean code, Long kind);
+    //문의글 답글여부, kind종류에 따라 리스트 출력
+    public List<QuestionProjection> selectQuestionList(Boolean reply, Long kind);
+
+    //문의글 답글여부에 따른 리스트 출력
+    public List<QuestionProjection> selectQuestionList1(Boolean reply);
 
     // 문의글 회원별리스트 조회
     public List<Question> selectMemberQuestionList(String email);
