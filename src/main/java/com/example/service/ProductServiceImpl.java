@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService{
     //제품 1개 조회 (상세 페이지)
     @Override
     public ProductListProjection selectProductOne(long code) {
-        return pRepository.findByProductcode(code);
+        return pRepository.querySelectProduct(code);
     }
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)

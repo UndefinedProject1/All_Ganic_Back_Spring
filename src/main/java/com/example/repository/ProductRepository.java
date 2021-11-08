@@ -43,7 +43,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
     List<ProductProjection>  findByCategory_CategorycodeStartingWithOrderByProductnameAsc(String categorycode, Pageable pageable);
 
     //제품 1개 조회 (상세 페이지)
-    ProductListProjection findByProductcode(long code);
+    @Query(value = "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE PRODUCTCODE =:code", nativeQuery = true)
+    public ProductListProjection querySelectProduct(@Param("code") Long code);
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
     List<ProductProjection> findByProductnameIgnoreCaseContainingOrderByProductnameAsc(String productname, Pageable pageable);
