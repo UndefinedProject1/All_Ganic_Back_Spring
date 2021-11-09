@@ -12,7 +12,7 @@ public interface QuestionMapper {
     @Select({
         "<script>",
             "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, PRODUCTCODE, ",
-            "to_char(QUESTIONDATE),'YYYY-MM-DD') AS QUESTIONDATE ",
+            "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE ",
             " FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
             " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
             "ORDER BY QUESTIONDATE ",
