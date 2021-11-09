@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
-import com.example.entity.QuestionProjection;
 
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,9 @@ public interface QuestionService {
 
     //문의글 답글여부, kind에 따른 리스트 출력(dto)
     public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind);
+
+    // 문의글 물품별, 종류별 리스트 조회
+    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind);
 
     // 문의글 회원별리스트 조회
     public List<Question> selectMemberQuestionList(String email);

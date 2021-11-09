@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
-import com.example.entity.QuestionProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
@@ -166,6 +164,29 @@ public class QuestionController {
             List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind);
             map.put("list", list);
             map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 물품상세페이지에서 문의글 종류별 조회(날짜 기준 정렬)
+    // 127.0.0.1:8080/REST/api/question/product/selectlist
+    @RequestMapping(value = "/question/product/selectlist", method = {
+        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productSelectListGET(@RequestParam(name = "no", defaultValue = "0") Long no, 
+    @RequestParam(name = "kind", defaultValue = "0") long kind) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            if(no == 0){
+                map.put("result", 0); // 0이면 물품코드가 제대로 안넘어왔다는 의미
+            }
+            else{
+                List<Map<String, Object>> list = qService.selectProductQuestionList(no, kind);
+                map.put("list", list);
+                map.put("result", 1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());

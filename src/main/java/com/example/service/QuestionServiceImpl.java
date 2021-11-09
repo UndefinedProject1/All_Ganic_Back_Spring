@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
-import com.example.entity.QuestionProjection;
 import com.example.mappers.QuestionMapper;
 import com.example.repository.QuestionRepository;
 
@@ -53,6 +52,12 @@ public class QuestionServiceImpl implements QuestionService{
         return qMapper.selectQuestionDTO(reply, kind);
     }
 
+    // 문의글 물품별, 종류별 리스트 조회
+    @Override
+    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind) {
+        return qMapper.selectProductList(no, kind);
+    }
+
     // 문의글 회원별리스트 조회
     @Override
     public List<Question> selectMemberQuestionList(String email) {
@@ -65,8 +70,6 @@ public class QuestionServiceImpl implements QuestionService{
         // TODO Auto-generated method stub
         return 0;
     }
-
-
 
     
 }

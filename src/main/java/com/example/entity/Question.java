@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -57,4 +58,11 @@ public class Question {
     @ManyToOne // 회원 정보
     @JoinColumn(updatable = false, name = "MEMBER")
     private Member member;
+
+    @Column(name = "ANSWERCONTENT")
+    private String answercontent = null;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(updatable = false, name = "ANSWERDATE")
+    private Date answerdate = null;
 }
