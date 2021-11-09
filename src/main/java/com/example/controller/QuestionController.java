@@ -139,7 +139,7 @@ public class QuestionController {
         try {
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
-                List<Question> list = qService.selectMemberQuestionList(useremail);
+                List<Map<String, Object>> list = qService.selectMemberQuestionList(useremail);
                 map.put("list", list);
                 map.put("result", 1L);
             }
@@ -154,7 +154,7 @@ public class QuestionController {
     }
 
     // 문의글 답글여부, 종류별 조회(날짜 기준 정렬)
-    // 127.0.0.1:8080/REST/api/question/all/selectlist
+    // 127.0.0.1:8080/REST/api/question/all/selectlist?reply=false&kind=2
     @RequestMapping(value = "/question/all/selectlist", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> AllSelectListGET(@RequestParam(name = "reply") Boolean reply, 
@@ -172,7 +172,7 @@ public class QuestionController {
     }
 
     // 물품상세페이지에서 문의글 종류별 조회(날짜 기준 정렬)
-    // 127.0.0.1:8080/REST/api/question/product/selectlist
+    // 127.0.0.1:8080/REST/api/question/product/selectlist?no=4&kind=1
     @RequestMapping(value = "/question/product/selectlist", method = {
         RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productSelectListGET(@RequestParam(name = "no", defaultValue = "0") Long no, 

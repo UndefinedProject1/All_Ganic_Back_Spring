@@ -62,7 +62,6 @@ public class Question {
     @Column(name = "ANSWERCONTENT")
     private String answercontent = null;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(updatable = false, name = "ANSWERDATE")
-    private Date answerdate = null;
+    @Column(name = "ANSWERDATE")
+    private String answerdate = null;
 }

@@ -31,4 +31,19 @@ public interface QuestionMapper {
         "</script>"
     })
     public List<Map<String, Object>> selectProductList(Long no, Long kind);
+
+    // 멤버아이디에 따른 문의리스트 출력(마이페이지)
+    @Select({
+        "<script>",
+            "SELECT QUESTION.QUESTIONCODE, QUESTION.QUESTIONTITLE, QUESTION.QUESTIONCONTENT, ",
+            "QUESTION.QUESTIONDATE, QUESTION.QUESTIONKIND, QUESTION.QUESTIONREPLY, ",
+            " PRODUCT.PRODUCTNAME, BRAND.BRANDNAME",
+            " FROM QUESTION ",
+            " INNER JOIN PRODUCT ON QUESTION.PRODUCT = PRODUCT.PRODUCTCODE",
+            " INNER JOIN BRAND ON PRODUCT.BRAND = BRAND.BRANDCODE",
+            "WHERE MEMBER=#{email} ",
+            "ORDER BY QUESTIONDATE DESC",
+        "</script>"
+    })
+    public List<Map<String, Object>> selectMemberList(String email);
 }

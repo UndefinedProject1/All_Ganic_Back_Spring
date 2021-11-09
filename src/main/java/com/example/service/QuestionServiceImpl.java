@@ -60,8 +60,8 @@ public class QuestionServiceImpl implements QuestionService{
 
     // 문의글 회원별리스트 조회
     @Override
-    public List<Question> selectMemberQuestionList(String email) {
-        return qRepository.findByMember_UseremailOrderByQuestiondateDesc(email);
+    public List<Map<String, Object>> selectMemberQuestionList(String email) {
+        return qMapper.selectMemberList(email);
     }
 
     // 문의글 중복 체크

@@ -30,7 +30,7 @@ public interface QuestionService {
     public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind);
 
     // 문의글 회원별리스트 조회
-    public List<Question> selectMemberQuestionList(String email);
+    public List<Map<String, Object>> selectMemberQuestionList(String email);
 
     //문의글 중복 체크
     public int checkQuestionCode(Long questioncode);

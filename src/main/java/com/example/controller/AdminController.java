@@ -1,6 +1,10 @@
 package com.example.controller;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +12,14 @@ import java.util.Map;
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
+import com.example.entity.Question;
 import com.example.entity.SubImage;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
+import com.example.service.QuestionService;
 import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +58,8 @@ public class AdminController {
     @Autowired
     SubImageService sImageService;
 
-    // // 상수
-    // @Value("${board.page.count}")
-    // private int PAGECNT;
+    @Autowired
+    QuestionService qService;
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/api/admin/brand_insert
@@ -309,6 +314,33 @@ public class AdminController {
         Map<String, Object> map = new HashMap<>();
         try {
             sImageService.deleteSubimg(subImage.getSubcode());
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 문의글 답글 작성
+    // 127.0.0.1:8080/REST/api/admin/question/reply/insert?code=
+    // 여기서 code는 문의코드
+    @RequestMapping(value = "/admin/question/reply/insert", method = {
+        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> replyInsertPOST(@RequestBody Question question, @RequestParam("code") long code,
+    @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            Question question1 = qService.selectQuestion(code);
+            question1.setAnswercontent(question.getAnswercontent());
+
+            Date today = new Date();
+            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+
+            question1.setAnswerdate(date.format(today));
+
+            question1.setQuestionreply(true);
+            qService.updateQuestion(question1);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
