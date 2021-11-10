@@ -140,27 +140,23 @@ public class MemberController {
     // 127.0.0.1:8080/REST/api/member/update
     @RequestMapping(value = "/member/update", method = {
             RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> memberUpdate(@RequestBody Map<String, Object> mapobj,
+    public Map<String, Object> memberUpdate(@RequestBody Member member,
             @RequestHeader("token") String token) {
 
         Map<String, Object> map = new HashMap<>();
         try {
-            // @RequestBody Map<>으로 데이터 받는부분
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-            String username = (String) mapobj.get("username"); // 이름
-            String usertel = (String) mapobj.get("usertel"); // 전화번호
-            Long post = Long.parseLong(String.valueOf(mapobj.get("post"))); // 우편번호
-            String address = (String) mapobj.get("address"); // 주소
 
             // 토큰과 사용자 아이디 일치 시점
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
                 // 아이디를 이용해 기존 정보 가져오기
-                Member member = mServiece.getMemberOne(useremail);
-                member.setUsername(username);
-                member.setUsertel(usertel);
-                member.setPost(post);
-                member.setAddress(address);
-                mServiece.updateMember(member);
+                Member member1 = mServiece.getMemberOne(useremail);
+                member1.setUsername(member.getUsername());
+                member1.setUsertel(member.getUsertel());
+                member1.setPost(member.getPost());
+                member1.setAddress(member.getAddress());
+                member1.setDetaileaddress(member.getDetaileaddress());
+                mServiece.updateMember(member1);
                 map.put("result", 1L);
             }
         } catch (Exception e) {
