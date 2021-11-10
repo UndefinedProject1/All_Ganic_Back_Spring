@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.example.entity.Member;
 import com.example.entity.Product;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
 import lombok.Getter;

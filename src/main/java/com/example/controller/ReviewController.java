@@ -61,8 +61,9 @@ public class ReviewController {
                 review.setReviewimgtype(file.getContentType());
                 rService.insertReview(review);
                 map.put("result", 1L);
+            }else{
+                map.put("result", 0L);
             }
-            map.put("result", 0L);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());

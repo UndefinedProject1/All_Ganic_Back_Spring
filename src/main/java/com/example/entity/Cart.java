@@ -24,6 +24,7 @@ import lombok.ToString;
 @Table(name = "CART")
 @SequenceGenerator(name = "SEQ_CART_NO", sequenceName = "SEQ_CART_NO", initialValue = 1, allocationSize = 1)
 public class Cart {
+    
     @Id
     @Column(name = "CARTCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CART_NO")
@@ -32,12 +33,5 @@ public class Cart {
     @OneToOne // 회원정보
     @JoinColumn(updatable = false, name = "MEMBER")
     private Member member;
-
-    @ManyToOne // 물품 정보
-    @JoinColumn(updatable = false, name = "PRODUCT")
-    private Product product;
-
-    @Column(name = "QUANTITY")
-    private Long quantity = 0L;
 
 }
