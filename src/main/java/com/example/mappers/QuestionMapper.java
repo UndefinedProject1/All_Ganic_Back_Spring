@@ -25,7 +25,7 @@ public interface QuestionMapper {
     // 물품코드와 문의종류에 따른 리스트 출력(물품 상세)
     @Select({
         "<script>",
-            "SELECT QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, QUESTIONKIND, MEMBER ",
+            "SELECT QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, QUESTIONKIND, QUESTIONREPLY, MEMBER ",
             " FROM QUESTION WHERE PRODUCT=#{no} ",
             " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
             "ORDER BY QUESTIONDATE DESC",
