@@ -16,6 +16,9 @@ public interface CartItemService {
     // 장바구니에 담긴 물품코드 중복 확인
     public int checkProduct(Long no, Long code);
 
+    // 장바구니아이템 1개 수량 리턴(여기서 code는 장바구니아이템 code)
+    public Long selectCartQuantity(long code);
+
     // 장바구니아이템 1개 찾기(여기서 code는 cart코드)
     public CartItem selectCartProductOne(long no, long code);
 

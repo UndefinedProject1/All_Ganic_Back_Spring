@@ -64,4 +64,8 @@ public class Product {
     @JoinColumn( name = "CATEGORY")
     private Category category;
 
+    @ManyToOne // 주문 정보
+    @JoinColumn( name = "PAY")
+    private Pay pay;
+
 }

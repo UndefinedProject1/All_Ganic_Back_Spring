@@ -23,6 +23,11 @@ public interface CartItemMapper {
     "WHERE PRODUCT=#{no} AND CART=#{code}"})
 	public CartItem selectCartItem(@Param("no") Long no, @Param("code") Long code);
 
+    // 장바구니물품 찾아서 반환하기
+    @Select({"SELECT QUANTITY FROM CARTITEM ", 
+    "WHERE CARTITEMCODE=#{code}"})
+	public long selectCartQuantity(@Param("code") Long code);
+
     // 수량 변경하기
     @Update({
         "UPDATE CARTITEM SET QUANTITY=#{cnt} WHERE CARTITEMCODE=#{no}"

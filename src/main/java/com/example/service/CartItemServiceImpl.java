@@ -32,6 +32,12 @@ public class CartItemServiceImpl implements CartItemService{
         return ciMapper.selectCount(no, code);
     }
 
+    // 장바구니 아이템 수량 리턴
+    @Override
+    public Long selectCartQuantity(long code) {
+        return ciMapper.selectCartQuantity(code);
+    }
+   
     // 장바구니 아이템 찾고 반환하기
     @Override
     public CartItem selectCartProductOne(long no, long code) {
@@ -61,5 +67,5 @@ public class CartItemServiceImpl implements CartItemService{
     public void deleteCartItemSome(List<Long> chks) {
         ciRepository.deleteAllByIdInBatch(chks);
     }
-   
+
 }
