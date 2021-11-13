@@ -44,7 +44,7 @@ public class CartController {
     @RequestMapping(value = "cart/create/insert", method = {
         RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestParam(name = "cnt") long cnt,
-            @RequestParam(name = "no", defaultValue = "0") long no,@RequestHeader("token") String token) {
+            @RequestParam(name = "no", defaultValue = "0") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
@@ -62,7 +62,7 @@ public class CartController {
                         CartItem cartitem = new CartItem();
                         cartitem.setCart(cart1);
                         cartitem.setProduct(pService.selectProduct(no));
-                        cartitem.setQuantity(no);
+                        cartitem.setQuantity(cnt);
                         ciService.insertCartItem(cartitem);
                         map.put("state", "장바구니 물품이 추가되었습니다");
                         map.put("result", 1L);
@@ -124,6 +124,7 @@ public class CartController {
     public Map<String, Object> MemberSelectListGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
+            System.out.println(token);
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
                 Cart cart1 = cService.findCart(useremail);
@@ -155,11 +156,17 @@ public class CartController {
     public Map<String, Object> cartItemAllDELTE(@RequestParam(name = "code") long code) {
         Map<String, Object> map = new HashMap<String, Object>();
         int i = ciService.deleteCartItemAll(code);
-        if(i == 1){
-            map.put("result", 1L);
+        try{
+            if(i == 1){
+                map.put("result", 1L);
+            }
+            else{
+                map.put("result", 0L);
+            }
         }
-        else{
-            map.put("result", 0L);
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
         }
         return map;
     }
@@ -171,11 +178,17 @@ public class CartController {
     @RequestMapping(value = "/cartitem/delete/check", method = RequestMethod.DELETE)
     public Map<String, Object> cartItemSomeDELTE(@RequestParam(name = "chks") List<Long> chks) {
         Map<String, Object> map = new HashMap<String, Object>();
-        for (Long chk : chks) {
-            System.out.println(chk);
+        try{
+            for (Long chk : chks) {
+                System.out.println(chk);
+            }
+            ciService.deleteCartItemSome(chks);
+            map.put("result", 1L);
         }
-        ciService.deleteCartItemSome(chks);
-        map.put("result", 1L);
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
         return map;
     }
 }
