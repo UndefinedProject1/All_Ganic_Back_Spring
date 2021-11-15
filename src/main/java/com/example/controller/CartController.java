@@ -159,7 +159,7 @@ public class CartController {
         Map<String, Object> map = new HashMap<String, Object>();
         int i = ciService.deleteCartItemAll(code);
         try{
-            if(i == 1){
+            if(i >= 1){
                 map.put("result", 1L);
             }
             else{
