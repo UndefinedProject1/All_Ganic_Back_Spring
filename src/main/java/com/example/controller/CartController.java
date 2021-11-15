@@ -206,8 +206,10 @@ public class CartController {
                 map.put("cartitem", chks);
                 map.put("result", 1L);
             }
-            map.put("state", "체크한 장바구니 아이템정보가 넘어오지 않았습니다.");
-            map.put("result", 0L);
+           else{
+                map.put("state", "체크한 장바구니 아이템정보가 넘어오지 않았습니다.");
+                map.put("result", 0L);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
