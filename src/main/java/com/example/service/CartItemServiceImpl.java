@@ -68,4 +68,9 @@ public class CartItemServiceImpl implements CartItemService{
         ciRepository.deleteAllByIdInBatch(chks);
     }
 
+    @Override
+    public List<Map<String, Object>> payMemberProductList(List<Long> chks) {
+        return ciMapper.selectPaymentInfo(chks);
+    }
+
 }

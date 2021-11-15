@@ -34,4 +34,7 @@ public interface CartItemService {
     // 회원 장바구니 아이템 선택삭제
     public void deleteCartItemSome(List<Long> chks);
 
+    // 결제 시 나올 아이템 정보 및 회원 정보
+    public List<Map<String, Object>> payMemberProductList(List<Long> chks);
+
 }

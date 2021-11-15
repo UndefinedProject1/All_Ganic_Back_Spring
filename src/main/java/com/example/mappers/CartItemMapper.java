@@ -53,4 +53,15 @@ public interface CartItemMapper {
         "DELETE CARTITEM WHERE CART=#{code}"
     })
     public int deleteCartItemAll(@Param("code")long code);
+
+    // 결제 시 멤버, 물품 정보 넘기기(collection이 변수 명, item과 {}에 들어가는건 동일한 임시 변수명 )
+    @Select({
+        "<script>",
+            "SELECT * FROM PAYMENTLIST ", 
+            "WHERE CARTITEMCODE IN ",
+            " <foreach collection='chks' item='list' open='(' close=')' separator=','> ",
+            "#{list}",
+            " </foreach>",
+        "</script>"})
+	public List<Map<String, Object>> selectPaymentInfo(@Param("chks") List<Long> chks);
 }

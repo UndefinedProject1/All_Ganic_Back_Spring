@@ -14,6 +14,8 @@ import com.example.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -184,6 +186,28 @@ public class CartController {
             }
             ciService.deleteCartItemSome(chks);
             map.put("result", 1L);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+    
+	// 결제 시 나타나는 정보들 
+    // 127.0.0.1:8080/REST/api/cartitem/payment
+    // chks는 체크해서 넘긴 장바구니 코드들
+	@GetMapping(value = "/cartitem/payment")
+	public Map<String, Object> cartitemPayGET(@RequestParam(name = "chks") List<Long> chks) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            if(chks.size() != 0){
+                map.put("list",ciService.payMemberProductList(chks)); 
+                map.put("cartitem", chks);
+                map.put("result", 1L);
+            }
+            map.put("state", "체크한 장바구니 아이템정보가 넘어오지 않았습니다.");
+            map.put("result", 0L);
         }
         catch (Exception e) {
             e.printStackTrace();

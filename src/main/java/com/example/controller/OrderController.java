@@ -177,8 +177,8 @@ public class OrderController {
         Map<String, Object> map = new HashMap<>();
         try {
             System.out.println(body);
-            imp_uid = (String) body.get("imp_uid"); // 원래 비밀번호
-            merchant_uid = (String) body.get("merchant_uid"); // 새비밀번호
+            imp_uid = (String) body.get("imp_uid"); // 결제번호
+            merchant_uid = (String) body.get("merchant_uid"); // 주문번호
 			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
 
             List<?> product = (List<?>) body.get("product"); // 물품 코드
