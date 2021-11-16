@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -156,6 +157,35 @@ public class MemberController {
                 member1.setPost(member.getPost());
                 member1.setAddress(member.getAddress());
                 member1.setDetaileaddress(member.getDetaileaddress());
+                mServiece.updateMember(member1);
+                map.put("result", 1L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 우편주소 수정
+    // 127.0.0.1:8080/REST/api/member/address/update
+    @PutMapping(value = "/member/address/update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> addressUpdate(@RequestBody Map<String, Object> body,
+            @RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            String address = (String) body.get("address"); 
+            Long post = (Long) body.get("post");
+            String detaileaddress = (String) body.get("detailaddress");
+
+            // 토큰과 사용자 아이디 일치 시점
+            if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+                // 아이디를 이용해 기존 정보 가져오기
+                Member member1 = mServiece.getMemberOne(useremail);
+                member1.setPost(post);
+                member1.setAddress(address);
+                member1.setDetaileaddress(detaileaddress);
                 mServiece.updateMember(member1);
                 map.put("result", 1L);
             }
