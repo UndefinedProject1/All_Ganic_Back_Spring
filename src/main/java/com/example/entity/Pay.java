@@ -35,19 +35,4 @@ public class  Pay{
     @Column(name = "MERCHANT_UID", updatable = false)
     private String merchant_uid = null;
 
-    @Column(name = "ORDERQUANTITY", updatable = false)
-    private String orderquantity = null;
-
-    @CreationTimestamp
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    @Column(updatable = false, name = "ORDERDATE")
-    private Date orderdate = null;
-
-    @OneToMany(mappedBy = "pay")
-	private List<Product> products = new ArrayList<>();
-
-    @ManyToOne // 회원 정보
-    @JoinColumn(updatable = false, name = "MEMBER")
-    private Member member;
-
 }

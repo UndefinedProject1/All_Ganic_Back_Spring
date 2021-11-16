@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
 import com.example.entity.Pay;
+import com.example.entity.PayHistory;
 import com.example.entity.Product;
 import com.example.jwt.JwtUtil;
 import com.example.request.AuthData;
@@ -20,7 +21,8 @@ import com.example.response.IamportResponse;
 import com.example.response.Payment;
 import com.example.service.CartItemService;
 import com.example.service.MemberServiece;
-import com.example.service.OrderService;
+import com.example.service.PayHistoryService;
+import com.example.service.PayService;
 import com.example.service.ProductService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,15 +38,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api")
-public class OrderController {
+public class PayController {
     private static final String API_URL = "https://api.iamport.kr";
 	private String api_key = "6255883224837328";
 	private String api_secret = "dc31f716c19acc3805bb973e1a66dbc8a98047636f628621dc4b6397133db4930c424e2c087e4af9";
@@ -58,7 +62,10 @@ public class OrderController {
     CartItemService ciService;
 
 	@Autowired
-    OrderService oService;
+    PayService oService;
+
+	@Autowired
+    PayHistoryService phService;
 
 	@Autowired
     MemberServiece mService;
@@ -181,28 +188,6 @@ public class OrderController {
             merchant_uid = (String) body.get("merchant_uid"); // 주문번호
 			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
 
-            List<?> product = (List<?>) body.get("product"); // 물품 코드
-            List<Product> list = new ArrayList<>(); // 물품코드를 다시 넣어주기 위한 새로운 변수선언
-            for(int i=0; i<product.size(); i++){
-                String st = String.valueOf(product.get(i));
-				Long s = Long.valueOf(st);
-                list.add(pService.selectProduct(s));
-                System.out.println(s);
-            }
-
-			List<?> chks = (List<?>) body.get("chks"); // 결제한 장바구니아이템 코드
-            List<Long> item = new ArrayList<>(); // 장바구니아이템코드를 다시 넣어주기 위한 새로운 변수선언
-			String st = new String(); // 수량 저장
-            for(int i=0; i<chks.size(); i++){
-				String sb = String.valueOf(chks.get(i));
-                Long s = Long.valueOf(sb); 
-                item.add(s);
-				Long q = ciService.selectCartQuantity(s); // 코드를 통해 수량을 출력해 String으로 변환해서 입력
-				st += String.valueOf(q);
-				st += ",";
-                System.out.println(s);
-            }
-
             System.out.println("imp :" + imp_uid + "merchant :" + merchant_uid);
             if(imp_uid != null && merchant_uid != null && useremail != null){
                 IamportResponse<Payment> pay = paymentByImpUid(imp_uid); // 토큰을 통해 아임포트 서버에 접속하여 결제 정보 추출
@@ -212,10 +197,29 @@ public class OrderController {
 					Pay order = new Pay();
 					order.setImp_uid(imp_uid);
 					order.setMerchant_uid(merchant_uid);
-					order.setMember(mService.getMemberOne(useremail)); // 회원
-					order.setProducts(list); // 물품
-					order.setOrderquantity(st); // 수량
 					oService.insertPayment(order); 
+
+					List<?> chks = (List<?>) body.get("chks"); // 결제한 장바구니아이템 코드
+					List<?> product = (List<?>) body.get("product"); // 물품 코드를 받기 위한 반복문
+					List<Long> item = new ArrayList<>(); // 장바구니아이템코드를 삭제를 위해 다시 넣어주는 변수선언
+
+					for(int i=0; i<chks.size(); i++){ // 배열 크기만큼 반복문을 통해 결제내역을 저장
+						PayHistory pHistory = new PayHistory(); // 결제 내역에 동일한 정보들 미리 세팅
+						pHistory.setMember(mService.getMemberOne(useremail));
+						pHistory.setPay(order);
+
+						String sb = String.valueOf(chks.get(i));
+						Long s = Long.valueOf(sb); 
+						item.add(s);
+						Long q = ciService.selectCartQuantity(s); // 코드를 통해 수량을 출력해 String으로 변환해서 입력
+						pHistory.setOrderquantity(q);
+
+						String s1 = String.valueOf(product.get(i));
+						Long s2 = Long.valueOf(s1); // 물품코드
+						System.out.println(s2);
+						pHistory.setProduct(pService.selectProduct(s2));
+						phService.insertPayHistory(pHistory); // 반복문을 통해 n개 저장
+					}
 
 					ciService.deleteCartItemSome(item); // 장바구니아이템 삭제
 					map.put("state", "결제가 완료되었습니다.");
@@ -237,21 +241,47 @@ public class OrderController {
         return map;
     }
 
-	// // 주문내역 확인하기(아임포트 서버에 접속하여 물품정보등 출력)
-    // // 127.0.0.1:8080/REST/api/payments/list
-    // @RequestMapping(value="/payments/list", method=RequestMethod.GET)
-    // public Map<String, Object> productReviewListGET(@RequestHeader("token") String token) {
-    //     Map<String, Object> map = new HashMap<String, Object>();
-    //     try{
-	// 		IamportResponse<Payment> pay = paymentByImpUid(imp_uid);
+	// 결제내역확인을 통해 리뷰작성가능한지 확인
+    // 127.0.0.1:8080/REST/api/payments/paylist/check?no=14
+    @GetMapping(value="/payments/paylist/check")
+    public int payhistoryCheckListGET(@RequestParam("no") Long no, @RequestHeader("token") String token) {
+        int i;
+        try{
+			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+			int check = phService.checkPayHistory(no, useremail);
+			if(check >= 1){
+				i = 1;
+			}
+			else i = 0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            i = e.hashCode();
+        }
+        return i;
+    }
 
-    //         map.put("list", list);
-    //         map.put("result", 1L);
-    //     }
-    //     catch (Exception e) {
-    //         e.printStackTrace();
-    //         map.put("result", e.hashCode());
-    //     }
-    //     return map;
-    // }
+	// 주문내역 확인하기
+    // 127.0.0.1:8080/REST/api/payments/member/list
+    @GetMapping(value="/payments/member/list")
+    public Map<String, Object> productReviewListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+			List<Map<String, Object>> list = phService.selectMemberPayList(useremail);
+			if(list.size() != 0){
+				map.put("list", list);
+				map.put("result", 1L);
+			}
+			else{
+				map.put("state", "주문내역이 없습니다.");
+				map.put("result", 0L);
+			}
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 }

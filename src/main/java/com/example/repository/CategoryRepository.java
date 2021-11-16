@@ -8,7 +8,7 @@ import com.example.entity.CategoryProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface CategoryRepository extends JpaRepository<Category, Long>{
+public interface CategoryRepository extends JpaRepository<Category, String>{
     
     //카테고리 목록
     // @Query(value = "SELECT * FROM CATEGORY", nativeQuery = true)

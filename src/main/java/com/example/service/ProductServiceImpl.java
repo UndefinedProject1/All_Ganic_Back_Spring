@@ -9,6 +9,7 @@ import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
 import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
+import com.example.mappers.ProductMapper;
 import com.example.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class ProductServiceImpl implements ProductService{
 
     @Autowired
     ProductRepository pRepository;
+
+    @Autowired
+    ProductMapper pMapper;
 
     //제품 추가
     public void insertProduct(Product product){

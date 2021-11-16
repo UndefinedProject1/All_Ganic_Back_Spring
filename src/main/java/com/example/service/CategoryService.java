@@ -11,7 +11,7 @@ public interface CategoryService {
     public void insertCategory(Category category);
 
     //카테고리 찾기
-    public Category selectCategory(long cno);
+    public Category selectCategory(String cno);
 
     //카테고리 전체 조회
     public List<CategoryProjection> selectCategoryList();

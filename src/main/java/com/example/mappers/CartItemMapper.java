@@ -46,7 +46,7 @@ public interface CartItemMapper {
             "ORDER BY PRODUCT.PRODUCTNAME ASC",
         "</script>"
     })
-    public List<Map<String, Object>> selectMemberList(String email);
+    public List<Map<String, Object>> selectMemberList(@Param("email") String email);
 
     // 회원 장바구니 전체삭제
     @Delete({

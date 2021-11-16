@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     //카테고리 찾기
     @Override
-    public Category selectCategory(long cno) {
+    public Category selectCategory(String cno) {
         Optional<Category> category = cRepository.findById(cno);
         return category.orElse(null);
     }

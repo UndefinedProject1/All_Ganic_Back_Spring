@@ -54,4 +54,5 @@ public interface ProductService {
 
     // 브랜드별 물품 개수
     public List<BrandCountProjection> selectBrandCount();
+
 }
