@@ -184,7 +184,8 @@ public class OrderController {
             List<?> product = (List<?>) body.get("product"); // 물품 코드
             List<Product> list = new ArrayList<>(); // 물품코드를 다시 넣어주기 위한 새로운 변수선언
             for(int i=0; i<product.size(); i++){
-                Long s = (Long) product.get(i);
+                String st = String.valueOf(product.get(i));
+				Long s = Long.valueOf(st);
                 list.add(pService.selectProduct(s));
                 System.out.println(s);
             }
@@ -193,7 +194,8 @@ public class OrderController {
             List<Long> item = new ArrayList<>(); // 장바구니아이템코드를 다시 넣어주기 위한 새로운 변수선언
 			String st = new String(); // 수량 저장
             for(int i=0; i<chks.size(); i++){
-                Long s = (Long) chks.get(i);
+				String sb = String.valueOf(chks.get(i));
+                Long s = Long.valueOf(sb); 
                 item.add(s);
 				Long q = ciService.selectCartQuantity(s); // 코드를 통해 수량을 출력해 String으로 변환해서 입력
 				st += String.valueOf(q);
