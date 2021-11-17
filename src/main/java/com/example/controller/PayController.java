@@ -253,10 +253,10 @@ public class PayController {
 			Boolean review = (Boolean)check.get("REVIEWCHECK");
 			// System.out.println(count);
 			// System.out.println(review);
-			if(count == 1 && review == true){
+			if(count >= 1 && review == true){
 				i = 2; // 이미 작성한 리뷰가 있습니다
 			}
-			else if(count == 1 && review == false){
+			else if(count >= 1 && review == false){
 				i = 1; // 리뷰 작성 가능
 			}
 			else{
