@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,23 @@ public class MemberController {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @GetMapping(value = "/validtoken")
+    public int validTokenGET(@RequestHeader("token") String token) {
+        int ret;
+        try {
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            if(jwtUtil.validateToken(token, useremail)){
+                ret = 1;
+            }
+            else{
+                ret = 0;
+            }
+        } catch (Exception e) {
+            ret = e.hashCode();
+        }
+        return ret;
+    }
 
     // 회원가입
     // 127.0.0.1:8080/REST/api/member/join

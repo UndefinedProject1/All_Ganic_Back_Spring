@@ -36,5 +36,11 @@ public class PayHistoryServiceImpl implements PayHistoryService{
     public List<Map<String, Object>> selectMemberPayList(String email) {
         return phMapper.selectPayMemberList(email);
     }
+
+    // 리뷰 작성 시 reviewcheck 다 true로 변경
+    @Override
+    public void updateReview(Long no, String email) {
+        phMapper.updateReview(no, email);
+    }
     
 }

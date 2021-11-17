@@ -9,6 +9,7 @@ import com.example.entity.Review;
 import com.example.entity.ReviewProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberServiece;
+import com.example.service.PayHistoryService;
 import com.example.service.ProductService;
 import com.example.service.ReviewService;
 
@@ -39,6 +40,9 @@ public class ReviewController {
     ProductService pService;
 
     @Autowired
+    PayHistoryService phService;
+
+    @Autowired
     JwtUtil jwtUtil;
 
     // 리뷰 작성
@@ -60,6 +64,8 @@ public class ReviewController {
                 review.setReviewimgname(file.getOriginalFilename());
                 review.setReviewimgtype(file.getContentType());
                 rService.insertReview(review);
+
+                phService.updateReview(no, useremail); // 리뷰 작성 시 결제내역의 리뷰확인에 true로 변경해주기
                 map.put("result", 1L);
             }else{
                 map.put("result", 0L);

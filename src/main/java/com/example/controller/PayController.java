@@ -250,9 +250,7 @@ public class PayController {
 			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
 			Map<String, Object> check = phService.checkPayHistory(no, useremail);
 			Long count = (Long)check.get("COUNT(MEMBER)");
-			Boolean review = (Boolean)check.get("REVIEWCHECK");
-			// System.out.println(count);
-			// System.out.println(review);
+			Boolean review = (Boolean)check.get("MAX(REVIEWCHECK)");
 			if(count >= 1 && review == true){
 				i = 2; // 이미 작성한 리뷰가 있습니다
 			}

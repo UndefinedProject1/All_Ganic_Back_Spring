@@ -18,4 +18,7 @@ public interface PayHistoryService {
 
     // 회원별 주문내역
     public List<Map<String, Object>> selectMemberPayList(String email);
+
+    // 리뷰 작성 시 reviewcheck 다 true로 변경(no는 물품코드, email은 회원정보)
+    public void updateReview(Long no, String email);
 }

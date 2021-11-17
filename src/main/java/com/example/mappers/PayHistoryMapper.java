@@ -6,13 +6,14 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface PayHistoryMapper {
     
     // 회원과 물품정보에 따른 결제내역 조회(리뷰작성가능한지)
     @Select({
-            "SELECT COUNT(MEMBER), REVIEWCHECK FROM PAYHISTORYLIST  ", 
+            "SELECT COUNT(MEMBER), max(REVIEWCHECK) FROM PAYHISTORYLIST  ", 
             "WHERE MEMBER=#{email} AND PRODUCTCODE=#{no}",
     })
 	public Map<String, Object> selectPayHistoryCheck(@Param("no") Long no, @Param("email") String email);
@@ -25,4 +26,10 @@ public interface PayHistoryMapper {
         "ORDER BY ORDERDATE DESC"
     })
     public List<Map<String, Object>> selectPayMemberList(@Param("email") String email);
+
+    // 리뷰 작성 시 결제내역의 리뷰확인 해당하는거 다 true로 변경해주기
+    @Update({
+        "UPDATE PAYHISTORY SET REVIEWCHECK=TRUE WHERE PRODUCT=#{no} AND MEMBER=#{email}"
+    })
+    public void updateReview(@Param("no") Long no, @Param("email") String email);
 }
