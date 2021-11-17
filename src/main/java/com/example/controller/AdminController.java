@@ -348,4 +348,12 @@ public class AdminController {
         }
         return map;
     }
+
+    // 매일 그날과 이전 5일간의 날짜와 payhistory개수를 리스트로 출력
+
+
+    // 브랜드별 점유율
+    
+
+    // 브랜드별 및 카테고리 별 판매량
 }

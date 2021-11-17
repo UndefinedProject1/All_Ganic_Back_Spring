@@ -270,8 +270,9 @@ public class MemberController {
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
                 // 아이디를 이용해 기존 정보 가져오기
                 Member member = mServiece.getMemberOne(useremail);
-                // 기존암호와 전달된 암호가 같으면 새로운 암호로 변경
+                // 기존암호와 전달된 암호가 같으면 삭제한다
                 if (bcpe.matches(userpw, member.getUserpw())) {
+                    
                     mServiece.deleteMember(useremail);
                     map.put("result", 1L);
                 }
