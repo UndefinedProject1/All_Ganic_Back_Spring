@@ -42,6 +42,9 @@ public class PayHistory {
     @Column(updatable = false, name = "ORDERDATE")
     private Date orderdate = null;
 
+    @Column(name = "REVIEWCHECK") // 리뷰 작성여부
+    private boolean reviewcheck = false;
+
     @ManyToOne // 결제 정보
     @JoinColumn(updatable = false, name = "PAY")
     private Pay pay;
@@ -53,4 +56,5 @@ public class PayHistory {
     @ManyToOne // 물품 정보
     @JoinColumn(updatable = false, name = "PRODUCT")
     private Product product;
+
 }
