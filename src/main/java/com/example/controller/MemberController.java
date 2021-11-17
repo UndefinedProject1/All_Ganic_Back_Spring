@@ -39,7 +39,7 @@ public class MemberController {
         int ret;
         try {
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-            if(jwtUtil.validateToken(token, useremail)){
+            if(jwtUtil.validateToken(token.substring(7), useremail)){
                 ret = 1;
             }
             else{
