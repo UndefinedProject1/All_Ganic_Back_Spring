@@ -276,7 +276,7 @@ public class AdminController {
     public Map<String, Object> subimgUpdate(
         @RequestParam("file") MultipartFile[] files,
         @RequestParam(name = "product")long no,
-        @RequestParam(name = "subcode")long subcode,
+        @RequestParam(name = "subcode")long[] subcode,
         @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
         
@@ -287,7 +287,7 @@ public class AdminController {
             for(int i=0; i<files.length; i++){
                 SubImage subImage2 = new SubImage();
                 subImage2.setProduct(product);
-                subImage2.setSubcode(subcode);
+                subImage2.setSubcode(subcode[i]);
                 subImage2.setImage(files[i].getBytes());
                 subImage2.setImagename(files[i].getOriginalFilename());
                 subImage2.setImagetype(files[i].getContentType());
