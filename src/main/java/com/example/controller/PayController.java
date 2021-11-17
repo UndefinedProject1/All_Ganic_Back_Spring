@@ -248,11 +248,21 @@ public class PayController {
         int i;
         try{
 			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-			int check = phService.checkPayHistory(no, useremail);
-			if(check >= 1){
-				i = 1;
+			Map<String, Object> check = phService.checkPayHistory(no, useremail);
+			Long count = (Long)check.get("COUNT(MEMBER)");
+			Boolean review = (Boolean)check.get("REVIEWCHECK");
+			// System.out.println(count);
+			// System.out.println(review);
+			if(count == 1 && review == true){
+				i = 2; // 이미 작성한 리뷰가 있습니다
 			}
-			else i = 0;
+			else if(count == 1 && review == false){
+				i = 1; // 리뷰 작성 가능
+			}
+			else{
+				i = 0; // 리뷰작성 불가
+			}
+			
         }
         catch (Exception e) {
             e.printStackTrace();

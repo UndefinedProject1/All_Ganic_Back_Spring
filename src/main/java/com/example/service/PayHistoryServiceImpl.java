@@ -27,7 +27,7 @@ public class PayHistoryServiceImpl implements PayHistoryService{
 
     // 결제내역여부에 따라 리뷰작성가능
     @Override
-    public int checkPayHistory(Long no, String email) {
+    public Map<String, Object> checkPayHistory(Long no, String email) {
         return phMapper.selectPayHistoryCheck(no, email);
     }
 

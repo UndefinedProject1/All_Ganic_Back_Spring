@@ -14,7 +14,7 @@ public interface PayHistoryService {
     public void insertPayHistory(PayHistory payhistory);
 
     // 물품페이지 리뷰작성할 수 있는지 확인(no는 물품코드, email은 회원정보)
-    public int checkPayHistory(Long no, String email);
+    public Map<String, Object> checkPayHistory(Long no, String email);
 
     // 회원별 주문내역
     public List<Map<String, Object>> selectMemberPayList(String email);
