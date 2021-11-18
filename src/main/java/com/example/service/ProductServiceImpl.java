@@ -1,6 +1,8 @@
 package com.example.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
@@ -109,6 +111,36 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<BrandCountProjection> selectBrandCount() {
         return pRepository.findGroupByProductWithNativeQuery();
+    }
+
+    // 브랜드별 점유율
+    @Override
+    public List<Map<String, Object>> selectBrandShare() {
+        return pMapper.selectBrandShare();
+    }
+
+    // 브랜드별 판매량
+    @Override
+    public List<Map<String, Object>> selectBrandSell() {
+        return pMapper.selectBrandSell();
+    }
+
+    // 카테고리별 판매량
+    @Override
+    public List<Map<String, Object>> selectCateSell() {
+        return pMapper.selectCateSell();
+    }
+
+    // 판매량 조회를 위한 날짜 업데이트
+    @Override
+    public int updateDate(long no, Date date) {
+        return pMapper.InsertDate(no, date);        
+    }
+
+    // 최근 5일간의 판매량조회
+    @Override
+    public List<Map<String, Object>> selectSaleRate() {
+        return pMapper.selectSalesRate();
     }
 
 }

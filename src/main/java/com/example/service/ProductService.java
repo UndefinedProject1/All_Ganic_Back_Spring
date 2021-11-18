@@ -1,6 +1,8 @@
 package com.example.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.example.entity.BrandCountProjection;
 import com.example.entity.Product;
@@ -54,5 +56,20 @@ public interface ProductService {
 
     // 브랜드별 물품 개수
     public List<BrandCountProjection> selectBrandCount();
+
+    // 판매량조회를 위한 날짜테이블
+    public int updateDate(long no, Date date);
+
+    // 최근5일간의 판매량 조회
+    public List<Map<String, Object>> selectSaleRate();
+
+    // 브랜드별 점유율
+    public List<Map<String, Object>> selectBrandShare();
+
+    // 브랜드별 판매량
+    public List<Map<String, Object>> selectBrandSell();
+
+    // 카테고리별 판매량
+    public List<Map<String, Object>> selectCateSell();
 
 }

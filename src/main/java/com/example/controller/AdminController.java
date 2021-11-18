@@ -3,7 +3,9 @@ package com.example.controller;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -350,10 +353,77 @@ public class AdminController {
     }
 
     // 매일 그날과 이전 5일간의 날짜와 payhistory개수를 리스트로 출력
+    // 127.0.0.1:8080/REST/api/admin/payhistory/list
+    @GetMapping(value = "/admin/payhistory/list")
+    public Map<String, Object> payhistoryListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date now1 = new Date();
 
+            for(int i=0; i<5; i++){
+                Calendar cal = Calendar.getInstance(); 
+                cal.setTime(now1);
+                cal.add(Calendar.DATE, -i);
+                Date date = df.parse(df.format(cal.getTime()));
+                pService.updateDate(i, date);
+            }
+
+            List<Map<String, Object>> list = pService.selectSaleRate();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 
     // 브랜드별 점유율
-    
+    // 127.0.0.1:8080/REST/api/admin/brand/share
+    @GetMapping(value = "/admin/brand/share")
+    public Map<String, Object> brandShareGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<Map<String, Object>> list = pService.selectBrandShare();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 
-    // 브랜드별 및 카테고리 별 판매량
+    // 브랜드별 판매량
+    // 127.0.0.1:8080/REST/api/admin/brand/sell
+    @GetMapping(value = "/admin/brand/sell")
+    public Map<String, Object> brandSellGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<Map<String, Object>> list = pService.selectBrandSell();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 카테고리별 판매량
+    // 127.0.0.1:8080/REST/api/admin/cate/sell
+    @GetMapping(value = "/admin/cate/sell")
+    public Map<String, Object> cateSellGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<Map<String, Object>> list = pService.selectCateSell();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
 }
