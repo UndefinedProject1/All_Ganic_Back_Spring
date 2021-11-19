@@ -24,7 +24,7 @@ public interface PayHistoryMapper {
     // 회원에 따른 주문내역리스트 출력
     @Select({
         "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME, ",
-        "ORDERQUANTITY, ORDERDATE, MERCHANT_UID ",
+        "ORDERQUANTITY, to_char(ORDERDATE,'YYYY-MM-DD') AS ORDERDATE, MERCHANT_UID ",
         " FROM PAYHISTORYLIST  WHERE MEMBER=#{email}",
         "ORDER BY ORDERDATE DESC"
     })
