@@ -50,14 +50,14 @@ public interface ProductMapper {
 
     // 브랜드별 누적 판매량
     @Select({
-        "SELECT PRODUCTNAME, COUNT(*) FROM PAYHISTORYLIST ",
+        "SELECT BRANDNAME, (COUNT(*)) AS CNT FROM PAYHISTORYLIST ",
         "GROUP BY PRODUCTCODE"
     })
     public List<Map<String, Object>> selectBrandSell();
 
     // 카테고리별 누적 판매량
     @Select({
-        "SELECT CATEGORYNAME, COUNT(*) FROM PAYHISTORYLIST ",
+        "SELECT CATEGORYNAME, (COUNT(*)) AS CNT FROM PAYHISTORYLIST ",
         "GROUP BY CATEGORYCODE"
     })
     public List<Map<String, Object>> selectCateSell();
