@@ -3,7 +3,9 @@ package com.example.mappers;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
@@ -47,4 +49,10 @@ public interface QuestionMapper {
         "</script>"
     })
     public List<Map<String, Object>> selectMemberList(String email);
+
+    // 물품 삭제 시 관련 문의 삭제
+    @Delete({
+        "DELETE FROM QUESTION WHERE PRODUCT=#{no}"
+    })
+    public int deleteSubImg(@Param("no") long no);
 }

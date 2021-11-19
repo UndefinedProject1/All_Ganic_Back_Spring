@@ -18,6 +18,7 @@ import com.example.entity.Question;
 import com.example.entity.SubImage;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
+import com.example.service.CartItemService;
 import com.example.service.CategoryService;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
@@ -29,6 +30,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +53,9 @@ public class AdminController {
 
     @Autowired
     CategoryService cService;
+
+    @Autowired
+    CartItemService ciService;
 
     @Autowired
     MemberServiece mServiece;
@@ -179,7 +184,6 @@ public class AdminController {
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            System.out.println(product.toString());
             product.setImage(file.getBytes());
             product.setImagename(file.getOriginalFilename());
             product.setImagetype(file.getContentType());
@@ -196,13 +200,16 @@ public class AdminController {
     //물품 삭제
     //127.0.0.1:8080/REST/api/admin/product_delete
     // {"productcode":33}
-    @RequestMapping(value = "/admin/product_delete", method = {
-            RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productDelete(@RequestBody Product product, @RequestHeader("token") String token) {
+    @DeleteMapping(value = "/admin/product_delete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> productDelete(@RequestParam("no") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
-            System.out.println(product.getProductcode());
-            pService.deleteProduct(product.getProductcode());
+            System.out.println(no);
+            
+            int a = pService.updateMainImg(no);
+            int b = pService.deleteSubImg(no);
+            int c = ciService.deleteProductCartItem(no);
+            
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();

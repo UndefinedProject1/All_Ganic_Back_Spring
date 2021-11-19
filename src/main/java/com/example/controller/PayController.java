@@ -11,14 +11,17 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import com.example.entity.CancelHistory;
 import com.example.entity.Pay;
 import com.example.entity.PayHistory;
 import com.example.entity.Product;
 import com.example.jwt.JwtUtil;
 import com.example.request.AuthData;
+import com.example.request.CancelData;
 import com.example.response.AccessToken;
 import com.example.response.IamportResponse;
 import com.example.response.Payment;
+import com.example.service.CancelService;
 import com.example.service.CartItemService;
 import com.example.service.MemberServiece;
 import com.example.service.PayHistoryService;
@@ -39,10 +42,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,6 +69,9 @@ public class PayController {
 
 	@Autowired
     PayHistoryService phService;
+
+	@Autowired
+    CancelService cService;
 
 	@Autowired
     MemberServiece mService;
@@ -95,7 +101,7 @@ public class PayController {
 			
 			if (response.getStatusLine().getStatusCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
-				   + response.getStatusLine().getStatusCode());
+				+ response.getStatusLine().getStatusCode());
 			}
 			
 			ResponseHandler<String> handler = new BasicResponseHandler();
@@ -138,7 +144,7 @@ public class PayController {
 
 			if (response.getStatusLine().getStatusCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
-				   + response.getStatusLine().getStatusCode());
+				+ response.getStatusLine().getStatusCode());
 			}
 			
 			ResponseHandler<String> handler = new BasicResponseHandler();
@@ -146,14 +152,14 @@ public class PayController {
 
 			return body;
 			
-		  } catch (ClientProtocolException e) {
+		} catch (ClientProtocolException e) {
 
-			e.printStackTrace();
+		e.printStackTrace();
 
-		  } catch (IOException e) {
+		} catch (IOException e) {
 
-			e.printStackTrace();
-		  }
+		e.printStackTrace();
+		}
 		
 		return null;
 	}
@@ -174,12 +180,63 @@ public class PayController {
 		}		
 		return null;		
 	}	
+
+	// 환불을 위한 API작업
+	private String postRequest(String path, String token, StringEntity postData) throws URISyntaxException{
+		
+		try {
+			
+			HttpPost postRequest = new HttpPost(API_URL+path);
+			postRequest.setHeader("Accept", "application/json");
+			postRequest.setHeader("Connection","keep-alive");
+			postRequest.setHeader("Content-Type", "application/json");
+			postRequest.addHeader("Authorization", token);
+
+			postRequest.setEntity(postData);
+					
+			HttpResponse response = client.execute(postRequest);
+			
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+			+ response.getStatusLine().getStatusCode());
+			}
+			
+			ResponseHandler<String> handler = new BasicResponseHandler();
+			String body = handler.handleResponse(response);
+			
+			return body;
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// 환불
+	public IamportResponse<Payment> cancelPayment(CancelData cancelData) throws Exception {
+		
+		String token = this.getToken();
+		
+		if(token != null){
+			String cancelJsonData = gson.toJson(cancelData);
+			StringEntity data = new StringEntity(cancelJsonData);
+			
+			String response = this.postRequest("/payments/cancel", token, data);
+						
+			Type listType = new TypeToken<IamportResponse<Payment>>(){}.getType();
+			IamportResponse<Payment> payment = gson.fromJson(response, listType);
+			
+			return payment;
+		}		
+		return null;
+	}	
 	
     // 결제 127.0.0.1:8080/REST/api/payments/complete
     // { imp_uid : 161616133(결제 번호), merchant_uid : k1234565(주문번호), chks : {1,2,3} }
     // 결제함과 동시에 결제한 아이템 장바구니에서 삭제
-    @RequestMapping(value = "/payments/complete", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/payments/complete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> paymentPost(@RequestBody Map<String, Object> body, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -193,15 +250,16 @@ public class PayController {
                 IamportResponse<Payment> pay = paymentByImpUid(imp_uid); // 토큰을 통해 아임포트 서버에 접속하여 결제 정보 추출
 				Payment pay1 = pay.getResponse();
 				Long payamount = pay1.getAmount();
-				if(payamount == 1000){ // 고정된 금액이 아니라면 db에 접속해 진짜 금액과 비교해야함
+
+				List<?> chks = (List<?>) body.get("chks"); // 결제한 장바구니아이템 코드
+				List<?> product = (List<?>) body.get("product"); // 물품 코드를 받기 위한 반복문
+				List<Long> item = new ArrayList<>(); // 장바구니아이템코드를 삭제를 위해 다시 넣어주는 변수선언
+
+				if(payamount == product.size()*100){ // 고정된 금액이 아니라면 db에 접속해 진짜 금액과 비교해야함
 					Pay order = new Pay();
 					order.setImp_uid(imp_uid);
 					order.setMerchant_uid(merchant_uid);
 					oService.insertPayment(order); 
-
-					List<?> chks = (List<?>) body.get("chks"); // 결제한 장바구니아이템 코드
-					List<?> product = (List<?>) body.get("product"); // 물품 코드를 받기 위한 반복문
-					List<Long> item = new ArrayList<>(); // 장바구니아이템코드를 삭제를 위해 다시 넣어주는 변수선언
 
 					for(int i=0; i<chks.size(); i++){ // 배열 크기만큼 반복문을 통해 결제내역을 저장
 						PayHistory pHistory = new PayHistory(); // 결제 내역에 동일한 정보들 미리 세팅
@@ -240,6 +298,42 @@ public class PayController {
         }
         return map;
     }
+
+	// 환불하기
+	// 127.0.0.1:8080/REST/api/payments/cancel
+	@PostMapping(value = "/payments/cancel")
+	public Map<String, Object> cancelPost(@RequestBody Map<String, Object> body, @RequestHeader("token") String token) {
+		Map<String, Object> map = new HashMap<>();
+		try{
+            merchant_uid = (String) body.get("merchant_uid"); // 주문번호
+			long code = Long.valueOf((int)body.get("product")); // 물품번호
+			long quantity = Long.valueOf((int)body.get("quantity")); // 수량
+			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+			CancelData cancel1 = new CancelData(merchant_uid, false, 100); // true면 imp_uid, false면 merchant를 unique key로 한다.
+
+			IamportResponse<Payment> cancelpayment = cancelPayment(cancel1);
+			System.out.println(cancelpayment.getMessage());
+			System.out.println(cancelpayment.getCode());
+			if(cancelpayment.getCode() == 0){
+				Pay pay = oService.selectPay(merchant_uid, code);
+				System.out.println(pay);
+
+				phService.deletePayHistory(merchant_uid, code);
+				CancelHistory cancel = new CancelHistory();
+				cancel.setCancelquantity(quantity);
+				cancel.setPay(pay);
+				cancel.setMember(mService.getMemberOne(useremail));
+				cancel.setProduct(pService.selectProduct(code)); 
+				cService.insertCancel(cancel);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", e.hashCode());
+		}
+		return map;
+	}
+
 
 	// 결제내역확인을 통해 리뷰작성가능한지 확인
     // 127.0.0.1:8080/REST/api/payments/paylist/check?no=14

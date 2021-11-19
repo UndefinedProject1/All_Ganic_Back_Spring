@@ -3,6 +3,9 @@ package com.example.mappers;
 import java.util.List;
 import java.util.Map;
 
+import com.example.entity.Pay;
+
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -32,4 +35,12 @@ public interface PayHistoryMapper {
         "UPDATE PAYHISTORY SET REVIEWCHECK=TRUE WHERE PRODUCT=#{no} AND MEMBER=#{email}"
     })
     public void updateReview(@Param("no") Long no, @Param("email") String email);
+
+    // 환불 시 주문내역의 정보 삭제
+    @Delete({
+        "DELETE FROM PAYHISTORY WHERE PAY=(",
+        "SELECT IMP_UID FROM PAY WHERE MERCHANT_UID=#{id})",
+        "AND PRODUCT=#{code}"
+    })
+    public void deletePayHistory(@Param("id") String id, @Param("code") long code);
 }

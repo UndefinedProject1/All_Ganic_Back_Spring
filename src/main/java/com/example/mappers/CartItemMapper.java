@@ -64,4 +64,10 @@ public interface CartItemMapper {
             " </foreach>",
         "</script>"})
 	public List<Map<String, Object>> selectPaymentInfo(@Param("chks") List<Long> chks);
+
+    // 물품 삭제 시 장바구니에 담긴 것 삭제
+    @Delete({
+        "DELETE FROM CARTITEM WHERE PRODUCT=#{no}"
+    })
+    public int deleteProductCartItem(@Param("no") long no);
 }

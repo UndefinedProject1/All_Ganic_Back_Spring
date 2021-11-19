@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.List;
 import java.util.Map;
 
+import com.example.entity.Pay;
 import com.example.entity.PayHistory;
 import com.example.mappers.PayHistoryMapper;
 import com.example.repository.PayHistoryRepository;
@@ -41,6 +42,12 @@ public class PayHistoryServiceImpl implements PayHistoryService{
     @Override
     public void updateReview(Long no, String email) {
         phMapper.updateReview(no, email);
+    }
+
+    // 환불 시 결제내역 삭제
+    @Override
+    public void deletePayHistory(String id, Long code) {
+        phMapper.deletePayHistory(id, code);
     }
     
 }

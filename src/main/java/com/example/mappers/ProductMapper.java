@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -11,6 +12,18 @@ import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface ProductMapper {
+
+    // 물품삭제 시 메인이미지 null로 변환
+    @Update({
+        "UPDATE PRODUCT SET PRODUCTIMAGE=NULL, IMAGENAME=NULL, IMAGETYPE=NULL WHERE PRODUCTCODE=#{no}"
+    })
+    public int updateMain(@Param("no") long no);
+
+    // 물품 삭제 시 서브이미지 삭제
+    @Delete({
+        "DELETE FROM SUBIMAGE WHERE PRODUCT=#{no}"
+    })
+    public int deleteSubImg(@Param("no") long no);
 
     // 판매량조회를 위한 날짜 테이블 
     @Update({

@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.List;
 import java.util.Map;
 
+import com.example.entity.Pay;
 import com.example.entity.PayHistory;
 
 import org.springframework.stereotype.Service;
@@ -21,4 +22,7 @@ public interface PayHistoryService {
 
     // 리뷰 작성 시 reviewcheck 다 true로 변경(no는 물품코드, email은 회원정보)
     public void updateReview(Long no, String email);
+
+    // 환불 시 주문내역에서 삭제
+    public void deletePayHistory(String id, Long code);
 }
