@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MemberServiceImpl implements MemberServiece {
+public class MemberServiceImpl implements MemberService {
 
     @Autowired
     EntityManagerFactory emf;
@@ -59,10 +61,15 @@ public class MemberServiceImpl implements MemberServiece {
         mRepository.save(member);
     }
 
-    // 회원탈퇴
+    // 회원탈퇴 시 날짜 및 여부 변경
     @Override
-    public void deleteMember(String email) {
-        mRepository.deleteById(email);
+    public int updateLeaveMember(Date date, String email) {
+        return mMapper.updateLeave(date, email);
+    }
+
+    @Override
+    public List<String> deleteMemberList(Date date) {
+        return mMapper.deleteMemberList(date);
     }
 
 }

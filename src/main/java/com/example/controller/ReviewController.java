@@ -8,7 +8,7 @@ import java.util.Map;
 import com.example.entity.Review;
 import com.example.entity.ReviewProjection;
 import com.example.jwt.JwtUtil;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.PayHistoryService;
 import com.example.service.ProductService;
 import com.example.service.ReviewService;
@@ -35,7 +35,7 @@ public class ReviewController {
     ReviewService rService;
 
     @Autowired
-    MemberServiece mService;
+    MemberService mService;
 
     @Autowired
     ProductService pService;

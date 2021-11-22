@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.example.entity.Question;
 import com.example.jwt.JwtUtil;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.ProductService;
 import com.example.service.QuestionService;
 
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionController {
 
     @Autowired
-    MemberServiece mService;
+    MemberService mService;
 
     @Autowired
     ProductService pService;

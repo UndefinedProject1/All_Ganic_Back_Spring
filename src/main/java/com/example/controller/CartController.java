@@ -9,7 +9,7 @@ import com.example.entity.CartItem;
 import com.example.jwt.JwtUtil;
 import com.example.service.CartItemService;
 import com.example.service.CartService;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class CartController {
     ProductService pService;
 
     @Autowired
-    MemberServiece mService;
+    MemberService mService;
 
     @Autowired
     JwtUtil jwtUtil;

@@ -16,7 +16,7 @@ import com.example.entity.SubImage;
 import com.example.entity.SubImageProjection;
 import com.example.service.BrandService;
 import com.example.service.CategoryService;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.ProductService;
 import com.example.service.SubImageService;
 
@@ -43,7 +43,7 @@ public class ProductController {
     CategoryService cService;
 
     @Autowired
-    MemberServiece mServiece;
+    MemberService mServiece;
 
     @Autowired
     ProductService pService;

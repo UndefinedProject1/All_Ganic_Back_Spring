@@ -1,11 +1,17 @@
 package com.example.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Member;
 import com.example.jwt.JwtUtil;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MemberController {
 
     @Autowired
-    MemberServiece mServiece;
+    MemberService mServiece;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -256,10 +262,8 @@ public class MemberController {
     // 127.0.0.1:8080/REST/api/member/leave
     @RequestMapping(value = "/member/leave", method = {
             RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> memberLeave(@RequestBody Map<String, Object> mapobj,
-            @RequestHeader("token") String token) {
-
-        Map<String, Object> map = new HashMap<>();
+    public int memberLeave(@RequestBody Map<String, Object> mapobj, @RequestHeader("token") String token) {
+        int i = 0;
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
             // @RequestBody Map<>으로 데이터 받는부분
@@ -272,19 +276,31 @@ public class MemberController {
                 Member member = mServiece.getMemberOne(useremail);
                 // 기존암호와 전달된 암호가 같으면 삭제한다
                 if (bcpe.matches(userpw, member.getUserpw())) {
-                    
-                    mServiece.deleteMember(useremail);
-                    map.put("result", 1L);
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date now1 = new Date();
+
+                    Calendar cal = Calendar.getInstance(); 
+                    cal.setTime(now1);
+                    cal.add(Calendar.YEAR, 1);
+                    Date date = df.parse(df.format(cal.getTime()));
+                    int result = mServiece.updateLeaveMember(date, useremail);
+                    if(result == 1){
+                        i = 1;
+                    }
+                    else{
+                        i = 3;
+                    }
                 }
                 // 기존암호와 전달된 암호가 같지않을 시
                 else{
-                    map.put("result", 0L);
+                    i = 4;
                 }
             }
         } catch (Exception e) {
-            map.put("result", e.hashCode());
+            e.printStackTrace();
+            i = e.hashCode();
         }
-        return map;
+        return i;
     }
 
 }

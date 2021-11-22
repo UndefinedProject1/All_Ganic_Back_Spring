@@ -23,7 +23,7 @@ import com.example.response.IamportResponse;
 import com.example.response.Payment;
 import com.example.service.CancelService;
 import com.example.service.CartItemService;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.PayHistoryService;
 import com.example.service.PayService;
 import com.example.service.ProductService;
@@ -74,7 +74,7 @@ public class PayController {
     CancelService cService;
 
 	@Autowired
-    MemberServiece mService;
+    MemberService mService;
 
     @Autowired
     ProductService pService;

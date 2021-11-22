@@ -21,7 +21,7 @@ import com.example.service.BrandService;
 import com.example.service.CartItemService;
 import com.example.service.CategoryService;
 import com.example.service.MainService;
-import com.example.service.MemberServiece;
+import com.example.service.MemberService;
 import com.example.service.ProductService;
 import com.example.service.QuestionService;
 import com.example.service.SubImageService;
@@ -59,7 +59,7 @@ public class AdminController {
     MainService mService;
 
     @Autowired
-    MemberServiece mServiece;
+    MemberService mServiece;
 
     @Autowired
     ProductService pService;

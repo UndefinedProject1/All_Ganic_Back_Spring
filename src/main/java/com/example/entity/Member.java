@@ -60,4 +60,12 @@ public class Member {
 
     @Column(name = "DETAILEADDRESS")
     private String detaileaddress = null;
+
+    @Column(name = "LEAVECHECK")
+    private Boolean leavecheck = false;
+
+    @CreationTimestamp
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "LEAVEDATE")
+    private Date leavedate = null;
 }

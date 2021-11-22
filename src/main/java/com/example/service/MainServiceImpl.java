@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -35,6 +37,36 @@ public class MainServiceImpl implements MainService{
             .setParameter("no", no).executeUpdate();
 		em.getTransaction().commit();
 
+    }
+
+    @Override
+    public void deleteMemberTransaction(String email, Date date) {
+        EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+        String sql1 = "DELETE FROM CARTITEM WHERE CART=(SELECT CARTCODE FROM CART WHERE MEMBER=:email)";
+        em.createNativeQuery(sql1)
+            .setParameter("email", email).executeUpdate();
+        String sql2 = "DELETE FROM CART WHERE MEMBER=:email";
+        em.createNativeQuery(sql2)
+            .setParameter("email", email).executeUpdate();
+        String sql3 = "DELETE FROM CANCELHISTORY WHERE MEMBER=:email";
+        em.createNativeQuery(sql3)
+            .setParameter("email", email).executeUpdate();
+        String sql4 = "UPDATE PAYHISTORY SET MEMBER='ghost' WHERE MEMBER=:email";
+        em.createNativeQuery(sql4)
+            .setParameter("email", email).executeUpdate();
+        String sql6 = "DELETE FROM QUESTION WHERE MEMBER=:email";
+        em.createNativeQuery(sql6)
+            .setParameter("email", email).executeUpdate();
+        String sql7 = "DELETE FROM REVIEW WHERE MEMBER=:email";
+        em.createNativeQuery(sql7)
+            .setParameter("email", email).executeUpdate();
+        String sql = "DELETE FROM MEMBER WHERE LEAVECHECK=TRUE AND LEAVEDATE=:date AND USEREMAIL=:email";
+        em.createNativeQuery(sql)
+            .setParameter("email", email)
+            .setParameter("date", date).executeUpdate();
+		em.getTransaction().commit();
+        
     }
     
 }
