@@ -142,17 +142,5 @@ public class ProductServiceImpl implements ProductService{
     public List<Map<String, Object>> selectSaleRate() {
         return pMapper.selectSalesRate();
     }
-
-    // 물품 삭제 시 메인이미지 null로 변경
-    @Override
-    public int updateMainImg(long no) {
-        return pMapper.updateMain(no);
-    }
-
-    @Override
-    public int deleteSubImg(long no) {
-        return pMapper.deleteSubImg(no);
-    }
-
     
 }

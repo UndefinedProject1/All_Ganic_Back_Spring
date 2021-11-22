@@ -72,11 +72,4 @@ public interface ProductService {
     // 카테고리별 판매량
     public List<Map<String, Object>> selectCateSell();
 
-    // 삭제 시 메인이미지 NULL로 변경
-    public int updateMainImg(long no);
-
-    // 물품 삭제 시 서브이미지 삭제
-    public int deleteSubImg(long no);
-
-
 }

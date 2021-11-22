@@ -50,9 +50,4 @@ public interface QuestionMapper {
     })
     public List<Map<String, Object>> selectMemberList(String email);
 
-    // 물품 삭제 시 관련 문의 삭제
-    @Delete({
-        "DELETE FROM QUESTION WHERE PRODUCT=#{no}"
-    })
-    public int deleteSubImg(@Param("no") long no);
 }

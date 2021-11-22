@@ -20,6 +20,7 @@ import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
 import com.example.service.CartItemService;
 import com.example.service.CategoryService;
+import com.example.service.MainService;
 import com.example.service.MemberServiece;
 import com.example.service.ProductService;
 import com.example.service.QuestionService;
@@ -55,7 +56,7 @@ public class AdminController {
     CategoryService cService;
 
     @Autowired
-    CartItemService ciService;
+    MainService mService;
 
     @Autowired
     MemberServiece mServiece;
@@ -67,7 +68,7 @@ public class AdminController {
     SubImageService sImageService;
 
     @Autowired
-    QuestionService qService;
+    QuestionService qService;    
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/api/admin/brand_insert
@@ -198,18 +199,13 @@ public class AdminController {
     }
 
     //물품 삭제
-    //127.0.0.1:8080/REST/api/admin/product_delete
+    //127.0.0.1:8080/REST/api/admin/product_delete?no=167
     // {"productcode":33}
     @DeleteMapping(value = "/admin/product_delete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestParam("no") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
-            System.out.println(no);
-            
-            int a = pService.updateMainImg(no);
-            int b = pService.deleteSubImg(no);
-            int c = ciService.deleteProductCartItem(no);
-            
+            mService.deleteProductTransaction(no);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();

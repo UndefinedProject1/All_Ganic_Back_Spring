@@ -73,11 +73,4 @@ public class CartItemServiceImpl implements CartItemService{
         return ciMapper.selectPaymentInfo(chks);
     }
 
-    // 물품 삭제 시 장바구니 아이템 삭제
-    @Override
-    public int deleteProductCartItem(Long no) {
-        return ciMapper.deleteProductCartItem(no);
-    }
-
-    
 }

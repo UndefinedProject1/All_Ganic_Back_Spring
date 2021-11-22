@@ -5,6 +5,9 @@ import java.util.List;
 import com.example.entity.Brand;
 import com.example.entity.BrandProjection;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface BrandService {
 
     //브랜드 추가
