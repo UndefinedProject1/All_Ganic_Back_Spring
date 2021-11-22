@@ -12,6 +12,7 @@ import com.example.service.QuestionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -193,4 +194,25 @@ public class QuestionController {
         }
         return map;
     }
+
+    
+    // 문의글에 대한 답변 나타내기
+    // 127.0.0.1:8080/REST/api/member/question/answer?code=1
+    // 여기서 코드는 문의코드
+    @GetMapping(value = "member/question/answer")
+    public Map<String, Object> memberQuestionAnswerGET(@RequestHeader("token") String token, @RequestParam(name = "code") long code) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            Map<String, Object> answer = qService.selectQuestionAnswer(code);
+            map.put("answer", answer);
+            map.put("result", 1L);
+            map.put("result", 0L);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
 }

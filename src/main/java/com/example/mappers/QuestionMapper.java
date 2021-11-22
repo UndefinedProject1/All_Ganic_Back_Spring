@@ -22,7 +22,7 @@ public interface QuestionMapper {
             " <if test='reply == false'> ASC  </if>",
         "</script>"    
     })
-	public List<Map<String, Object>> selectQuestionDTO(Boolean reply, Long kind);
+	public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("king") Long kind);
     
     // 물품코드와 문의종류에 따른 리스트 출력(물품 상세)
     @Select({
@@ -33,7 +33,7 @@ public interface QuestionMapper {
             "ORDER BY QUESTIONDATE DESC",
         "</script>"
     })
-    public List<Map<String, Object>> selectProductList(Long no, Long kind);
+    public List<Map<String, Object>> selectProductList(@Param("no") Long no, @Param("king") Long kind);
 
     // 멤버아이디에 따른 문의리스트 출력(마이페이지)
     @Select({
@@ -48,6 +48,12 @@ public interface QuestionMapper {
             "ORDER BY QUESTIONDATE DESC",
         "</script>"
     })
-    public List<Map<String, Object>> selectMemberList(String email);
+    public List<Map<String, Object>> selectMemberList(@Param("email") String email);
 
+    // 문의글 답변 나타내기
+    @Select({
+        "SELECT ANSWERDATE, ANSWERCONTENT ",
+        " FROM QUESTION WHERE QUESTIONCODE=#{code}",
+    })
+    public Map<String, Object> selectMemberAnswer(@Param("code") Long code);
 }

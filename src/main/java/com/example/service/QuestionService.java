@@ -35,4 +35,6 @@ public interface QuestionService {
     //문의글 중복 체크
     public int checkQuestionCode(Long questioncode);
 
+    // 문의글 답변 나타내기
+    public Map<String, Object> selectQuestionAnswer(Long code);
 }

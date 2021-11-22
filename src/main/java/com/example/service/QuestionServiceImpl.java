@@ -71,5 +71,11 @@ public class QuestionServiceImpl implements QuestionService{
         return 0;
     }
 
+    // 문의글 답변 나타내기
+    @Override
+    public Map<String, Object> selectQuestionAnswer(Long code) {
+        return qMapper.selectMemberAnswer(code);
+    }
+
     
 }

@@ -211,7 +211,6 @@ public class AdminController {
             e.printStackTrace();
             map.put("result", e.hashCode());
         }
-
         return map;
     }
 
