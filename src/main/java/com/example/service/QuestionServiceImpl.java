@@ -46,16 +46,22 @@ public class QuestionServiceImpl implements QuestionService{
         qRepository.save(question);
     }
 
+    // 관리자페이지에서 물품개수
+    @Override
+    public int selectReplyKindCNT(Boolean reply, Long kind) {
+        return qMapper.selectReplyKindCNT(reply, kind);
+    }
+
     // 문의글 답글여부, kind에 따른 리스트 조회(dto)
     @Override
-    public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind) {
-        return qMapper.selectQuestionDTO(reply, kind);
+    public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind, Long start, Long end) {
+        return qMapper.selectQuestionDTO(reply, kind, start, end);
     }
 
     // 문의글 물품에 따른 개수조회
     @Override
     public int selectProductKindCNT(Long no, Long kind) {
-        return 0;
+        return qMapper.selectProductCNT(no, kind);
     }
 
     // 문의글 물품별, 종류별 리스트 조회

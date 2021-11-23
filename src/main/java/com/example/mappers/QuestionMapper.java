@@ -10,19 +10,30 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface QuestionMapper {
+    // 관리자페이지에서 문의글 리스트 개수
+    @Select({
+        "<script>",
+            "SELECT COUNT(*)",
+            " FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
+            " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
+        "</script>"  
+    })
+    public int selectReplyKindCNT(@Param("reply") Boolean reply, @Param("kind") Long kind);
+
     // 답글여부, 문의종류에 따른 리스트 출력(admin)
     @Select({
         "<script>",
+            "SELECT * FROM(",
             "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, PRODUCTCODE, ",
-            "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE ",
+            "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, ROW_NUMBER() OVER () ROWN ",
             " FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
             " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
             "ORDER BY QUESTIONDATE ",
             " <if test='reply == true'> DESC  </if>",
-            " <if test='reply == false'> ASC  </if>",
+            " <if test='reply == false'> ASC  </if>) QUESTION WHERE ROWN BETWEEN #{start} AND #{end}",
         "</script>"    
     })
-	public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("king") Long kind);
+	public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("kind") Long kind, @Param("start") long start, @Param("end") long end);
 
     // 물품코드와 문의종류에 따른 개수 출력(물품 상세)
     @Select({

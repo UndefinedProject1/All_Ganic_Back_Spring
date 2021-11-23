@@ -155,15 +155,29 @@ public class QuestionController {
     }
 
     // 문의글 답글여부, 종류별 조회(날짜 기준 정렬)
-    // 127.0.0.1:8080/REST/api/question/all/selectlist?reply=false&kind=2
+    // 127.0.0.1:8080/REST/api/question/all/selectlist?reply=false&kind=2&page=1
     @GetMapping(value = "/question/all/selectlist", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> AllSelectListGET(@RequestParam(name = "reply") Boolean reply, 
-    @RequestParam(name = "kind", defaultValue = "0") long kind) {
+    @RequestParam(name = "kind", defaultValue = "0") long kind, @RequestParam(name = "page", defaultValue = "1") long page) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind);
-            map.put("list", list);
-            map.put("result", 1);
+            long start, end = 1;
+            int count = qService.selectReplyKindCNT(reply, kind);
+            if(page == 1){
+                start = 1;
+                end = 1*5;
+                List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }
+            else{
+                start = (page-1)*5+1;
+                end = page*5; 
+                List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }
+            map.put("count", count);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
