@@ -23,17 +23,29 @@ public interface QuestionMapper {
         "</script>"    
     })
 	public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("king") Long kind);
+
+    // 물품코드와 문의종류에 따른 개수 출력(물품 상세)
+    @Select({
+        "<script>",
+            "SELECT COUNT(*) ",
+            " FROM QUESTION WHERE PRODUCT=#{no} ",
+            " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
+        "</script>"
+    })
+    public int selectProductCNT(@Param("no") Long no, @Param("kind") Long kind);
     
     // 물품코드와 문의종류에 따른 리스트 출력(물품 상세)
     @Select({
         "<script>",
-            "SELECT QUESTIONTITLE, QUESTIONCONTENT, to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, QUESTIONKIND, QUESTIONREPLY, MEMBER ",
-            " FROM QUESTION WHERE PRODUCT=#{no} ",
+            "SELECT * FROM(",
+            "SELECT QUESTIONTITLE, QUESTIONCONTENT, to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, QUESTIONKIND, QUESTIONREPLY, MEMBER, ",
+            " ROW_NUMBER() OVER (ORDER BY QUESTIONDATE DESC) ROWN FROM QUESTION WHERE PRODUCT=#{no} ",
             " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
-            "ORDER BY QUESTIONDATE DESC",
+            ") QUESTION",
+            " WHERE ROWN BETWEEN #{start} AND #{end}",
         "</script>"
     })
-    public List<Map<String, Object>> selectProductList(@Param("no") Long no, @Param("kind") Long kind);
+    public List<Map<String, Object>> selectProductList(@Param("no") Long no, @Param("kind") Long kind, @Param("start") long start, @Param("end") long end);
 
     // 멤버아이디에 따른 문의리스트 출력(마이페이지)
     @Select({

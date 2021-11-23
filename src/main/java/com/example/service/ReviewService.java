@@ -22,6 +22,9 @@ public interface ReviewService {
     // 리뷰 수정
     public void updteReview(Review review);
 
+    // 물품별 리뷰 개수
+    public int selectProductCNT(long code);
+
     // 물품별 리뷰 출력
     public List<Map<String, Object>> selectProductList(long code, long start, long end);
 

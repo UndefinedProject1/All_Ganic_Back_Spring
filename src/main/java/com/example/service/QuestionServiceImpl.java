@@ -52,10 +52,16 @@ public class QuestionServiceImpl implements QuestionService{
         return qMapper.selectQuestionDTO(reply, kind);
     }
 
+    // 문의글 물품에 따른 개수조회
+    @Override
+    public int selectProductKindCNT(Long no, Long kind) {
+        return 0;
+    }
+
     // 문의글 물품별, 종류별 리스트 조회
     @Override
-    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind) {
-        return qMapper.selectProductList(no, kind);
+    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind, Long start, Long end) {
+        return qMapper.selectProductList(no, kind, start, end);
     }
 
     // 문의글 회원별리스트 조회

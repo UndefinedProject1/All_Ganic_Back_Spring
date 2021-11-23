@@ -26,8 +26,11 @@ public interface QuestionService {
     //문의글 답글여부, kind에 따른 리스트 출력(dto)
     public List<Map<String, Object>> selectQuestionDTOList(Boolean reply, Long kind);
 
+    // 문의글 물품상세(물품, 종류에 따른) 개수
+    public int selectProductKindCNT(Long no, Long kind);
+
     // 문의글 물품별, 종류별 리스트 조회
-    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind);
+    public List<Map<String, Object>> selectProductQuestionList(Long no, Long kind, Long start, Long end);
 
     // 문의글 회원별리스트 조회
     public List<Map<String, Object>> selectMemberQuestionList(String email);

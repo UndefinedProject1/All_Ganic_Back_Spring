@@ -11,6 +11,12 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface ReviewMapper {
+
+    // 물품별 리뷰 개수
+    @Select({
+        "SELECT COUNT(*) FROM REVIEW WHERE PRODUCT=#{code}"
+    })
+    public int selectProductCNT(@Param("code") Long code);
     
     // 물품별 리뷰 출력
     @Select({

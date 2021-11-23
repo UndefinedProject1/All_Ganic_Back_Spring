@@ -156,12 +156,13 @@ public class ReviewController {
     // 물품별 리뷰들 들고오기
     // 127.0.0.1:8080/REST/api/review/list/product?code=14&page=1
     // 여기서 code는 물품코드
-    @RequestMapping(value="/review/list/product", method=RequestMethod.GET)
+    @GetMapping(value="/review/list/product")
     public Map<String, Object> productReviewListGET(@RequestParam(name = "code") long code, 
         @RequestParam(name = "page", defaultValue = "1") long page) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{
             long start, end = 1;
+            int count = rService.selectProductCNT(code);
             if(page == 1){
                 start = 1;
                 end = 1*5;
@@ -176,6 +177,7 @@ public class ReviewController {
                 map.put("list", list);
                 map.put("result", 1L);
             }
+            map.put("count", count);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -187,7 +189,7 @@ public class ReviewController {
     // 회원별 리뷰들 들고오기
     // 127.0.0.1:8080/REST/api/member/review/list
     // 여기서 회원확인 token값으로 확인
-    @RequestMapping(value="member/review/list", method=RequestMethod.GET)
+    @GetMapping(value="member/review/list")
     public Map<String, Object> memberReviewListGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{

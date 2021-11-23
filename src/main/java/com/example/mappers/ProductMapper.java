@@ -13,6 +13,12 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface ProductMapper {
 
+    // 브랜드 별 물품 개수
+    @Select({
+        "SELECT COUNT(*) FROM PRODUCT WHERE BRAND=#{code}"
+    })
+    public int selectBrandProduct(@Param("code") Long code);
+
     // 카테고리 별 물품 개수
     @Select({
         "SELECT COUNT(*) FROM PRODUCTLIST WHERE CATEGORY LIKE #{code} || '%'"

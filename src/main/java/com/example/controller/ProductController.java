@@ -328,7 +328,8 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectBProductLsit2(code);
-            //System.out.println(list.get(0).getImage());
+            int count = pService.selectBrandProductCount(code);
+            map.put("count", count);
             model.addAttribute("list", list);
             map.put("list", list);
             map.put("result", 1);
@@ -351,6 +352,8 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectBProductLsit3(code, pageable);
+            int count = pService.selectBrandProductCount(code);
+            map.put("count", count);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {

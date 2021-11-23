@@ -113,7 +113,7 @@ public class QuestionController {
     // 문의글 찾기
     // 127.0.0.1:8080/REST/api/question/select?no=13
     // 여기서 넘어오는 no는 문의 코드
-    @RequestMapping(value = "/question/select", method = RequestMethod.GET)
+    @GetMapping(value = "/question/select")
     public Map<String, Object> questionSelectGET(@RequestParam(name = "no", defaultValue = "0") long no) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -134,7 +134,7 @@ public class QuestionController {
 
     // 회원별 문의글 리스트 찾기(날짜 기준으로 정렬)
     // 127.0.0.1:8080/REST/api/question/member/selectlist
-    @RequestMapping(value = "/question/member/selectlist", method = RequestMethod.GET)
+    @GetMapping(value = "/question/member/selectlist")
     public Map<String, Object> MemberSelectListGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -156,8 +156,7 @@ public class QuestionController {
 
     // 문의글 답글여부, 종류별 조회(날짜 기준 정렬)
     // 127.0.0.1:8080/REST/api/question/all/selectlist?reply=false&kind=2
-    @RequestMapping(value = "/question/all/selectlist", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/question/all/selectlist", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> AllSelectListGET(@RequestParam(name = "reply") Boolean reply, 
     @RequestParam(name = "kind", defaultValue = "0") long kind) {
         Map<String, Object> map = new HashMap<>();
@@ -173,20 +172,33 @@ public class QuestionController {
     }
 
     // 물품상세페이지에서 문의글 종류별 조회(날짜 기준 정렬)
-    // 127.0.0.1:8080/REST/api/question/product/selectlist?no=4&kind=1
-    @RequestMapping(value = "/question/product/selectlist", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    // 127.0.0.1:8080/REST/api/question/product/selectlist?no=4&kind=1&page=1
+    @GetMapping(value = "/question/product/selectlist", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productSelectListGET(@RequestParam(name = "no", defaultValue = "0") Long no, 
-    @RequestParam(name = "kind", defaultValue = "0") long kind) {
+    @RequestParam(name = "kind", defaultValue = "0") long kind, @RequestParam(name = "page", defaultValue = "1") long page) {
         Map<String, Object> map = new HashMap<>();
         try {
             if(no == 0){
                 map.put("result", 0); // 0이면 물품코드가 제대로 안넘어왔다는 의미
             }
             else{
-                List<Map<String, Object>> list = qService.selectProductQuestionList(no, kind);
-                map.put("list", list);
-                map.put("result", 1);
+                long start, end = 1;
+                int count = qService.selectProductKindCNT(no, kind);
+                if(page == 1){
+                    start = 1;
+                    end = 1*5;
+                    List<Map<String, Object>> list = qService.selectProductQuestionList(no, kind, start, end);
+                    map.put("list", list);
+                    map.put("result", 1);
+                }
+                else{
+                    start = (page-1)*5+1;
+                    end = page*5; 
+                    List<Map<String, Object>> list = qService.selectProductQuestionList(no, kind, start, end);
+                    map.put("list", list);
+                    map.put("result", 1);
+                }
+                map.put("count", count);
             }
         } catch (Exception e) {
             e.printStackTrace();

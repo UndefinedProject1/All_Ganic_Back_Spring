@@ -39,6 +39,9 @@ public interface ProductService {
     //브랜드 코드 별 제품 조회(sql)
     public List<ProductProjection> selectBProductLsit2(Long code);
 
+    // 브랜드별 제품 개수
+    public int selectBrandProductCount(Long code);
+
     //카테고리 코드 별 제품 조회(sql)
     public List<ProductListProjection> selectCProductLsit(String code);
 

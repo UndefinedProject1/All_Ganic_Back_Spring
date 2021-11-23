@@ -72,6 +72,13 @@ public class ProductServiceImpl implements ProductService{
         return pRepository.queryListBProduct(code);
     }
 
+    // 브랜드별 제품 개수
+    @Override
+    public int selectBrandProductCount(Long code) {
+        return pMapper.selectBrandProduct(code);
+    }
+    
+
     //카테고리 코드 별 제품 개수
     @Override
     public int selectCateProductCount(String code) {
@@ -148,5 +155,5 @@ public class ProductServiceImpl implements ProductService{
     public List<Map<String, Object>> selectSaleRate() {
         return pMapper.selectSalesRate();
     }
-    
+
 }
