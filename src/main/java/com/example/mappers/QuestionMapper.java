@@ -27,19 +27,19 @@ public interface QuestionMapper {
     // 물품코드와 문의종류에 따른 리스트 출력(물품 상세)
     @Select({
         "<script>",
-            "SELECT QUESTIONTITLE, QUESTIONCONTENT, QUESTIONDATE, QUESTIONKIND, QUESTIONREPLY, MEMBER ",
+            "SELECT QUESTIONTITLE, QUESTIONCONTENT, to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, QUESTIONKIND, QUESTIONREPLY, MEMBER ",
             " FROM QUESTION WHERE PRODUCT=#{no} ",
             " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
             "ORDER BY QUESTIONDATE DESC",
         "</script>"
     })
-    public List<Map<String, Object>> selectProductList(@Param("no") Long no, @Param("king") Long kind);
+    public List<Map<String, Object>> selectProductList(@Param("no") Long no, @Param("kind") Long kind);
 
     // 멤버아이디에 따른 문의리스트 출력(마이페이지)
     @Select({
         "<script>",
             "SELECT QUESTION.QUESTIONCODE, QUESTION.QUESTIONTITLE, QUESTION.QUESTIONCONTENT, ",
-            "QUESTION.QUESTIONDATE, QUESTION.QUESTIONKIND, QUESTION.QUESTIONREPLY, ",
+            "to_char(QUESTION.QUESTIONDATE, 'YYYY-MM-DD') AS QUESTIONDATE, QUESTION.QUESTIONKIND, QUESTION.QUESTIONREPLY, ",
             " PRODUCT.PRODUCTNAME, BRAND.BRANDNAME",
             " FROM QUESTION ",
             " INNER JOIN PRODUCT ON QUESTION.PRODUCT = PRODUCT.PRODUCTCODE",

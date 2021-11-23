@@ -22,7 +22,7 @@ public class MyScheduler {
     @Autowired
     MainService mainServiece;
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void printDate() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();
