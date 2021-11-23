@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.entity.Review;
-import com.example.entity.ReviewProjection;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberService;
 import com.example.service.PayHistoryService;
@@ -161,7 +160,7 @@ public class ReviewController {
     public Map<String, Object> productReviewListGET(@RequestParam(name = "code") long code) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{
-            List<ReviewProjection> list = rService.selectProductList(code);
+            List<Map<String, Object>> list = rService.selectProductList(code);
             map.put("list", list);
             map.put("result", 1L);
         }
@@ -181,7 +180,7 @@ public class ReviewController {
         try{
             String useremail = jwtUtil.extractUsername(token.substring(7));
             if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
-                List<ReviewProjection> list = rService.selectMemberList(useremail);
+                List<Map<String, Object>> list = rService.selectMemberList(useremail);
                 map.put("list", list);
                 map.put("result", 1L);
             }

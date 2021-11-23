@@ -1,9 +1,9 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.example.entity.Review;
-import com.example.entity.ReviewProjection;
 
 import org.springframework.stereotype.Service;
 
@@ -23,8 +23,8 @@ public interface ReviewService {
     public void updteReview(Review review);
 
     // 물품별 리뷰 출력
-    public List<ReviewProjection> selectProductList(long code);
+    public List<Map<String, Object>> selectProductList(long code);
 
     // 회원별 리뷰 출력
-    public List<ReviewProjection> selectMemberList(String email);
+    public List<Map<String, Object>> selectMemberList(String email);
 }
