@@ -42,6 +42,9 @@ public interface ProductService {
     //카테고리 코드 별 제품 조회(sql)
     public List<ProductListProjection> selectCProductLsit(String code);
 
+    // 카테고리 코드 별 제품 개수
+    public int selectCateProductCount(String code);
+
     //카테고리 코드 별 제품 조회(jpa)
     public List<ProductProjection> selectCProductLsit2(String code);
 

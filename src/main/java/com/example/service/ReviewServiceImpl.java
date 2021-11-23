@@ -42,8 +42,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Map<String, Object>> selectProductList(long code) {
-        return rMapper.selectProductList(code);
+    public List<Map<String, Object>> selectProductList(long code, long start, long end) {
+        return rMapper.selectProductList(code, start, end);
     }
 
     @Override

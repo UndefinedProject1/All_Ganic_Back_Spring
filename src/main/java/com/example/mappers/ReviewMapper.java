@@ -14,10 +14,11 @@ public interface ReviewMapper {
     
     // 물품별 리뷰 출력
     @Select({
-        "SELECT REVIEWCODE, REVIEWRATING, REVIEWCONTENT, to_char(REVIEWDATE,'YYYY-MM-DD') AS REVIEWDATE ",
-        " FROM REVIEW WHERE PRODUCT=#{code}"
+        "SELECT * FROM(SELECT REVIEWCODE, REVIEWRATING, REVIEWCONTENT, to_char(REVIEWDATE,'YYYY-MM-DD') AS REVIEWDATE, ",
+        " ROW_NUMBER() OVER (ORDER BY REVIEWDATE DESC) ROWN FROM REVIEW WHERE PRODUCT=#{code})",
+        " REVIEW WHERE ROWN BETWEEN #{start} AND #{end}"
     })
-    public List<Map<String, Object>> selectProductList(@Param("code") long code);
+    public List<Map<String, Object>> selectProductList(@Param("code") long code, @Param("start") long start, @Param("end") long end);
 
     // 회원별 리뷰 출력
     @Select({

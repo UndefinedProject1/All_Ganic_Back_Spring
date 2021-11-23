@@ -13,6 +13,12 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface ProductMapper {
 
+    // 카테고리 별 물품 개수
+    @Select({
+        "SELECT COUNT(*) FROM PRODUCTLIST WHERE CATEGORY LIKE #{code} || '%'"
+    })
+    public int selectCateProduct(@Param("code") String code);
+
     // 판매량조회를 위한 날짜 테이블 
     @Update({
         "UPDATE DUAL SET DUAL_DATE=#{date} WHERE DUAL_ID=#{no}"

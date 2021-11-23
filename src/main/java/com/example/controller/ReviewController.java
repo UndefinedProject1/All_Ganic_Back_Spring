@@ -154,15 +154,28 @@ public class ReviewController {
     }
 
     // 물품별 리뷰들 들고오기
-    // 127.0.0.1:8080/REST/api/review/list/product?code=14
+    // 127.0.0.1:8080/REST/api/review/list/product?code=14&page=1
     // 여기서 code는 물품코드
     @RequestMapping(value="/review/list/product", method=RequestMethod.GET)
-    public Map<String, Object> productReviewListGET(@RequestParam(name = "code") long code) {
+    public Map<String, Object> productReviewListGET(@RequestParam(name = "code") long code, 
+        @RequestParam(name = "page", defaultValue = "1") long page) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{
-            List<Map<String, Object>> list = rService.selectProductList(code);
-            map.put("list", list);
-            map.put("result", 1L);
+            long start, end = 1;
+            if(page == 1){
+                start = 1;
+                end = 1*5;
+                List<Map<String, Object>> list = rService.selectProductList(code, start, end);
+                map.put("list", list);
+                map.put("result", 1L);
+            }
+            else{
+                start = (page-1)*5+1;
+                end = page*5; 
+                List<Map<String, Object>> list = rService.selectProductList(code, start, end);
+                map.put("list", list);
+                map.put("result", 1L);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

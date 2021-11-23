@@ -23,7 +23,7 @@ public interface ReviewService {
     public void updteReview(Review review);
 
     // 물품별 리뷰 출력
-    public List<Map<String, Object>> selectProductList(long code);
+    public List<Map<String, Object>> selectProductList(long code, long start, long end);
 
     // 회원별 리뷰 출력
     public List<Map<String, Object>> selectMemberList(String email);

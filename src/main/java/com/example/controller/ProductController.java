@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -243,8 +244,7 @@ public class ProductController {
     
     //카테고리 코드 별 제품 조회(sql)
     // 127.0.0.1:8080/REST/api/select_cproduct?code= 카테고리 코드
-    @RequestMapping(value = "/select_cproduct", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/select_cproduct", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProductGET( Model model,
     @RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
@@ -262,8 +262,7 @@ public class ProductController {
         
     //카테고리 코드 별 제품 이름 순 조회(jpa)
     // 127.0.0.1:8080/REST/api/select_cproduct3?page=1&code=
-    @RequestMapping(value = "/select_cproduct3", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/select_cproduct3", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProduct2GET(
     @RequestParam(value = "page", defaultValue = "1")int page,
     @RequestParam("code") String code) {
@@ -272,6 +271,8 @@ public class ProductController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<ProductProjection> list = pService.selectCProductLsit3(code, pageable);
+            int count = pService.selectCateProductCount(code);
+            map.put("count", count);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
@@ -280,7 +281,7 @@ public class ProductController {
         }
         return map;
     } 
- 
+
     // 브랜드 전체 조회
     // 127.0.0.1:8080/REST/api/select_brand
     @RequestMapping(value = "/select_brand", method = {

@@ -72,6 +72,12 @@ public class ProductServiceImpl implements ProductService{
         return pRepository.queryListBProduct(code);
     }
 
+    //카테고리 코드 별 제품 개수
+    @Override
+    public int selectCateProductCount(String code) {
+        return pMapper.selectCateProduct(code);
+    }
+
     //카테고리 코드 별 제품 조회(sql)
     @Override
     public List<ProductListProjection> selectCProductLsit(String code) {
