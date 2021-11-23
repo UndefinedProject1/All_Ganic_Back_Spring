@@ -2,22 +2,23 @@ package com.example.controller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.example.dto.MailDto;
 import com.example.entity.Member;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberService;
+import com.example.service.sendEmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +34,9 @@ public class MemberController {
 
     @Autowired
     MemberService mServiece;
+
+    @Autowired
+    sendEmailService sendEmailService;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -79,8 +83,7 @@ public class MemberController {
     // 로그인
     // 127.0.0.1:8080/REST/api/member/login
     // {"useremail":"a@gmail.com", "userpw":"a"}
-    @RequestMapping(value = "/member/login", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/member/login", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -97,12 +100,12 @@ public class MemberController {
 
     // 이메일 중복 체크(dto)
     // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
-    @RequestMapping(value = "/member/checkemail", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> CheckEmailPOST(@RequestBody Member member) {
+    @GetMapping(value = "/member/checkemail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> CheckEmailPOST(@RequestBody  Map<String, Object> body) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            int count = mServiece.checkEmailDTO(member.getUseremail());
+            String mail = (String) body.get("useremail");
+            int count = mServiece.checkEmailDTO(mail);
             System.out.println(count);
             if (count == 0) {
                 map.put("result", 0L);
@@ -116,11 +119,20 @@ public class MemberController {
         return map;
     }
 
+    //등록된 이메일로 임시비밀번호를 발송하고 발송된 임시비밀번호로 사용자의 pw를 변경하는 컨트롤러
+    // 127.0.0.1:8080/check/findPw/sendEmail
+    @PostMapping(value = "/check/findPw/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void sendEmail(@RequestBody  Map<String, Object> body){
+        String userEmail = (String) body.get("useremail");
+        String userName = (String) body.get("username");
+        MailDto dto = sendEmailService.createMailAndChangePassword(userEmail, userName);
+        sendEmailService.mailSend(dto);
+    }
+
     // 토큰을 통한 권한 확인
     // token값이 있으면 이를 통해 권한 찾기
     // 127.0.0.1:8080/REST/api/member/role
-    @RequestMapping(value = "/member/role", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/member/role", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckRoleGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -145,8 +157,7 @@ public class MemberController {
 
     // 회원정보 찾기
     // 127.0.0.1:8080/REST/api/member/find
-    @RequestMapping(value = "/member/find", method = {
-        RequestMethod.GET }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/member/find", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberFind(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -163,8 +174,7 @@ public class MemberController {
 
     // 회원정보 수정(이름, 전화번호, 우편번호, 주소, 상세주소)
     // 127.0.0.1:8080/REST/api/member/update
-    @RequestMapping(value = "/member/update", method = {
-            RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/member/update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberUpdate(@RequestBody Member member,
             @RequestHeader("token") String token) {
 
@@ -222,8 +232,7 @@ public class MemberController {
 
     // 비밀번호 변경
     // 127.0.0.1:8080/REST/api/member/passwd
-    @RequestMapping(value = "/member/passwd", method = {
-            RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/member/passwd", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> memberPasswd(@RequestBody Map<String, Object> mapobj,
             @RequestHeader("token") String token) {
 
@@ -260,8 +269,7 @@ public class MemberController {
 
     // 회원탈퇴
     // 127.0.0.1:8080/REST/api/member/leave
-    @RequestMapping(value = "/member/leave", method = {
-            RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/member/leave", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public int memberLeave(@RequestBody Map<String, Object> mapobj, @RequestHeader("token") String token) {
         int i = 0;
         try {
