@@ -366,7 +366,7 @@ public class PayController {
 	// 주문내역 확인하기
     // 127.0.0.1:8080/REST/api/payments/member/list
     @GetMapping(value="/payments/member/list")
-    public Map<String, Object> productReviewListGET(@RequestHeader("token") String token) {
+    public Map<String, Object> paymentMemberListGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{
 			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
@@ -377,6 +377,30 @@ public class PayController {
 			}
 			else{
 				map.put("state", "주문내역이 없습니다.");
+				map.put("result", 0L);
+			}
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+	// 환불내역 확인하기
+    // 127.0.0.1:8080/REST/api/cancel/member/list
+    @GetMapping(value="/cancel/member/list")
+    public Map<String, Object> cancelMemberListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+			List<Map<String, Object>> list = cService.selectMemberCancelList(useremail);
+			if(list.size() != 0){
+				map.put("list", list);
+				map.put("result", 1L);
+			}
+			else{
+				map.put("state", "환불내역이 없습니다.");
 				map.put("result", 0L);
 			}
         }
