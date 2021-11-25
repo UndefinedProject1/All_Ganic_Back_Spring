@@ -3,7 +3,6 @@ package com.example.service;
 import java.util.List;
 import java.util.Map;
 
-import com.example.dto.QuestionDTO;
 import com.example.entity.Question;
 
 import org.springframework.stereotype.Service;

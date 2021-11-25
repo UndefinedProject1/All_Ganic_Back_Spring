@@ -1,9 +1,7 @@
 package com.example.controller;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,7 +16,6 @@ import com.example.entity.Question;
 import com.example.entity.SubImage;
 import com.example.jwt.JwtUtil;
 import com.example.service.BrandService;
-import com.example.service.CartItemService;
 import com.example.service.CategoryService;
 import com.example.service.MainService;
 import com.example.service.MemberService;
@@ -56,10 +53,10 @@ public class AdminController {
     CategoryService cService;
 
     @Autowired
-    MainService mService;
+    MainService mainService;
 
     @Autowired
-    MemberService mServiece;
+    MemberService memberService;
 
     @Autowired
     ProductService pService;
@@ -205,7 +202,7 @@ public class AdminController {
     public Map<String, Object> productDelete(@RequestParam("no") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
-            mService.deleteProductTransaction(no);
+            mainService.deleteProductTransaction(no);
             map.put("result", 1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -420,6 +417,22 @@ public class AdminController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             List<Map<String, Object>> list = pService.selectCateSell();
+            map.put("list", list);
+            map.put("result", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
+    // 회원관리(각 회원의 구매, 신고, 위조금액 적발 횟수)
+    // 127.0.0.1:8080/REST/api/admin/member/list
+    @GetMapping(value = "admin/member/list")
+    public Map<String, Object> memberListGET(@RequestHeader("token") String token) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<Map<String, Object>> list = memberService.adminMemberList();
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {

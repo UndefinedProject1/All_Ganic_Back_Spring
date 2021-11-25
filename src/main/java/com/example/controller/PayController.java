@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +8,12 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 
 import com.example.entity.CancelHistory;
+import com.example.entity.Member;
 import com.example.entity.Pay;
 import com.example.entity.PayHistory;
-import com.example.entity.Product;
+import com.example.entity.Report;
 import com.example.jwt.JwtUtil;
 import com.example.request.AuthData;
 import com.example.request.CancelData;
@@ -27,6 +26,7 @@ import com.example.service.MemberService;
 import com.example.service.PayHistoryService;
 import com.example.service.PayService;
 import com.example.service.ProductService;
+import com.example.service.ReportService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -77,7 +77,11 @@ public class PayController {
     MemberService mService;
 
     @Autowired
-    ProductService pService;
+    ProductService pService;  
+	
+	@Autowired
+    ReportService rServiece;
+
 
 	@Autowired
     JwtUtil jwtUtil;
@@ -232,6 +236,21 @@ public class PayController {
 		}		
 		return null;
 	}	
+
+	// 위조금액 적발
+	public void counterfeitMoney(String useremail) throws Exception {
+		Report report = rServiece.findReport(useremail);
+		if(report != null){
+			rServiece.updateCount(report.getReportcode());
+		}		
+		else{
+			Report report1 = new Report();
+			Member member = mService.getMemberOne(useremail);
+			report1.setMember(member);
+			report1.setReportcount(1L);
+			rServiece.insertReport(report1);
+		}
+	}	
 	
     // 결제 127.0.0.1:8080/REST/api/payments/complete
     // { imp_uid : 161616133(결제 번호), merchant_uid : k1234565(주문번호), chks : {1,2,3} }
@@ -278,12 +297,12 @@ public class PayController {
 						pHistory.setProduct(pService.selectProduct(s2));
 						phService.insertPayHistory(pHistory); // 반복문을 통해 n개 저장
 					}
-
 					ciService.deleteCartItemSome(item); // 장바구니아이템 삭제
 					map.put("state", "결제가 완료되었습니다.");
 					map.put("result", 1L);
 				}
 				else{
+					counterfeitMoney(useremail);
 					map.put("state", "위조된 결제금액입니다.");
 					map.put("result", 4L);
 				}

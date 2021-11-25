@@ -3,7 +3,6 @@ package com.example.mappers;
 import java.util.List;
 import java.util.Map;
 
-import com.example.entity.Pay;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;

@@ -31,4 +31,7 @@ public interface MemberService {
 
     // 그 날 탈퇴시킬 회원리스트
     public List<String> deleteMemberList(Date date);
+
+    // 관리자페이지에 회원관리 리스트
+    public List<Map<String, Object>> adminMemberList();
 }

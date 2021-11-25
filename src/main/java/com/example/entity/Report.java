@@ -33,9 +33,6 @@ public class Report {
     @JoinColumn(updatable = false, name = "MEMBER")
     private Member member;
 
-    @Column(name = "REPORTKIND")
-    private Long reportkind = 0L;
-
     @Column(name = "REPORTDATE")
     private String reprotdate = null;
 

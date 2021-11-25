@@ -72,4 +72,9 @@ public class MemberServiceImpl implements MemberService {
         return mMapper.deleteMemberList(date);
     }
 
+    @Override
+    public List<Map<String, Object>> adminMemberList() {
+        return mMapper.adminMemberList();
+    }
+
 }

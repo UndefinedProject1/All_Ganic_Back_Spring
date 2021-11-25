@@ -32,4 +32,10 @@ public interface MemberMapper {
         "SELECT USEREMAIL FROM MEMBER WHERE LEAVECHECK=TRUE AND LEAVEDATE=#{date}"
     })
     public List<String> deleteMemberList(@Param("date") Date date);
+
+    // 관리자의 회원관리
+    @Select({
+        "SELECT * FROM MEMBERLIST ORDER BY ORDERCNT DESC"
+    })
+    public List<Map<String, Object>> adminMemberList();
 }

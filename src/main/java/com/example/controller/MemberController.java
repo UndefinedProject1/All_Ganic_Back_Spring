@@ -2,6 +2,8 @@ package com.example.controller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,8 +11,10 @@ import java.util.Map;
 
 import com.example.dto.MailDto;
 import com.example.entity.Member;
+import com.example.entity.Report;
 import com.example.jwt.JwtUtil;
 import com.example.service.MemberService;
+import com.example.service.ReportService;
 import com.example.service.sendEmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -38,6 +40,9 @@ public class MemberController {
 
     @Autowired
     sendEmailService sendEmailService;
+
+    @Autowired
+    ReportService rServiece;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -63,19 +68,27 @@ public class MemberController {
         return ret;
     }
 
-    // 신고하기
+    // 신고하기(리뷰, 문의)
+    // 127.0.0.1:8080/REST/api/member/report
     @PostMapping(value = "member/report", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> reportPOST(@RequestParam(value = "kind", defaultValue = "0")Long kind, @RequestHeader("token") String token,
-        @RequestBody Member member){
+    public Map<String, Object> reportPOST(@RequestHeader("token") String token, @RequestBody Map<String, Object> mapobj){
         Map<String, Object> map = new HashMap<String, Object>();
         try{
-            if(kind == 0){
-                map.put("result", "신고 종류가 안넘어왔습니다.");
+            String useremail = (String) mapobj.get("useremail");
+            Report report = rServiece.findReport(useremail);
+            String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if(report != null){
+                rServiece.updateDate(report.getReprotdate()+formatDate+",", report.getReportcode());
             }
-            else if(kind == 1){
-                
-                map.put("result", "신고접수가 완료되었습니다.");
+            else{
+                Report report1 = new Report();
+                Member member = mServiece.getMemberOne(useremail);
+                report1.setMember(member);
+                report1.setReprotdate(formatDate+",");
+                rServiece.insertReport(report1);
             }
+            map.put("result", 1);
+            map.put("state", "신고접수가 완료되었습니다.");
         }
         catch (Exception e) {
             e.printStackTrace();
