@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -44,6 +45,7 @@ public class MemberController {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    // 토큰 유효성 검사
     @GetMapping(value = "/validtoken")
     public int validTokenGET(@RequestHeader("token") String token) {
         int ret;
@@ -61,6 +63,27 @@ public class MemberController {
         return ret;
     }
 
+    // 신고하기
+    @PostMapping(value = "member/report", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> reportPOST(@RequestParam(value = "kind", defaultValue = "0")Long kind, @RequestHeader("token") String token,
+        @RequestBody Member member){
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            if(kind == 0){
+                map.put("result", "신고 종류가 안넘어왔습니다.");
+            }
+            else if(kind == 1){
+                
+                map.put("result", "신고접수가 완료되었습니다.");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+    }
+
     // 회원가입
     // 127.0.0.1:8080/REST/api/member/join
     // {"useremail":"a@gmail.com", "userpw":"a","username":"a1","userrole":"MEMBER",
@@ -75,6 +98,7 @@ public class MemberController {
             mServiece.joinMember(member);
             map.put("result", 1);
         } catch (Exception e) {
+            e.printStackTrace();
             map.put("result", e.hashCode());
         }
         return map;

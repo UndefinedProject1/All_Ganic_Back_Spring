@@ -20,17 +20,25 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-@Table(name = "CART")
-@SequenceGenerator(name = "SEQ_CART_NO", sequenceName = "SEQ_CART_NO", initialValue = 1, allocationSize = 1)
-public class Cart {
+@Table(name = "REPORT")
+@SequenceGenerator(name = "SEQ_REPORT_NO", sequenceName = "SEQ_REPORT_NO", initialValue = 1, allocationSize = 1)
+public class Report {
     
     @Id
-    @Column(name = "CARTCODE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_CART_NO")
-    private long cartcode = 0L;
+    @Column(name = "REPORTCODE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REPORT_NO")
+    private long reportcode = 0L;
 
     @OneToOne // 회원정보
     @JoinColumn(updatable = false, name = "MEMBER")
     private Member member;
 
+    @Column(name = "REPORTKIND")
+    private Long reportkind = 0L;
+
+    @Column(name = "REPORTDATE")
+    private String reprotdate = null;
+
+    @Column(name = "REPORTCOUNT")
+    private Long reportcount = 0L;
 }
