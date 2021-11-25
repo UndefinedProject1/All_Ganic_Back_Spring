@@ -77,4 +77,9 @@ public class MemberServiceImpl implements MemberService {
         return mMapper.adminMemberList();
     }
 
+    @Override
+    public int forgeMoneyThree() {
+        return mMapper.forgeMoneyThree();
+    }
+
 }

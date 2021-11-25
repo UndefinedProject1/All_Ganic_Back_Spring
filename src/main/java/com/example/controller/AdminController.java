@@ -447,12 +447,65 @@ public class AdminController {
         return map;
     }
 
+    // 위조금액 적발 3회인 회원 수
+    // 127.0.0.1:8080/REST/api/admin/forge/member
+    @GetMapping(value = "/admin/forge/member")
+    public int forgeMemberGET(@RequestHeader("token") String token) {
+        int result = 0;
+        try {
+            int count = memberService.forgeMoneyThree();
+            result = count;
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = e.hashCode();
+        }
+        return result;
+    }
+
+    // 관리자가 회원을 삭제 시킬 때
+    // 127.0.0.1:8080/REST/api/admin/delete/member
+    @DeleteMapping(value = "/admin/delete/member", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public int deleteMember(@RequestHeader("token") String token, @RequestBody Map<String, Object> body) {
+        int result = 0;
+        String userEmail = (String) body.get("useremail");
+        try {
+            if(userEmail != null){
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                Date now = new Date();
+                Date date = df.parse(df.format(now.getTime()));
+                int state = memberService.updateLeaveMember(date, userEmail);
+                if(state == 1){
+                    mainService.deleteMemberTransaction(userEmail, date);
+                    result = 1;
+                }
+                else{
+                    result = 300;
+                }
+            }
+            else{
+                result = 400;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = e.hashCode();
+        }
+        return result;
+    }
+
     // 위조금액 3번 적발 시 삭제하면서 발송되는 메일
     // 127.0.0.1:8080/REST/api/Malignity/sendEmail
     @PostMapping(value = "/Malignity/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void sendEmail(@RequestBody  Map<String, Object> body){
-        String userEmail = (String) body.get("useremail");
-        String userName = (String) body.get("username");
-        sendEmailService.createMailAndCounterfeitMember(userEmail, userName);
+    public int sendEmail(@RequestBody Map<String, Object> body){
+        int result = 0;
+        try{
+            String userEmail = (String) body.get("useremail");
+            String userName = (String) body.get("username");
+            sendEmailService.createMailAndCounterfeitMember(userEmail, userName);
+            result = 1;
+        }catch (Exception e) {
+            e.printStackTrace();
+            result = e.hashCode();
+        }
+        return result;
     }
 }

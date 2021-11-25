@@ -38,4 +38,10 @@ public interface MemberMapper {
         "SELECT * FROM MEMBERLIST ORDER BY ORDERCNT DESC"
     })
     public List<Map<String, Object>> adminMemberList();
+
+    // 위조금액 3번 적발된 회원의 수
+    @Select({
+        "SELECT COUNT(*) FROM MEMBERLIST WHERE REPORTCOUNT=3"
+    })
+    public int forgeMoneyThree();
 }

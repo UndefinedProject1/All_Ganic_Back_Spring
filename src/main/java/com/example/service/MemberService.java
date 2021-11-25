@@ -34,4 +34,7 @@ public interface MemberService {
 
     // 관리자페이지에 회원관리 리스트
     public List<Map<String, Object>> adminMemberList();
+
+    // 위조금액 3번 적발된 회원 수
+    public int forgeMoneyThree();
 }
