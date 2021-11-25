@@ -28,8 +28,8 @@ public interface ReviewMapper {
 
     // 회원별 리뷰 출력
     @Select({
-        "SELECT REVIEWCODE, REVIEWRATING, REVIEWCONTENT, to_char(REVIEWDATE,'YYYY-MM-DD') AS REVIEWDATE ",
-        " FROM REVIEW WHERE MEMBER=#{email}"
+        "SELECT REVIEWCODE, REVIEWRATING, REVIEWCONTENT, REVIEWDATE ",
+        " FROM REVIEWLIST WHERE USEREMAIL=#{email}"
     })
     public List<Map<String, Object>> selectMemberList(@Param("email") String email);
 
