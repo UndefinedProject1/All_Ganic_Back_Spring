@@ -22,6 +22,7 @@ import com.example.service.MemberService;
 import com.example.service.ProductService;
 import com.example.service.QuestionService;
 import com.example.service.SubImageService;
+import com.example.service.sendEmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +67,10 @@ public class AdminController {
     SubImageService sImageService;
 
     @Autowired
-    QuestionService qService;    
+    QuestionService qService;   
+    
+    @Autowired
+    sendEmailService sendEmailService;
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/api/admin/brand_insert
@@ -440,5 +445,14 @@ public class AdminController {
             map.put("result", e.hashCode());
         }
         return map;
+    }
+
+    // 위조금액 3번 적발 시 삭제하면서 발송되는 메일
+    // 127.0.0.1:8080/REST/api/Malignity/sendEmail
+    @PostMapping(value = "/Malignity/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void sendEmail(@RequestBody  Map<String, Object> body){
+        String userEmail = (String) body.get("useremail");
+        String userName = (String) body.get("username");
+        sendEmailService.createMailAndCounterfeitMember(userEmail, userName);
     }
 }
