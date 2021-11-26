@@ -137,7 +137,7 @@ public class MemberController {
 
     // 이메일 중복 체크(dto)
     // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
-    @GetMapping(value = "/member/checkemail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/member/checkemail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckEmailPOST(@RequestBody  Map<String, Object> body) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -159,7 +159,7 @@ public class MemberController {
     //등록된 이메일로 임시비밀번호를 발송하고 발송된 임시비밀번호로 사용자의 pw를 변경하는 컨트롤러
     // 127.0.0.1:8080/check/findPw/sendEmail
     @PostMapping(value = "/check/findPw/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public int sendEmail(@RequestBody  Map<String, Object> body){
+    public int sendEmail(@RequestBody Map<String, Object> body){
         int result = 0;
         try{
             String userEmail = (String) body.get("useremail");

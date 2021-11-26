@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.dto.MailDto;
 import com.example.entity.Brand;
 import com.example.entity.Category;
 import com.example.entity.Product;
@@ -462,7 +463,7 @@ public class AdminController {
         return result;
     }
 
-    // 관리자가 회원을 삭제 시킬 때
+    // 관리자가 회원을 삭제 시킬 때(이메일 먼저 전송되고 나서 발동)
     // 127.0.0.1:8080/REST/api/admin/delete/member
     @DeleteMapping(value = "/admin/delete/member", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public int deleteMember(@RequestHeader("token") String token, @RequestBody Map<String, Object> body) {
@@ -493,15 +494,23 @@ public class AdminController {
     }
 
     // 위조금액 3번 적발 시 삭제하면서 발송되는 메일
-    // 127.0.0.1:8080/REST/api/Malignity/sendEmail
-    @PostMapping(value = "/Malignity/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public int sendEmail(@RequestBody Map<String, Object> body){
+    // 127.0.0.1:8080/REST/api/admin/delete/sendEmail
+    @PostMapping(value = "/admin/delete/sendEmail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public int deleteSendEmail(@RequestHeader("token") String token, @RequestBody Map<String, Object> body, @RequestParam("kind") long kind){
         int result = 0;
         try{
             String userEmail = (String) body.get("useremail");
             String userName = (String) body.get("username");
-            sendEmailService.createMailAndCounterfeitMember(userEmail, userName);
-            result = 1;
+            if(kind == 1){
+                MailDto dto = sendEmailService.createMailAndMalignityMember(userEmail, userName);
+                sendEmailService.imgMailSend(dto);
+                result = 1;
+            }
+            else if(kind == 2){
+                MailDto dto = sendEmailService.createMailAndCounterfeitMember(userEmail, userName);
+                sendEmailService.imgMailSend(dto);
+                result = 1;
+            }
         }catch (Exception e) {
             e.printStackTrace();
             result = e.hashCode();
