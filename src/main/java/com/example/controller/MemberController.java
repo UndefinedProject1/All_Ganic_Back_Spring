@@ -255,7 +255,9 @@ public class MemberController {
         try {
             String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
             String address = (String) body.get("address"); 
-            Long post = (Long) body.get("post");
+            // Long post = (Long) body.get("post");
+            String pst = (String) body.get("post");
+            Long post = Long.valueOf(pst); 
             String detaileaddress = (String) body.get("detailaddress");
 
             // 토큰과 사용자 아이디 일치 시점
