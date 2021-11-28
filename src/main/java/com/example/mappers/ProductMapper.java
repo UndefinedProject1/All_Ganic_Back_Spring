@@ -61,4 +61,18 @@ public interface ProductMapper {
         "GROUP BY CATEGORYCODE"
     })
     public List<Map<String, Object>> selectCateSell();
+
+    // 최근 구매한 물품 코드 리턴
+    @Select({
+        "SELECT PRODUCT FROM PAYHISTORY WHERE MEMBER=#{email} ORDER BY ORDERDATE ASC LIMIT 1"
+    })
+    public Long latestOrder(@Param("email") String email);
+
+    // 랜덤으로 물품 출력
+    @Select({
+        "SELECT PRODUCTCODE FROM PRODUCT ",
+        "WHERE CATEGORY LIKE (SELECT SUBSTR(CATEGORY, 0, 3) FROM PRODUCT WHERE PRODUCTCODE=#{code}) || '%'",
+        "ORDER BY RAND() LIMIT 1"
+    })
+    public Long randomProduct(@Param("code") Long code);
 }

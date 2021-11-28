@@ -27,15 +27,15 @@ public class Recommend {
     @Id
     @Column(name = "RECOMMENDCODE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_RECOMMEND_NO")
-    private long RECOMMENDcode = 0L;
+    private long recommendcode = 0L;
 
     @OneToOne // 물품정보
     @JoinColumn(updatable = false, name = "PRODUCT")
     private Product product;
 
-    @Column(updatable = false, name = "RECOMMENDKEY")
-    private Long recommendkey = 0L;
+    @Column(name = "RECOMMENDKEY")
+    private String recommendkey = null;
 
     @Column(name = "RECOMMENDVALUE")
-    private Long recommendvalue = 0L;
+    private String recommendvalue = null;
 }

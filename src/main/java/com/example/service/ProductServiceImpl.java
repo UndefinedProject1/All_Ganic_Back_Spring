@@ -156,4 +156,16 @@ public class ProductServiceImpl implements ProductService{
         return pMapper.selectSalesRate();
     }
 
+    // 해당 회원의 최근 구매 물품코드 리턴
+    @Override
+    public Long latestOrder(String email) {
+        return pMapper.latestOrder(email);
+    }
+
+    // 랜덤 출력
+    @Override
+    public Long randomProduct(Long code) {
+        return pMapper.randomProduct(code);
+    }
+
 }

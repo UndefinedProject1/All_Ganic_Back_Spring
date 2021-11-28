@@ -1,6 +1,8 @@
 package com.example.controller;
 
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import com.example.entity.CancelHistory;
 import com.example.entity.Member;
 import com.example.entity.Pay;
 import com.example.entity.PayHistory;
+import com.example.entity.Recommend;
 import com.example.entity.Report;
 import com.example.jwt.JwtUtil;
 import com.example.request.AuthData;
@@ -26,6 +29,7 @@ import com.example.service.MemberService;
 import com.example.service.PayHistoryService;
 import com.example.service.PayService;
 import com.example.service.ProductService;
+import com.example.service.RecommendService;
 import com.example.service.ReportService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -82,6 +86,8 @@ public class PayController {
 	@Autowired
     ReportService rServiece;
 
+	@Autowired
+    RecommendService recommendServiece;
 
 	@Autowired
     JwtUtil jwtUtil;
@@ -429,4 +435,37 @@ public class PayController {
         }
         return map;
     }
+
+	// 물품 구매 시 추천물품에 추가
+	// 127.0.0.1:8080/REST/api/add/recommended
+    @GetMapping(value="/add/recommended")
+    public Map<String, Object> addRecommendProduct(@RequestHeader("token") String token, 
+	@RequestParam("no") Long no) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Long> list1 = new ArrayList<>(); 
+		List<Long> list2 = new ArrayList<>(); 
+        try{
+			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+			Long product = pService.latestOrder(useremail);
+			if(product != null){
+				Recommend recommend = recommendServiece.findRecommend(no);
+				if(recommend != null){
+					String[] st1 = recommend.getRecommendkey().split(",");
+					String[] st2 = recommend.getRecommendvalue().split(",");
+					for(int i=0; i<st1.length; i++){
+						
+					}
+					// recommendServiece.updateKeyValue(key, count, no);
+				}
+			}
+			else{
+
+			}
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            map.put("result", e.hashCode());
+        }
+        return map;
+	}
 }

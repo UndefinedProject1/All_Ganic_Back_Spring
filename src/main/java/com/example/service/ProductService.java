@@ -78,4 +78,9 @@ public interface ProductService {
     // 카테고리별 판매량
     public List<Map<String, Object>> selectCateSell();
 
+    // 해당 회원의 최근 구매 물품코드 리턴
+    public Long latestOrder(String email);
+
+    // 추천물품이 없으면 랜덤출력
+    public Long randomProduct(Long code);
 }
