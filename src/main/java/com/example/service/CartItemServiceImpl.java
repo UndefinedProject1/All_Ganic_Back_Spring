@@ -37,7 +37,7 @@ public class CartItemServiceImpl implements CartItemService{
     public Long selectCartQuantity(long code) {
         return ciMapper.selectCartQuantity(code);
     }
-   
+
     // 장바구니 아이템 찾고 반환하기
     @Override
     public CartItem selectCartProductOne(long no, long code) {

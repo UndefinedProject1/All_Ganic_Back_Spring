@@ -15,7 +15,6 @@ import com.example.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -206,7 +205,7 @@ public class CartController {
                 map.put("cartitem", chks);
                 map.put("result", 1L);
             }
-           else{
+            else{
                 map.put("state", "체크한 장바구니 아이템정보가 넘어오지 않았습니다.");
                 map.put("result", 0L);
             }
