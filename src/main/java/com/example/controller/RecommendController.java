@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +36,38 @@ public class RecommendController {
     @Autowired
     ProductService pService;
     
-    @GetMapping(value="/random")
+    // 물품상세페이지에 추천물품코드 출력
+    // 127.0.0.1:8080/REST/api/recommend/product?code=
+    @GetMapping(value="/recommend/product")
     public Map<String, Object> getRandom(@RequestParam Long code) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> list = rService.checkRecommend(code);
         try{
             if(list != null){
-
+                Map<Long, Integer> re = new HashMap<Long, Integer>();
+                Recommend recommend = rService.findRecommend(code);
+                String[] st1 = recommend.getRecommendkey().split(",");
+                String[] st2 = recommend.getRecommendvalue().split(",");
+                for(int i=0; i<st1.length; i++){
+                    re.put(Long.parseLong(st1[i]), Integer.parseInt(st2[i]));
+                }
+                List<Entry<Long, Integer>> list_entries = new ArrayList<Entry<Long, Integer>>(re.entrySet());
+                // 비교함수 Comparator를 사용하여 오름차순으로 정렬
+                Collections.sort(list_entries, new Comparator<Entry<Long, Integer>>() {
+                    // compare로 값을 비교
+                    public int compare(Entry<Long, Integer> obj1, Entry<Long, Integer> obj2) {
+                        // 오름 차순 정렬
+                        return obj2.getValue().compareTo(obj1.getValue());
+                    }
+                });
+                ProductListProjection product = pService.selectProductOne(list_entries.get(0).getKey());
+                map.put("result", 1);
+                map.put("recommend", product);
             }else{
                 Long ret = pService.randomProduct(code);
                 ProductListProjection product = pService.selectProductOne(ret);
-                map.put("list", product);
+                map.put("result", 2);
+                map.put("recommend", product);
             }
         }catch (Exception e) {
             e.printStackTrace();
