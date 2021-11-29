@@ -15,11 +15,11 @@ public interface RecommendMapper {
     @Select({
         "SELECT RECOMMENDKEY, RECOMMENDVALUE FROM RECOMMEND WHERE PRODUCT=#{code}"
     })
-    public List<Map<String, Object>> checkRecommend(@Param("code")Long code);
+    public Map<String, Object> checkRecommend(@Param("code")Long code);
 
     // 추천물품의 key와 value업데이트
     @Update({
-        "UPDATE RECOMMEND SET RECOMMENDKEY=#{key} AND RECOMMENDVALUE=#{count} WHERE PRODUCT=#{no}"
+        "UPDATE RECOMMEND SET RECOMMENDKEY=#{key}, RECOMMENDVALUE=#{count} WHERE PRODUCT=#{no}"
     })
     public void updateReportDate(@Param("key") String key, @Param("count") String count, @Param("no") Long no);
 

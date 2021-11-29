@@ -37,7 +37,7 @@ public class RecommendServiceImpl implements RecommendService{
     }
 
     @Override
-    public List<Map<String, Object>> checkRecommend(Long code) {
+    public Map<String, Object> checkRecommend(Long code) {
         return rMapper.checkRecommend(code);
     }
 

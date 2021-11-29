@@ -20,5 +20,5 @@ public interface RecommendService {
     public void updateKeyValue(String key, String count, long no);
 
     // 추천물품 있는지 확인
-    public List<Map<String, Object>> checkRecommend(Long code);
+    public Map<String, Object> checkRecommend(Long code);
 }

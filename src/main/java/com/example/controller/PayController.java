@@ -4,9 +4,13 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -47,6 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,9 +90,6 @@ public class PayController {
 	
 	@Autowired
     ReportService rServiece;
-
-	@Autowired
-    RecommendService recommendServiece;
 
 	@Autowired
     JwtUtil jwtUtil;
@@ -436,36 +438,5 @@ public class PayController {
         return map;
     }
 
-	// 물품 구매 시 추천물품에 추가
-	// 127.0.0.1:8080/REST/api/add/recommended
-    @GetMapping(value="/add/recommended")
-    public Map<String, Object> addRecommendProduct(@RequestHeader("token") String token, 
-	@RequestParam("no") Long no) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<Long> list1 = new ArrayList<>(); 
-		List<Long> list2 = new ArrayList<>(); 
-        try{
-			String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-			Long product = pService.latestOrder(useremail);
-			if(product != null){
-				Recommend recommend = recommendServiece.findRecommend(no);
-				if(recommend != null){
-					String[] st1 = recommend.getRecommendkey().split(",");
-					String[] st2 = recommend.getRecommendvalue().split(",");
-					for(int i=0; i<st1.length; i++){
-						
-					}
-					// recommendServiece.updateKeyValue(key, count, no);
-				}
-			}
-			else{
-
-			}
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-	}
+	
 }
