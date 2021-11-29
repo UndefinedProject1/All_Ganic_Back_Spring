@@ -22,7 +22,7 @@ public class sendEmailService {
     MemberService mService;
 
     private JavaMailSender mailSender;
-    private static final String FROM_ADDRESS = "본인 이메일 넣는 곳";
+    private static final String FROM_ADDRESS = "insa2678@gmail.com";
 
     public MailDto createMailAndMalignityMember(String userEmail, String userName){
         String str = getTempPassword();

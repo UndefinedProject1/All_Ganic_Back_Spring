@@ -11,13 +11,14 @@ import com.example.service.CartItemService;
 import com.example.service.CartService;
 import com.example.service.MemberService;
 import com.example.service.ProductService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +43,7 @@ public class CartController {
     // 장바구니 생성 및 물품추가
     // 127.0.0.1:8080/REST/api/cart/create/insert?no=14
     // 여기서 넘어오는 no는 물품 정보
-    @RequestMapping(value = "cart/create/insert", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "cart/create/insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@RequestParam(name = "cnt") long cnt,
             @RequestParam(name = "no", defaultValue = "0") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -97,8 +97,7 @@ public class CartController {
     // 장바구니 물품수량 수정
     // 127.0.0.1:8080/REST/api/cartitem/quantity/update?cnt=4&no=14
     // no는 장바구니아이템 코드
-    @RequestMapping(value = "/cartitem/quantity/update", method = {
-        RequestMethod.PUT }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/cartitem/quantity/update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> questionUpdate(@RequestParam(name = "cnt", defaultValue = "0") long cnt, 
     @RequestParam(name = "no", defaultValue = "0") long no) {
         Map<String, Object> map = new HashMap<>();
@@ -121,7 +120,7 @@ public class CartController {
 
     // 회원별 장바구니 아이템 리스트 출력(물품이름 순 정렬)
     // 127.0.0.1:8080/REST/api/cartitem/member/list
-    @RequestMapping(value = "/cartitem/member/list", method = RequestMethod.GET)
+    @GetMapping(value = "/cartitem/member/list")
     public Map<String, Object> MemberSelectListGET(@RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -153,7 +152,7 @@ public class CartController {
     // 회원별 장바구니 아이템 전체삭제
     // 127.0.0.1:8080/REST/api/cartitem/delete/all
     // code는 장바구니코드
-    @RequestMapping(value = "/cartitem/delete/all", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/cartitem/delete/all")
     public Map<String, Object> cartItemAllDELTE(@RequestParam(name = "code") long code) {
         Map<String, Object> map = new HashMap<String, Object>();
         int i = ciService.deleteCartItemAll(code);
@@ -176,7 +175,7 @@ public class CartController {
     // 회원별 장바구니 아이템 일부분 삭제
     // 127.0.0.1:8080/REST/api/cartitem/delete/check
     // chks는 장바구니아이템코드
-    @RequestMapping(value = "/cartitem/delete/check", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/cartitem/delete/check")
     public Map<String, Object> cartItemSomeDELTE(@RequestParam(name = "chks") List<Long> chks) {
         Map<String, Object> map = new HashMap<String, Object>();
         try{

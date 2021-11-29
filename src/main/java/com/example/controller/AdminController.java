@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,10 +74,9 @@ public class AdminController {
 
     // 브랜드 추가
     // 127.0.0.1:8080/REST/api/admin/brand_insert
-    @RequestMapping(value = "/admin/brand_insert", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/brand_insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@ModelAttribute Brand brand, @RequestParam("file") MultipartFile file,
-    @RequestHeader("token") String token) {
+        @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             brand.setBrandimage(file.getBytes());
@@ -96,8 +94,7 @@ public class AdminController {
     //브랜드 중복 체크
     // {"brandcode":1} 있으면 1 리턴, 없으면 0 리턴
     // 127.0.0.1:8080/REST/api/admin/checkbrand
-    @RequestMapping(value = "/admin/checkbrand", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/checkbrand", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckBrandPOST(@RequestBody Brand brand) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -118,7 +115,7 @@ public class AdminController {
     // 브랜드 이미지 찾기
     // 127.0.0.1:8080/REST/api/select_image?no=번호
     // <img src="/select_image?no=12" />
-    @RequestMapping(value = "/select_image", method = RequestMethod.GET)
+    @GetMapping(value = "/select_image")
     public ResponseEntity<byte[]> selectImage(@RequestParam("no") long no) throws Exception {
         try {
             Brand brand = bService.selectBrand(no);
@@ -143,8 +140,7 @@ public class AdminController {
 
     // 카테고리 추가
     // 127.0.0.1:8080/REST/api/admin/category_insert
-    @RequestMapping(value = "/admin/category_insert", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/category_insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> brandInsertPOST(@RequestBody Category category, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -157,11 +153,10 @@ public class AdminController {
         return map;
     }
 
-    //카테고리 중복 체크
+    // 카테고리 중복 체크
     // {"categorycode":"100101"} 있으면 1 리턴, 없으면 0 리턴
     // 127.0.0.1:8080/REST/api/admin/checkcate
-    @RequestMapping(value = "/admin/checkcate", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/checkcate", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> CheckCatePOST(@RequestBody Category category) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
@@ -182,8 +177,7 @@ public class AdminController {
     // 제품 추가
     // 127.0.0.1:8080/REST/api/admin/product_insert
     // form-data => productname, productprice, file, brand, category
-    @RequestMapping(value = "/admin/product_insert", method = {
-            RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/product_insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productInsertPOST(@ModelAttribute Product product,
             @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -220,8 +214,7 @@ public class AdminController {
     //물품 수정
     //127.0.0.1:8080/REST/api/admin/product_update
     // formdata =>productcode, productname, productprice, file, brand, category
-    @RequestMapping(value = "/admin/product_update", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/product_update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productUpdate(@ModelAttribute Product product,
         @RequestParam("file") MultipartFile file,
         @RequestHeader("token") String token) { 
@@ -248,11 +241,8 @@ public class AdminController {
     // 서브이미지 등록
     //127.0.0.1:8080/REST/api/admin/subimg_insert?product=1
     //form-data => file
-    @RequestMapping(value = "/admin/subimg_insert", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> subimgInsertPOST( 
-    @RequestParam("file") MultipartFile[] files,
-    @RequestParam(name = "product")long no,
+    @PostMapping(value = "/admin/subimg_insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> subimgInsertPOST(@RequestParam("file") MultipartFile[] files, @RequestParam(name = "product")long no,
     @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -279,13 +269,9 @@ public class AdminController {
     //서브이미지 수정하기
     //127.0.0.1:8080/REST/api/admin/subimg_update?product=1&subcode=34
     //form-data => file
-    @RequestMapping(value = "/admin/subimg_update", method = {
-        RequestMethod.POST}, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> subimgUpdate(
-        @RequestParam("file") MultipartFile[] files,
-        @RequestParam(name = "product")long no,
-        @RequestParam(name = "subcode")long[] subcode,
-        @RequestHeader("token") String token) { 
+    @PostMapping(value = "/admin/subimg_update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> subimgUpdate(@RequestParam("file") MultipartFile[] files, @RequestParam(name = "product")long no,
+        @RequestParam(name = "subcode")long[] subcode, @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
         
         try{
@@ -315,8 +301,7 @@ public class AdminController {
     //서브이미지 삭제하기
     //127.0.0.1:8080/REST/api/admin/subimg_delete
     // {"subcode":33}
-    @RequestMapping(value = "/admin/subimg_delete", method = {
-        RequestMethod.DELETE }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/admin/subimg_delete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> subimgDelete(@RequestBody SubImage subImage, 
     @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
@@ -333,8 +318,7 @@ public class AdminController {
     // 문의글 답글 작성
     // 127.0.0.1:8080/REST/api/admin/question/reply/insert?code=
     // 여기서 code는 문의코드
-    @RequestMapping(value = "/admin/question/reply/insert", method = {
-        RequestMethod.POST }, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin/question/reply/insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> replyInsertPOST(@RequestBody Question question, @RequestParam("code") long code,
     @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<String, Object>();
