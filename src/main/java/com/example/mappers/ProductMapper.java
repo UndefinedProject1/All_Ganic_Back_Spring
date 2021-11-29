@@ -34,7 +34,7 @@ public interface ProductMapper {
     // 해당일의 최근 5일간의 판매량 조회
     @Select({
         "SELECT DUAL.DUAL_DATE, (NVL(DATE1.CNT, 0)) AS CNT FROM DUAL ",
-        "LEFT OUTER JOIN DATE1 ON DUAL.DUAL_DATE = DATE1.ORDERDATE"
+        "LEFT OUTER JOIN DATE1 ON DUAL.DUAL_DATE = DATE1.ORDERDATE ORDER BY DUAL.DUAL_DATE ASC"
     })
     public List<Map<String, Object>> selectSalesRate();
 
