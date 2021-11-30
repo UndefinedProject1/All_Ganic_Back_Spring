@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -118,16 +120,30 @@ public class MemberController {
     }
 
     // 로그인
-    // 127.0.0.1:8080/REST/api/member/login
+    // 127.0.0.1:8080/REST/api/member/login?sns=true
     // {"useremail":"a@gmail.com", "userpw":"a"}
     @PostMapping(value = "/member/login", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> memberLoginPOST(@RequestBody Member member) {
+    public Map<String, Object> memberLoginPOST(@RequestBody Member member, @RequestParam(name = "sns") Boolean sns) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            authenticationManager
+            BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+            Member member1 = mServiece.getMemberOne(member.getUseremail());
+
+            if(sns == true){ // 카카오로 로그인 시
+                if (bcpe.matches("kakao_login_pw", member1.getUserpw())) {
+                    map.put("result", 1L);
+                    map.put("token", jwtUtil.generateToken(member.getUseremail()));
+                }
+                else{
+                    map.put("result", 0L);
+                    map.put("state", "카카오 유저가 아닙니다. 사이트 로그인에서 로그인을 시도하여 주십시오.");
+                }
+            }else{ // 그냥 로그인 시
+                authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
-            map.put("result", 1L);
-            map.put("token", jwtUtil.generateToken(member.getUseremail()));
+                map.put("result", 1L);
+                map.put("token", jwtUtil.generateToken(member.getUseremail()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
@@ -135,10 +151,34 @@ public class MemberController {
         return map;
     }
 
+    // 비밀번호 변경 시 카카오유저인지 확인
+    // 127.0.0.1:8080/REST/api/kakao/user/check
+    @GetMapping(value = "/kakao/user/check")
+    public int kakaoUserCheckGET(@RequestHeader("token") String token) {
+        int result;
+        try {
+            BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+            String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+            // 아이디를 이용해 기존 정보 가져오기
+            Member member = mServiece.getMemberOne(useremail);
+            // 토큰과 사용자 아이디 일치 시점
+            if (bcpe.matches("kakao_login_pw", member.getUserpw())) {
+                result = 1;   
+            }
+            else{
+                result = 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = e.hashCode();
+        }
+        return result;
+    }
+
     // 이메일 중복 체크(dto)
     // {"useremail":"a@gmail.com"} 있으면 1리턴, 없으면 0리턴
     @PostMapping(value = "/member/checkemail", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> CheckEmailPOST(@RequestBody  Map<String, Object> body) {
+    public Map<String, Object> CheckEmailPOST(@RequestBody Map<String, Object> body) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             String mail = (String) body.get("useremail");
@@ -164,9 +204,18 @@ public class MemberController {
         try{
             String userEmail = (String) body.get("useremail");
             String userName = (String) body.get("username");
-            MailDto dto = sendEmailService.createMailAndChangePassword(userEmail, userName);
-            sendEmailService.mailSend(dto);
-            result = 1;
+            BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+            // 아이디를 이용해 기존 정보 가져오기
+            Member member = mServiece.getMemberOne(userEmail);
+            // 토큰과 사용자 아이디 일치 시점
+            if (bcpe.matches("kakao_login_pw", member.getUserpw())) {
+                result = 0;  // 카카오유저이므로 비밀번호 찾기 불가
+            }
+            else{
+                MailDto dto = sendEmailService.createMailAndChangePassword(userEmail, userName);
+                sendEmailService.mailSend(dto);
+                result = 1;
+            }
         }catch (Exception e) {
             e.printStackTrace();
             result = e.hashCode();
