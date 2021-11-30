@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.example.entity.ProductListProjection;
+import com.example.dto.ProductDto;
 import com.example.entity.Recommend;
 import com.example.jwt.JwtUtil;
 import com.example.service.ProductService;
@@ -60,12 +60,12 @@ public class RecommendController {
                         return obj2.getValue().compareTo(obj1.getValue());
                     }
                 });
-                ProductListProjection product = pService.selectProductOne(list_entries.get(0).getKey());
+                ProductDto product = pService.selectProductOne(list_entries.get(0).getKey());
                 map.put("result", 1);
                 map.put("recommend", product);
             }else{
                 Long ret = pService.randomProduct(code);
-                ProductListProjection product = pService.selectProductOne(ret);
+                ProductDto product = pService.selectProductOne(ret);
                 map.put("result", 2);
                 map.put("recommend", product);
             }

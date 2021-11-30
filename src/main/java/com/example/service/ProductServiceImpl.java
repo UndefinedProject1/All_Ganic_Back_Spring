@@ -7,9 +7,8 @@ import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
-import com.example.entity.BrandCountProjection;
+import com.example.dto.ProductDto;
 import com.example.entity.Product;
-import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 import com.example.mappers.ProductMapper;
 import com.example.repository.ProductRepository;
@@ -66,12 +65,6 @@ public class ProductServiceImpl implements ProductService{
         return pRepository.findByBrand_Brandcode(code);
     }
 
-    //브랜드 코드 별 제품 조회(sql)
-    @Override
-    public List<ProductProjection> selectBProductLsit2(Long code) {
-        return pRepository.queryListBProduct(code);
-    }
-
     // 브랜드별 제품 개수
     @Override
     public int selectBrandProductCount(Long code) {
@@ -87,8 +80,8 @@ public class ProductServiceImpl implements ProductService{
 
     //카테고리 코드 별 제품 조회(sql)
     @Override
-    public List<ProductListProjection> selectCProductLsit(String code) {
-        return pRepository.queryListCProduct(code);
+    public List<ProductDto> selectCProductLsit(String code) {
+        return pMapper.queryListCProduct(code);
     }
 
     //카테고리 코드 별 제품 조회(jpa)
@@ -99,8 +92,8 @@ public class ProductServiceImpl implements ProductService{
 
     //제품 1개 조회 (상세 페이지)
     @Override
-    public ProductListProjection selectProductOne(long code) {
-        return pRepository.querySelectProduct(code);
+    public ProductDto selectProductOne(long code) {
+        return pMapper.querySelectProduct(code);
     }
 
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
@@ -113,17 +106,6 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProductProjection> selectCProductLsit3(String code, Pageable pageable) {
         return pRepository.findByCategory_CategorycodeStartingWithOrderByProductnameAsc(code, pageable);
-    }
-
-    //브랜드 코드 별 제품 이름순 조회(jpa)
-    @Override
-    public List<ProductProjection> selectBProductLsit3(long code, Pageable pageable) {
-        return pRepository.findByBrand_BrandcodeOrderByProductnameAsc(code, pageable);
-    }
-
-    @Override
-    public List<BrandCountProjection> selectBrandCount() {
-        return pRepository.findGroupByProductWithNativeQuery();
     }
 
     // 브랜드별 점유율

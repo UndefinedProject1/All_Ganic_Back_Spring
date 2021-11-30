@@ -201,7 +201,7 @@ public class AdminController {
     @DeleteMapping(value = "/admin/product_delete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> productDelete(@RequestParam("no") long no, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
-        try {
+        try{
             mainService.deleteProductTransaction(no);
             map.put("result", 1);
         } catch (Exception e) {
@@ -215,8 +215,7 @@ public class AdminController {
     //127.0.0.1:8080/REST/api/admin/product_update
     // formdata =>productcode, productname, productprice, file, brand, category
     @PostMapping(value = "/admin/product_update", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> productUpdate(@ModelAttribute Product product,
-        @RequestParam("file") MultipartFile file,
+    public Map<String, Object> productUpdate(@ModelAttribute Product product, @RequestParam("file") MultipartFile file,
         @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
         try{ 
@@ -243,7 +242,7 @@ public class AdminController {
     //form-data => file
     @PostMapping(value = "/admin/subimg_insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> subimgInsertPOST(@RequestParam("file") MultipartFile[] files, @RequestParam(name = "product")long no,
-    @RequestHeader("token") String token) {
+        @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
             //물품코드 가져오기
@@ -273,7 +272,6 @@ public class AdminController {
     public Map<String, Object> subimgUpdate(@RequestParam("file") MultipartFile[] files, @RequestParam(name = "product")long no,
         @RequestParam(name = "subcode")long[] subcode, @RequestHeader("token") String token) { 
         Map<String, Object> map = new HashMap<>();
-        
         try{
             //물품코드 가져오기
             Product product = pService.selectProduct(no);
@@ -302,8 +300,7 @@ public class AdminController {
     //127.0.0.1:8080/REST/api/admin/subimg_delete
     // {"subcode":33}
     @DeleteMapping(value = "/admin/subimg_delete", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> subimgDelete(@RequestBody SubImage subImage, 
-    @RequestHeader("token") String token) {
+    public Map<String, Object> subimgDelete(@RequestBody SubImage subImage, @RequestHeader("token") String token) {
         Map<String, Object> map = new HashMap<>();
         try {
             sImageService.deleteSubimg(subImage.getSubcode());

@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.entity.BrandCountProjection;
+import com.example.dto.ProductDto;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
-import com.example.entity.ProductListProjection;
 import com.example.entity.ProductProjection;
 import com.example.entity.SubImage;
 import com.example.entity.SubImageProjection;
@@ -161,7 +160,7 @@ public class ProductController {
     public Map<String, Object> productOneGET(@RequestParam("code") long code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            ProductListProjection product = pService.selectProductOne(code);
+            ProductDto product = pService.selectProductOne(code);
             map.put("product", product);
             map.put("imgurl", "/REST/api/select_productimage?no=" + code);
             map.put("result", 1);
@@ -226,7 +225,7 @@ public class ProductController {
     public Map<String, Object> selectCProductGET(@RequestParam("code") String code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<ProductListProjection> list = pService.selectCProductLsit(code);
+            List<ProductDto> list = pService.selectCProductLsit(code);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {
@@ -287,58 +286,5 @@ public class ProductController {
         }
         return map;
     }
-    
-    //브랜드 코드 별 제품 조회(sql)
-    // 127.0.0.1:8080/REST/api/select_bproduct2?code= 브랜드 코드
-    @GetMapping(value = "/select_bproduct2", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBProduct2GET(@RequestParam("code") long code) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectBProductLsit2(code);
-            int count = pService.selectBrandProductCount(code);
-            map.put("count", count);
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
-            
-    //브랜드 코드 별 제품 이름 순 조회(jpa)
-    // 127.0.0.1:8080/REST/api/select_bproduct3?page=1&code=
-    @GetMapping(value = "/select_bproduct3", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBProduct3GET(@RequestParam(value = "page", defaultValue = "1")int page, @RequestParam("code") Long code) {
-        //페이지 네이션 처리
-        PageRequest pageable = PageRequest.of(page-1, 16);
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectBProductLsit3(code, pageable);
-            int count = pService.selectBrandProductCount(code);
-            map.put("count", count);
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
 
-    // 브랜드별 물품 개수(list에 brand, 개수 리턴)
-    // 127.0.0.1:8080/REST/api/select/brand/count
-    @GetMapping(value = "/select/brand/count", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectBrandCountGET() {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<BrandCountProjection> list = pService.selectBrandCount();
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
 } 

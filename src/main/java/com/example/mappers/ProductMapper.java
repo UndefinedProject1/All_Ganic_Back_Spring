@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Delete;
+import com.example.dto.ProductDto;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -12,6 +13,18 @@ import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface ProductMapper {
+
+    //카테고리 코드 별 제품 조회
+    @Select({
+        "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE CATEGORY LIKE #{code} || '%'"
+    })
+    public List<ProductDto> queryListCProduct(@Param("code") String code);
+
+    //제품 1개 조회 (상세 페이지)
+    @Select({
+        "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE PRODUCTCODE =#{code}"
+    })
+    public ProductDto querySelectProduct(@Param("code") Long code);
 
     // 브랜드 별 물품 개수
     @Select({
