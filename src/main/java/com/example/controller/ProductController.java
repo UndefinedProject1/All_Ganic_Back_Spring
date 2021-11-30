@@ -91,34 +91,29 @@ public class ProductController {
         }
     }
 
-    //물품 전체 조회
-    //127.0.0.1:8080/REST/api/select_product
-    @GetMapping(value = "/select_product", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectProductGET() {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectProductList();
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
-    
     //물품 목록 페이지
-    //127.0.0.1:8080/REST/api/select_product2?page=1&name=
-    @GetMapping(value = "/select_product2", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //127.0.0.1:8080/REST/api/select_product?page=1&name=
+    @GetMapping(value = "/select_product", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectProductListGET(@RequestParam(value = "page", defaultValue = "1")int page,
         @RequestParam(value = "name", defaultValue = "")String productname) {
-        //페이지 네이션 처리
-        PageRequest pageable = PageRequest.of(page-1, 16);
         Map<String, Object> map = new HashMap<>();
         try {
-            List<ProductProjection> list = pService.selectProductList2(productname, pageable);
-            map.put("list", list);
-            map.put("result", 1);
+            long start, end = 1;
+            int count = pService.serchProductCount(productname);
+            if(page == 1){
+                start = 1;
+                end = 1*16;
+                List<ProductDto> list = pService.selectProductList(productname, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }
+            else{
+                start = (page-1)*16+1;
+                end = page*16; 
+                List<ProductDto> list = pService.selectProductList(productname, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }map.put("count", count);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
@@ -202,23 +197,7 @@ public class ProductController {
         }
         return map;
     }
-        
-    //카테고리 코드 별 제품 조회(jpa)
-    // 127.0.0.1:8080/REST/api/select_cproduct2?code= 카테고리 코드
-    @GetMapping(value = "/select_cproduct2", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> selectCProduct2GET(@RequestParam(name = "code")String code) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<ProductProjection> list = pService.selectCProductLsit2(code+"");
-            map.put("list", list);
-            map.put("result", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("result", e.hashCode());
-        }
-        return map;
-    }
-    
+
     //카테고리 코드 별 제품 조회(sql)
     // 127.0.0.1:8080/REST/api/select_cproduct?code= 카테고리 코드
     @GetMapping(value = "/select_cproduct", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -239,15 +218,24 @@ public class ProductController {
     // 127.0.0.1:8080/REST/api/select_cproduct3?page=1&code=
     @GetMapping(value = "/select_cproduct3", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> selectCProduct2GET(@RequestParam(value = "page", defaultValue = "1")int page, @RequestParam("code") String code) {
-        //페이지 네이션 처리
-        PageRequest pageable = PageRequest.of(page-1, 16);
         Map<String, Object> map = new HashMap<>();
         try {
-            List<ProductProjection> list = pService.selectCProductLsit3(code, pageable);
+            long start, end = 1;
             int count = pService.selectCateProductCount(code);
-            map.put("count", count);
-            map.put("list", list);
-            map.put("result", 1);
+            if(page == 1){
+                start = 1;
+                end = 1*16;
+                List<ProductDto> list = pService.selectCProductLsit3(code, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }
+            else{
+                start = (page-1)*16+1;
+                end = page*16; 
+                List<ProductDto> list = pService.selectCProductLsit3(code, start, end);
+                map.put("list", list);
+                map.put("result", 1);
+            }map.put("count", count);
         } catch (Exception e) {
             e.printStackTrace();
             map.put("result", e.hashCode());
@@ -277,7 +265,7 @@ public class ProductController {
     public Map<String, Object> selectBProductGET(@RequestParam(name = "code")long code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            List<ProductProjection> list = pService.selectBProductList(code);
+            List<ProductDto> list = pService.selectBProductList(code);
             map.put("list", list);
             map.put("result", 1);
         } catch (Exception e) {

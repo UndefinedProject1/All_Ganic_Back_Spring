@@ -26,11 +26,8 @@ public interface ProductService {
     //제품정보 가져오기, 물품 이미지 찾고 변환하기
     public Product selectProduct(long code);
 
-    //제품 전체 조회
-    public List<ProductProjection> selectProductList();
-
     //브랜드 코드 별 제품 조회(jpa)
-    public List<ProductProjection> selectBProductList(long code);
+    public List<ProductDto> selectBProductList(long code);
 
     // 브랜드별 제품 개수
     public int selectBrandProductCount(Long code);
@@ -41,17 +38,17 @@ public interface ProductService {
     // 카테고리 코드 별 제품 개수
     public int selectCateProductCount(String code);
 
-    //카테고리 코드 별 제품 조회(jpa)
-    public List<ProductProjection> selectCProductLsit2(String code);
-
     //카테고리 코드 별 제품 이름순 조회(jpa)
-    public List<ProductProjection> selectCProductLsit3(String code, Pageable pageable);
+    public List<ProductDto> selectCProductLsit3(String code, long start, long end);
 
     //제품 1개 조회 (상세 페이지)
     public ProductDto selectProductOne(long code);
 
+    // 제품 검색을 위한 페이지네이션 개수
+    public int serchProductCount(String name);
+
     //제품 전체 목록(이름에 단어가 포함하는 + 제품이름 오름차순 정렬 + 페이지 네이션)
-    public List<ProductProjection> selectProductList2(String productname, Pageable pageable);
+    public List<ProductDto> selectProductList(String name, long start, long end);
 
     // 판매량조회를 위한 날짜테이블
     public int updateDate(long no, Date date);

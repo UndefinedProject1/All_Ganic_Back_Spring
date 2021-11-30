@@ -14,11 +14,40 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface ProductMapper {
 
+    // 브랜드별 물품 조회
+    @Select({
+        "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE BRANDCODE=#{code}"
+    })
+    public List<ProductDto> selectBrandProductList(@Param("code") long code);
+
+    // 검색 페이지네이션을 위한 개수조회
+    @Select({
+        "SELECT COUNT(*) FROM(SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME ",
+        "FROM PRODUCTLIST WHERE PRODUCTNAME LIKE '%' || #{name} || '%' ) PRODUCTLIST"
+    })
+    public int serchProductCount(@Param("name") String name);
+
+    // 제품이름 검색 기능+페이지네이션
+    @Select({
+        "SELECT * FROM(SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME, ",
+        "ROW_NUMBER() OVER (ORDER BY PRODUCTNAME ASC) ROWN FROM PRODUCTLIST WHERE PRODUCTNAME LIKE '%'||#{name}||'%') ",
+        "PRODUCTLIST WHERE ROWN BETWEEN #{start} AND #{end} "
+    })
+    public List<ProductDto> serchProductList(@Param("name") String name, @Param("start") long start, @Param("end") long end);
+
     //카테고리 코드 별 제품 조회
     @Select({
-        "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE CATEGORY LIKE #{code} || '%'"
+        "SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME FROM PRODUCTLIST WHERE CATEGORYCODE LIKE #{code} || '%'"
     })
     public List<ProductDto> queryListCProduct(@Param("code") String code);
+
+    // 카테고리 별 제품조회 및 페이지네이션
+    @Select({
+        "SELECT * FROM(SELECT PRODUCTCODE, PRODUCTNAME, PRODUCTPRICE, BRANDNAME, ",
+        "ROW_NUMBER() OVER (ORDER BY PRODUCTNAME ASC) ROWN FROM PRODUCTLIST WHERE CATEGORYCODE LIKE #{code} || '%') ",
+        "PRODUCTLIST WHERE ROWN BETWEEN #{start} AND #{end} "
+    })
+    public List<ProductDto> selectCateProductList(@Param("code") String code, @Param("start") long start, @Param("end") long end);
 
     //제품 1개 조회 (상세 페이지)
     @Select({
@@ -34,7 +63,7 @@ public interface ProductMapper {
 
     // 카테고리 별 물품 개수
     @Select({
-        "SELECT COUNT(*) FROM PRODUCTLIST WHERE CATEGORY LIKE #{code} || '%'"
+        "SELECT COUNT(*) FROM PRODUCTLIST WHERE CATEGORYCODE LIKE #{code} || '%'"
     })
     public int selectCateProduct(@Param("code") String code);
 
