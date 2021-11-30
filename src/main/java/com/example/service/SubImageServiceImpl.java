@@ -50,7 +50,7 @@ public class SubImageServiceImpl implements SubImageService {
     public void updateSubimg(List<SubImage> list) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();//트랜젝션 시작
-         String sql = "UPDATE SubImage SET SUBIMG=:subimg, IMAGENAME=:imagename, IMAGETYPE=:imagetype "
+        String sql = "UPDATE SubImage SET SUBIMG=:subimg, IMAGENAME=:imagename, IMAGETYPE=:imagetype "
             + "WHERE SUBCODE=:subcode";
         for(SubImage subImage:list){
             em.createNativeQuery(sql).setParameter("subimg", subImage.getImage()).setParameter("imagename", subImage.getImagename()).

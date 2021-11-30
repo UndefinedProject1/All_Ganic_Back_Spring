@@ -8,7 +8,6 @@ import com.example.dto.ProductDto;
 import com.example.entity.BrandProjection;
 import com.example.entity.CategoryProjection;
 import com.example.entity.Product;
-import com.example.entity.ProductProjection;
 import com.example.entity.SubImage;
 import com.example.entity.SubImageProjection;
 import com.example.service.BrandService;
@@ -18,7 +17,6 @@ import com.example.service.ProductService;
 import com.example.service.SubImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
