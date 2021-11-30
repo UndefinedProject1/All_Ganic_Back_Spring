@@ -24,12 +24,12 @@ public interface QuestionMapper {
         "<script>",
             "SELECT * FROM(",
             "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, PRODUCTCODE, ",
-            "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, ROW_NUMBER() OVER () ROWN ",
-            " FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
-            " <if test='kind != 0'> AND QUESTIONKIND=#{kind}  </if>",
-            "ORDER BY QUESTIONDATE ",
+            "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, ROW_NUMBER() OVER (ORDER BY QUESTIONDATE",
             " <if test='reply == true'> DESC  </if>",
-            " <if test='reply == false'> ASC  </if>) QUESTION WHERE ROWN BETWEEN #{start} AND #{end}",
+            " <if test='reply == false'> ASC  </if>) ROWN ",
+            "FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
+            "<if test='kind != 0'> AND QUESTIONKIND=#{kind} </if>",
+            ") QUESTION WHERE ROWN BETWEEN #{start} AND #{end}",
         "</script>"    
     })
 	public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("kind") Long kind, @Param("start") long start, @Param("end") long end);
