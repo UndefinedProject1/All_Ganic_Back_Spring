@@ -194,7 +194,6 @@ public class MemberController {
         try {
             String mail = (String) body.get("useremail");
             int count = mServiece.checkEmailDTO(mail);
-            System.out.println(count);
             if (count == 0) {
                 map.put("result", 0L);
             } else {
