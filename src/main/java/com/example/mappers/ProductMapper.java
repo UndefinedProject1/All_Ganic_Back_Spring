@@ -120,7 +120,7 @@ public interface ProductMapper {
 
     // 판매가능한 상품인지 확인
     @Select({
-        "SELECT COUNT(*) FROM PRODUCT WHERE PRODUCTCODE=#{code} AND  PRODUCTIMAGE=null"
+        "SELECT COUNT(*) FROM PRODUCT WHERE IMAGENAME IS NULL AND PRODUCTCODE=#{code}"
     })
     public int checkUnsalableProduct(@Param("code") Long code);
 }
