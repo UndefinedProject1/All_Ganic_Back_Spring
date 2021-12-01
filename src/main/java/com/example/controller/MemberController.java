@@ -126,9 +126,9 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
-
+            Member member1 = mServiece.getMemberOne(member.getUseremail());
             if(sns == true){ // 카카오로 로그인 시
-                if (bcpe.matches("kakao_login_pw", member.getUserpw())) {
+                if (bcpe.matches("kakao_login_pw", member1.getUserpw())) {
                     map.put("result", 1L);
                     map.put("token", jwtUtil.generateToken(member.getUseremail()));
                 }
@@ -137,7 +137,7 @@ public class MemberController {
                     map.put("state", "카카오 유저가 아닙니다. 사이트 로그인에서 로그인을 시도하여 주십시오.");
                 }
             }else{ // 그냥 로그인 시
-                if(bcpe.matches("kakao_login_pw", member.getUserpw())) {
+                if(bcpe.matches("kakao_login_pw", member1.getUserpw())) {
                     map.put("result", 0L);
                     map.put("state", "카카오 유저입니다. 카카오 로그인에서 로그인을 시도하여 주십시오.");
                 }
