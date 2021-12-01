@@ -82,4 +82,9 @@ public class MemberServiceImpl implements MemberService {
         return mMapper.forgeMoneyThree();
     }
 
+    @Override
+    public int leaveMemberCheck(String email) {
+        return mMapper.leaveMemberCheck(email);
+    }
+
 }

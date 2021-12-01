@@ -37,4 +37,7 @@ public interface MemberService {
 
     // 위조금액 3번 적발된 회원 수
     public int forgeMoneyThree();
+
+    // 탈퇴한 회원이 로그인하려는지 확인
+    public int leaveMemberCheck(String email);
 }

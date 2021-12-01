@@ -126,26 +126,33 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
-            Member member1 = mServiece.getMemberOne(member.getUseremail());
-            if(sns == true){ // 카카오로 로그인 시
-                if (bcpe.matches("kakao_login_pw", member1.getUserpw())) {
-                    map.put("result", 1L);
-                    map.put("token", jwtUtil.generateToken(member.getUseremail()));
-                }
-                else{
-                    map.put("result", 0L);
-                    map.put("state", "카카오 유저가 아닙니다. 사이트 로그인에서 로그인을 시도하여 주십시오.");
-                }
-            }else{ // 그냥 로그인 시
-                if(bcpe.matches("kakao_login_pw", member1.getUserpw())) {
-                    map.put("result", 0L);
-                    map.put("state", "카카오 유저입니다. 카카오 로그인에서 로그인을 시도하여 주십시오.");
-                }
-                else{
-                    authenticationManager
-                        .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
-                    map.put("result", 1L);
-                    map.put("token", jwtUtil.generateToken(member.getUseremail()));
+            int check = mServiece.leaveMemberCheck(member.getUseremail());
+            if(check == 1){ // 탈퇴한 회원
+                map.put("result", 4L);
+                map.put("state", "이미 탈퇴하신 회원입니다.");
+            }
+            else{ // 탈퇴하지 않은 회원
+                Member member1 = mServiece.getMemberOne(member.getUseremail());
+                if(sns == true){ // 카카오로 로그인 시
+                    if (bcpe.matches("kakao_login_pw", member1.getUserpw())) {
+                        map.put("result", 1L);
+                        map.put("token", jwtUtil.generateToken(member.getUseremail()));
+                    }
+                    else{
+                        map.put("result", 0L);
+                        map.put("state", "카카오 유저가 아닙니다. 사이트 로그인에서 로그인을 시도하여 주십시오.");
+                    }
+                }else{ // 그냥 로그인 시
+                    if(bcpe.matches("kakao_login_pw", member1.getUserpw())) {
+                        map.put("result", 0L);
+                        map.put("state", "카카오 유저입니다. 카카오 로그인에서 로그인을 시도하여 주십시오.");
+                    }
+                    else{
+                        authenticationManager
+                            .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
+                        map.put("result", 1L);
+                        map.put("token", jwtUtil.generateToken(member.getUseremail()));
+                    }
                 }
             }
         } catch (Exception e) {

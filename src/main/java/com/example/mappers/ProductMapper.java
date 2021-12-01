@@ -117,4 +117,10 @@ public interface ProductMapper {
         "ORDER BY RAND() LIMIT 1"
     })
     public Long randomProduct(@Param("code") Long code);
+
+    // 판매가능한 상품인지 확인
+    @Select({
+        "SELECT COUNT(*) FROM PRODUCT WHERE PRODUCTCODE=#{code} AND  PRODUCTIMAGE=null"
+    })
+    public int checkUnsalableProduct(@Param("code") Long code);
 }

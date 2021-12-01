@@ -45,6 +45,20 @@ public class ProductController {
     @Autowired
     SubImageService sImageService;
 
+    // 장바구니에 추가할 시 판매할수있는 제품인지 확인
+    // 127.0.0.1:8080/REST/api/check/unsalable/product
+    @GetMapping(value = "/check/unsalable/product")
+    public int checkUnsalabelGET(@RequestParam("product") long product){
+        int result = 0;
+        try {
+            result = pService.checkUnsalableProduct(product);
+        } catch (Exception e) { 
+            e.printStackTrace();
+            result = e.hashCode();
+        }
+        return result;
+    }
+
     //물품 코드에 따른 서브 이미지들 코드 찾기
     //127.0.0.1:8080/REST/api/select_subimage?product=1
     @GetMapping(value = "/select_subimage", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,6 +84,7 @@ public class ProductController {
         try {
             //서브이미지 코드 찾기
             SubImage subImage = sImageService.selectSubimg(no);
+
             if (subImage.getImage() != null) {
                 HttpHeaders headers = new HttpHeaders();
                 if (subImage.getImagetype().equals("image/jpeg")) {

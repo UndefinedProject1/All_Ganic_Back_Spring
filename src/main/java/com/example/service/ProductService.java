@@ -6,9 +6,6 @@ import java.util.Map;
 
 import com.example.dto.ProductDto;
 import com.example.entity.Product;
-import com.example.entity.ProductProjection;
-
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -70,4 +67,7 @@ public interface ProductService {
 
     // 추천물품이 없으면 랜덤출력
     public Long randomProduct(Long code);
+
+    // 판매가능한 상품인지 확인
+    public int checkUnsalableProduct(Long code);
 }

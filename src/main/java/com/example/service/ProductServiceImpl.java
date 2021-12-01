@@ -9,7 +9,6 @@ import javax.persistence.EntityManagerFactory;
 
 import com.example.dto.ProductDto;
 import com.example.entity.Product;
-import com.example.entity.ProductProjection;
 import com.example.mappers.ProductMapper;
 import com.example.repository.ProductRepository;
 
@@ -141,6 +140,12 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Long randomProduct(Long code) {
         return pMapper.randomProduct(code);
+    }
+
+    // 판매가능한 상품인지 확인
+    @Override
+    public int checkUnsalableProduct(Long code) {
+        return 0;
     }
 
 }

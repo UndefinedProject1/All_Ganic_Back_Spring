@@ -44,4 +44,10 @@ public interface MemberMapper {
         "SELECT COUNT(*) FROM MEMBERLIST WHERE REPORTCOUNT=3"
     })
     public int forgeMoneyThree();
+
+    // 탈퇴한 회원이 로그인하려는건지 확인
+    @Select({
+        "SELECT COUNT(*) FROM MEMBER WHERE USEREMAIL=#{email} AND LEAVECHECK=TRUE"
+    })
+    public int leaveMemberCheck(@Param("email") String email);
 }
