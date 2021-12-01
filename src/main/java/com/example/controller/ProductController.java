@@ -46,12 +46,12 @@ public class ProductController {
     SubImageService sImageService;
 
     // 장바구니에 추가할 시 판매할수있는 제품인지 확인
-    // 127.0.0.1:8080/REST/api/check/unsalable/product
+    // 127.0.0.1:8080/REST/api/check/unsalable/product?code=
     @GetMapping(value = "/check/unsalable/product")
-    public int checkUnsalabelGET(@RequestParam("product") long product){
+    public int checkUnsalabelGET(@RequestParam("code") long code){
         int result = 0;
         try {
-            result = pService.checkUnsalableProduct(product);
+            result = pService.checkUnsalableProduct(code);
         } catch (Exception e) { 
             e.printStackTrace();
             result = e.hashCode();
