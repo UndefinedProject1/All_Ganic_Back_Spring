@@ -145,7 +145,7 @@ public class ProductServiceImpl implements ProductService{
     // 판매가능한 상품인지 확인
     @Override
     public int checkUnsalableProduct(Long code) {
-        return 0;
+        return pMapper.checkUnsalableProduct(code);
     }
 
 }
