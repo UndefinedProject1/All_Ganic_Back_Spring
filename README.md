@@ -1,11 +1,15 @@
 # 🌏 All_Ganic (Back End-Spring)
 
-![header](https://capsule-render.vercel.app/api?type=soft&color=auto&height=300&section=header&text=효율적이고%20일관성있는%20코드로&desc=깔끔한%20데이터%20전달에%20집중&fontSize=40&descSize=25&descAlign=65)
+![header](https://capsule-render.vercel.app/api?type=soft&color=auto&height=300&section=header&text=효율적이고%20일관성있는%20코드로&desc=깔끔한%20데이터%20전달에%20집중&fontSize=50&descSize=20&descAlign=75)
 
 ## 목차
 1. [요약](#summary--요약)
 2. [서버구조](#server-structure--서버구조)
 3. [ERD 설계](#erd-설계)
+4. [기능](#fuction--기능)
+5. [특징](#features--특징)
+6. [개발환경](#tech--개발환경)
+7. [API](#Open-API--오픈-api)
 
 ## Summary / 요약
 - __프로젝트 기간__ : 2021.10.04 - 2021.12.03
@@ -20,5 +24,14 @@
 
 
 ## ERD 설계
+![캡처](https://user-images.githubusercontent.com/85853167/147996583-40b5b84d-f71e-420f-a659-2c9697015a9a.PNG)
+총 15개의 테이블이 있으며 ADMIN, MEMBER로 구분하여 설계를 했습니다. 설계에 대한 저의 생각이나 구조를 더 자세히 보고싶으시다면 👉🏼[ERD COLUD](https://www.erdcloud.com/d/X52ATW8iNCRWnrLGW)를 눌러주세요.
 
+## Fuction / 기능
+
+## Features / 특징
+
+## Tech / 개발환경
+
+## Open API / 오픈 api
 ![header](https://capsule-render.vercel.app/api?type=soft&height=300&text=Hello%20World!&desc=Hello%20capsule%20render)
