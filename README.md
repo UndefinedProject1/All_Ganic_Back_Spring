@@ -5,7 +5,7 @@
 ## 목차
 1. [요약](#summary--요약)
 2. [서버구조](#server-structure--서버구조)
-3. [ERD 설계]
+3. [ERD 설계](#erd-설계)
 
 ## Summary / 요약
 - __프로젝트 기간__ : 2021.10.04 - 2021.12.03
@@ -23,7 +23,7 @@
     npm install aos --save
 
 
-## Start / 구동
+## ERD 설계
     npm run serve
 
 ![header](https://capsule-render.vercel.app/api?type=soft&height=300&text=Hello%20World!&desc=Hello%20capsule%20render)
