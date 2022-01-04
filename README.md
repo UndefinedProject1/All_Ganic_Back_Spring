@@ -130,80 +130,151 @@ public int kakaoUserCheckGET(@RequestHeader("token") String token) {
 
 #### 4. 조사방법구현
 ``` javascript
-// 로그인
-// POST 127.0.0.1:8080/REST/api/member/login?sns=true
-@PostMapping(value = "/member/login", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-public Map<String, Object> memberLoginPOST(@RequestBody Member member, @RequestParam(name = "sns") Boolean sns) {
-    Map<String, Object> map = new HashMap<String, Object>();
-    try {
-        BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
-        int check = mServiece.leaveMemberCheck(member.getUseremail());
-        if(check == 1){ // 탈퇴한 회원
-            map.put("result", 4L);
-            map.put("state", "이미 탈퇴하신 회원입니다.");
-        }
-        else{ // 탈퇴하지 않은 회원
-            Member member1 = mServiece.getMemberOne(member.getUseremail());
-            if(sns == true){ // 카카오로 로그인 시
-                if (bcpe.matches("kakao_login_pw", member1.getUserpw())) {
-                    map.put("result", 1L);
-                    map.put("token", jwtUtil.generateToken(member.getUseremail()));
-                }
-                else{
-                    map.put("result", 0L);
-                    map.put("state", "카카오 유저가 아닙니다. 사이트 로그인에서 로그인을 시도하여 주십시오.");
-                }
-            }else{ // 그냥 로그인 시
-                if(bcpe.matches("kakao_login_pw", member1.getUserpw())) {
-                    map.put("result", 0L);
-                    map.put("state", "카카오 유저입니다. 카카오 로그인에서 로그인을 시도하여 주십시오.");
-                }
-                else{
-                    authenticationManager
-                        .authenticate(new UsernamePasswordAuthenticationToken(member.getUseremail(), member.getUserpw()));
-                    map.put("result", 1L);
-                    map.put("token", jwtUtil.generateToken(member.getUseremail()));
-                }
-            }
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        map.put("result", e.hashCode());
-    }
-    return map;
+// 물품 삭제 시 이루어지는 트랜잭션
+@Override
+public void deleteProductTransaction(Long no) {
+
+    EntityManager em = emf.createEntityManager();
+    em.getTransaction().begin();
+    String sql = "UPDATE PRODUCT SET PRODUCTIMAGE=NULL, IMAGENAME=NULL, IMAGETYPE=NULL WHERE PRODUCTCODE=:no";
+    em.createNativeQuery(sql)
+        .setParameter("no", no).executeUpdate();
+    String sql1 = "DELETE FROM SUBIMAGE WHERE PRODUCT=:no";
+    em.createNativeQuery(sql1)
+        .setParameter("no", no).executeUpdate();
+    String sql2 = "DELETE FROM QUESTION WHERE PRODUCT=:no";
+    em.createNativeQuery(sql2)
+        .setParameter("no", no).executeUpdate();
+    String sql3 = "DELETE FROM REVIEW WHERE PRODUCT=:no";
+    em.createNativeQuery(sql3)
+        .setParameter("no", no).executeUpdate();
+    String sql4 = "DELETE FROM CARTITEM WHERE PRODUCT=:no";
+    em.createNativeQuery(sql4)
+        .setParameter("no", no).executeUpdate();
+    em.getTransaction().commit();
+
 }
 
-// 비밀번호 변경 시 카카오유저인지 확인
-// GET 127.0.0.1:8080/REST/api/kakao/user/check
-@GetMapping(value = "/kakao/user/check")
-public int kakaoUserCheckGET(@RequestHeader("token") String token) {
-    int result;
-    try {
-        BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
-        String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-        // 아이디를 이용해 기존 정보 가져오기
-        Member member = mServiece.getMemberOne(useremail);
-        // 토큰과 사용자 아이디 일치 시점
-        if (bcpe.matches("kakao_login_pw", member.getUserpw())) {
-            result = 1;   
-        }
-        else{
-            result = 0;
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        result = e.hashCode();
-    }
-    return result;
+// 회원  시 이루어지는 트랜잭션
+@Override
+public void deleteMemberTransaction(String email, Date date) {
+    EntityManager em = emf.createEntityManager();
+    em.getTransaction().begin();
+    String sql1 = "DELETE FROM CARTITEM WHERE CART=(SELECT CARTCODE FROM CART WHERE MEMBER=:email)";
+    em.createNativeQuery(sql1)
+        .setParameter("email", email).executeUpdate();
+    String sql2 = "DELETE FROM CART WHERE MEMBER=:email";
+    em.createNativeQuery(sql2)
+        .setParameter("email", email).executeUpdate();
+    String sql3 = "DELETE FROM CANCELHISTORY WHERE MEMBER=:email";
+    em.createNativeQuery(sql3)
+        .setParameter("email", email).executeUpdate();
+    String sql4 = "UPDATE PAYHISTORY SET MEMBER='ghost' WHERE MEMBER=:email";
+    em.createNativeQuery(sql4)
+        .setParameter("email", email).executeUpdate();
+    String sql5 = "DELETE FROM REPORT WHERE MEMBER=:email";
+        em.createNativeQuery(sql5)
+            .setParameter("email", email).executeUpdate();
+    String sql6 = "DELETE FROM QUESTION WHERE MEMBER=:email";
+    em.createNativeQuery(sql6)
+        .setParameter("email", email).executeUpdate();
+    String sql7 = "DELETE FROM REVIEW WHERE MEMBER=:email";
+    em.createNativeQuery(sql7)
+        .setParameter("email", email).executeUpdate();
+    String sql = "DELETE FROM MEMBER WHERE LEAVECHECK=TRUE AND LEAVEDATE=:date AND USEREMAIL=:email";
+    em.createNativeQuery(sql)
+        .setParameter("email", email)
+        .setParameter("date", date).executeUpdate();
+    em.getTransaction().commit();
+
 }
 ```
-- `if(bcpe.matches("kakao_login_pw", member1.getUserpw()))`
 
 #### 5. 문제해결
 - Transaction을 사용하여 연관 정보들을 Query문을 통해 일괄 처리, 회원의 경우 결제와 같은 중요한 정보를 지니고 있기때문에 탈퇴한다는 날로부터 1년 뒤를 정보삭제날로 지정 후 매일 자정 스케쥴러를 이용해 LeaveCheck가 ture이면서 LeaveDate가 당일인 것들을 삭제
 - 연관정보 중 누적통계에 필요한 결제정보의 경우 외래키인 Member를 ghost라는 임시 계정을 참조하게 하여 회원정보는 사라지고 필요한 통계정보만 남기게함
+- 물품의 경우 결제정보등과 연관이 되어 물품 대표이미지를 null로 변경 후 연관된 정보들은 삭제하여 최소한의 정보만 
 
 ---
+### 장바구니 아이템
+#### 1. 문제정의
+- One to Many로 회원이 장바구니에 아이템을 추가할 때 데이터를 효율적으로 운용 및 관리가 안됨
+
+#### 2. 사실수집
+- 장바구니 아이템을 추가 시 Member를 외래키로 잡으면 해당 Member와 연관된 정보들이 다 불러와짐
+
+#### 3. 조사방법결정
+- Cart라는 One to One관계의 회원고유의 장바구니를 생성하여 
+
+#### 4. 조사방법구현
+``` javascript
+// 물품 삭제 시 이루어지는 트랜잭션
+@Override
+public void deleteProductTransaction(Long no) {
+
+    EntityManager em = emf.createEntityManager();
+    em.getTransaction().begin();
+    String sql = "UPDATE PRODUCT SET PRODUCTIMAGE=NULL, IMAGENAME=NULL, IMAGETYPE=NULL WHERE PRODUCTCODE=:no";
+    em.createNativeQuery(sql)
+        .setParameter("no", no).executeUpdate();
+    String sql1 = "DELETE FROM SUBIMAGE WHERE PRODUCT=:no";
+    em.createNativeQuery(sql1)
+        .setParameter("no", no).executeUpdate();
+    String sql2 = "DELETE FROM QUESTION WHERE PRODUCT=:no";
+    em.createNativeQuery(sql2)
+        .setParameter("no", no).executeUpdate();
+    String sql3 = "DELETE FROM REVIEW WHERE PRODUCT=:no";
+    em.createNativeQuery(sql3)
+        .setParameter("no", no).executeUpdate();
+    String sql4 = "DELETE FROM CARTITEM WHERE PRODUCT=:no";
+    em.createNativeQuery(sql4)
+        .setParameter("no", no).executeUpdate();
+    em.getTransaction().commit();
+
+}
+
+// 회원  시 이루어지는 트랜잭션
+@Override
+public void deleteMemberTransaction(String email, Date date) {
+    EntityManager em = emf.createEntityManager();
+    em.getTransaction().begin();
+    String sql1 = "DELETE FROM CARTITEM WHERE CART=(SELECT CARTCODE FROM CART WHERE MEMBER=:email)";
+    em.createNativeQuery(sql1)
+        .setParameter("email", email).executeUpdate();
+    String sql2 = "DELETE FROM CART WHERE MEMBER=:email";
+    em.createNativeQuery(sql2)
+        .setParameter("email", email).executeUpdate();
+    String sql3 = "DELETE FROM CANCELHISTORY WHERE MEMBER=:email";
+    em.createNativeQuery(sql3)
+        .setParameter("email", email).executeUpdate();
+    String sql4 = "UPDATE PAYHISTORY SET MEMBER='ghost' WHERE MEMBER=:email";
+    em.createNativeQuery(sql4)
+        .setParameter("email", email).executeUpdate();
+    String sql5 = "DELETE FROM REPORT WHERE MEMBER=:email";
+        em.createNativeQuery(sql5)
+            .setParameter("email", email).executeUpdate();
+    String sql6 = "DELETE FROM QUESTION WHERE MEMBER=:email";
+    em.createNativeQuery(sql6)
+        .setParameter("email", email).executeUpdate();
+    String sql7 = "DELETE FROM REVIEW WHERE MEMBER=:email";
+    em.createNativeQuery(sql7)
+        .setParameter("email", email).executeUpdate();
+    String sql = "DELETE FROM MEMBER WHERE LEAVECHECK=TRUE AND LEAVEDATE=:date AND USEREMAIL=:email";
+    em.createNativeQuery(sql)
+        .setParameter("email", email)
+        .setParameter("date", date).executeUpdate();
+    em.getTransaction().commit();
+
+}
+```
+
+#### 5. 문제해결
+- Transaction을 사용하여 연관 정보들을 Query문을 통해 일괄 처리, 회원의 경우 결제와 같은 중요한 정보를 지니고 있기때문에 탈퇴한다는 날로부터 1년 뒤를 정보삭제날로 지정 후 매일 자정 스케쥴러를 이용해 LeaveCheck가 ture이면서 LeaveDate가 당일인 것들을 삭제
+- 연관정보 중 누적통계에 필요한 결제정보의 경우 외래키인 Member를 ghost라는 임시 계정을 참조하게 하여 회원정보는 사라지고 필요한 통계정보만 남기게함
+- 물품의 경우 결제정보등과 연관이 되어 물품 대표이미지를 null로 변경 후 연관된 정보들은 삭제하여 최소한의 정보만 
+
+---
+
 ## Fuction / 기능
 
 
