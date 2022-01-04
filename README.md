@@ -198,73 +198,68 @@ public void deleteMemberTransaction(String email, Date date) {
 ---
 ### 장바구니 아이템
 #### 1. 문제정의
-- One to Many로 회원이 장바구니에 아이템을 추가할 때 데이터를 효율적으로 운용 및 관리가 안됨
+- 아이템을 추가 시 들어가있는지 확인 후 수량이 변경 오류
 
 #### 2. 사실수집
-- 장바구니 아이템을 추가 시 Member를 외래키로 잡으면 해당 Member와 연관된 정보들이 다 불러와짐
+- 장바구니 아이템을 추가 시 이미 장바구니에 해당 아이템이 들어있다면 원래 넣어놓은 수량에 이번에 추가하는 수량을 더하는 부분에서 오류 발생
 
 #### 3. 조사방법결정
-- Cart라는 One to One관계의 회원고유의 장바구니를 생성하여 
+- 
 
 #### 4. 조사방법구현
 ``` javascript
-// 물품 삭제 시 이루어지는 트랜잭션
-@Override
-public void deleteProductTransaction(Long no) {
+// 장바구니 생성 및 물품추가
+// POST 127.0.0.1:8080/REST/api/cart/create/insert?no=14
+// 여기서 넘어오는 no는 물품 정보
+@PostMapping(value = "cart/create/insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+public Map<String, Object> productInsertPOST(@RequestParam(name = "cnt") long cnt,
+        @RequestParam(name = "no", defaultValue = "0") long no, @RequestHeader("token") String token) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    try {
+        String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+        if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
+            Cart cart1 = cService.findCart(useremail);
+            if(cart1 != null){ // 장바구니가 생성되어 있으면
+                int check = ciService.checkProduct(no, cart1.getCartcode());
+                System.out.println(check);
+                if(check != 0){ // 이미 같은 항목의 물품이 장바구니에 있으니 찾아서 수량을 더해주기
+                    CartItem cartitem1 = ciService.selectCartProductOne(no, cart1.getCartcode());
+                    ciService.updateQuantity(cnt + cartitem1.getQuantity(), cartitem1.getCartitemcode());
+                    map.put("state", "장바구니 물품 수량이 변경되었습니다");
+                    map.put("result", 1L);
+                }else{ // 넣으려는 물품이 장바구니에 없으니 insert
+                    CartItem cartitem = new CartItem();
+                    cartitem.setCart(cart1);
+                    cartitem.setProduct(pService.selectProduct(no));
+                    cartitem.setQuantity(cnt);
+                    ciService.insertCartItem(cartitem);
+                    map.put("state", "장바구니 물품이 추가되었습니다");
+                    map.put("result", 1L);
+                }
+            }
+            else{ // 장바구니가 생성되어 있지 않으면
+                Cart cart = new Cart();
+                cart.setMember(mService.getMemberOne(useremail));
+                cService.insertCart(cart);
 
-    EntityManager em = emf.createEntityManager();
-    em.getTransaction().begin();
-    String sql = "UPDATE PRODUCT SET PRODUCTIMAGE=NULL, IMAGENAME=NULL, IMAGETYPE=NULL WHERE PRODUCTCODE=:no";
-    em.createNativeQuery(sql)
-        .setParameter("no", no).executeUpdate();
-    String sql1 = "DELETE FROM SUBIMAGE WHERE PRODUCT=:no";
-    em.createNativeQuery(sql1)
-        .setParameter("no", no).executeUpdate();
-    String sql2 = "DELETE FROM QUESTION WHERE PRODUCT=:no";
-    em.createNativeQuery(sql2)
-        .setParameter("no", no).executeUpdate();
-    String sql3 = "DELETE FROM REVIEW WHERE PRODUCT=:no";
-    em.createNativeQuery(sql3)
-        .setParameter("no", no).executeUpdate();
-    String sql4 = "DELETE FROM CARTITEM WHERE PRODUCT=:no";
-    em.createNativeQuery(sql4)
-        .setParameter("no", no).executeUpdate();
-    em.getTransaction().commit();
-
-}
-
-// 회원  시 이루어지는 트랜잭션
-@Override
-public void deleteMemberTransaction(String email, Date date) {
-    EntityManager em = emf.createEntityManager();
-    em.getTransaction().begin();
-    String sql1 = "DELETE FROM CARTITEM WHERE CART=(SELECT CARTCODE FROM CART WHERE MEMBER=:email)";
-    em.createNativeQuery(sql1)
-        .setParameter("email", email).executeUpdate();
-    String sql2 = "DELETE FROM CART WHERE MEMBER=:email";
-    em.createNativeQuery(sql2)
-        .setParameter("email", email).executeUpdate();
-    String sql3 = "DELETE FROM CANCELHISTORY WHERE MEMBER=:email";
-    em.createNativeQuery(sql3)
-        .setParameter("email", email).executeUpdate();
-    String sql4 = "UPDATE PAYHISTORY SET MEMBER='ghost' WHERE MEMBER=:email";
-    em.createNativeQuery(sql4)
-        .setParameter("email", email).executeUpdate();
-    String sql5 = "DELETE FROM REPORT WHERE MEMBER=:email";
-        em.createNativeQuery(sql5)
-            .setParameter("email", email).executeUpdate();
-    String sql6 = "DELETE FROM QUESTION WHERE MEMBER=:email";
-    em.createNativeQuery(sql6)
-        .setParameter("email", email).executeUpdate();
-    String sql7 = "DELETE FROM REVIEW WHERE MEMBER=:email";
-    em.createNativeQuery(sql7)
-        .setParameter("email", email).executeUpdate();
-    String sql = "DELETE FROM MEMBER WHERE LEAVECHECK=TRUE AND LEAVEDATE=:date AND USEREMAIL=:email";
-    em.createNativeQuery(sql)
-        .setParameter("email", email)
-        .setParameter("date", date).executeUpdate();
-    em.getTransaction().commit();
-
+                CartItem cartitem = new CartItem();
+                cartitem.setCart(cart);
+                cartitem.setProduct(pService.selectProduct(no));
+                cartitem.setQuantity(no);
+                ciService.insertCartItem(cartitem);
+                map.put("state", "장바구니 생성 및 물품이 추가되었습니다");
+                map.put("result", 1L);
+            }
+        }
+        else{
+            map.put("state", "회원정보 불러오는걸 실패했습니다.");
+            map.put("result", 0L);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        map.put("result", e.hashCode());
+    }
+    return map;
 }
 ```
 
