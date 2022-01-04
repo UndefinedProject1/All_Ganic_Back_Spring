@@ -14,16 +14,11 @@
 
 
 ## Server Structure / 서버구조
-    npm install element-plus --save
-    npm install @element-plus/icons
-    npm install --save jquery
-    npm install --save vue3-apexcharts
-    npm install vee-validate@next --save
-    npm install -S yup
-    npm install aos --save
+![프레젠테이션1](https://user-images.githubusercontent.com/85853167/147995935-a7cb34a9-0699-4763-ba5b-34d71b2becf6.png)
+> Spring MVC를 바탕으로 제작이 되었습니다. View인 Vew에서 Rest API로 백의 Controller에 요청이 오면 Service, ServiceImpl를 통해 DB에 접근하게 됩니다.
+> 이 때 Query문을 써야하면 Mybatis로 아니면 JPA를 이용하여 데이터에 접근합니다. 이 때 어떤 방법으로 접근했는지, 어떤 형태의 데이터가 받아오는지에 따라 Entity, DTO, Projection에 데이터를 담게 됩니다.
 
 
 ## ERD 설계
-    npm run serve
 
 ![header](https://capsule-render.vercel.app/api?type=soft&height=300&text=Hello%20World!&desc=Hello%20capsule%20render)
