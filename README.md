@@ -3,7 +3,7 @@
 ![header](https://capsule-render.vercel.app/api?type=soft&color=auto&height=300&section=header&text=효율적이고%20일관성있는%20코드로&desc=깔끔한%20데이터%20전달에%20집중&fontSize=40&descSize=25&descAlign=65)
 
 ## 목차
-1. [요약](
+1. [요약](#Summary-/-요약)
 2. [서버구조]
 3. [ERD 설계]
 
