@@ -4,7 +4,7 @@
 
 ## 목차
 1. [요약](#Summary-/-요약)
-2. [서버구조]
+2. [서버구조](#Server-Structure-/-서버구조)
 3. [ERD 설계]
 
 ## Summary / 요약
@@ -13,7 +13,7 @@
 - __메인 개발 환경__ : Spring Boot
 
 
-## Installation / 설치
+## Server Structure / 서버구조
     npm install element-plus --save
     npm install @element-plus/icons
     npm install --save jquery
