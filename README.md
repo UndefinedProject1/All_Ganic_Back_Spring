@@ -27,7 +27,7 @@
 ![캡처](https://user-images.githubusercontent.com/85853167/147996583-40b5b84d-f71e-420f-a659-2c9697015a9a.PNG)
 총 15개의 테이블이 있으며 ADMIN, MEMBER로 구분하여 설계를 했습니다. 설계에 대한 저의 생각이나 구조를 더 자세히 보고싶으시다면 👉🏼[ERD COLUD](https://www.erdcloud.com/d/X52ATW8iNCRWnrLGW)를 눌러주세요.
 
-## Problems and Solutions
+## Problems and Solutions / 문제 해결
 ### 카카오 유저와 기존 회원과의 혼동
 #### 1. 문제정의
 - 기존회원과 카카오톡 회원의 이메일이 같을 시 구분불가 
@@ -196,65 +196,92 @@ public void deleteMemberTransaction(String email, Date date) {
 - 물품의 경우 결제정보등과 연관이 되어 물품 대표이미지를 null로 변경 후 연관된 정보들은 삭제하여 최소한의 정보만 
 
 ---
-### 장바구니 아이템
+### 결제 시 필요한 정보 전달
 #### 1. 문제정의
-- 아이템을 추가 시 들어가있는지 확인 후 수량이 변경 오류
+- 하나 혹은 여러개의 장바구니 아이템 정보를 하나씩 찾아 정보를 전달
 
 #### 2. 사실수집
-- 장바구니 아이템을 추가 시 이미 장바구니에 해당 아이템이 들어있다면 원래 넣어놓은 수량에 이번에 추가하는 수량을 더하는 부분에서 오류 발생
+- 결제페이지로 넘길 때 체크한 물품정보와 회원정보를 list형태로 병합하여 보내야함.
+- param에서 List형태로 넘어오지만 여러개가 아닌 하나의 코드만 넘어올 수 있으며 결제가 되었을 시 결제한 장바구니아이템은 삭제처리가 되야하므로 여러테이블의 데이터를 넘겨야함.
 
 #### 3. 조사방법결정
-- 
+- VIEW를 생성하여 필요한 정보들을 모은 다음 해당 VIEW에서 foreach문을 통해 
 
 #### 4. 조사방법구현
 ``` javascript
-// 장바구니 생성 및 물품추가
-// POST 127.0.0.1:8080/REST/api/cart/create/insert?no=14
-// 여기서 넘어오는 no는 물품 정보
-@PostMapping(value = "cart/create/insert", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-public Map<String, Object> productInsertPOST(@RequestParam(name = "cnt") long cnt,
-        @RequestParam(name = "no", defaultValue = "0") long no, @RequestHeader("token") String token) {
+// 결제에 필요한 정보인 PAYMENTLIST VIEW생성
+CREATE VIEW PAYMENTLIST AS SELECT 
+   CARTITEM.QUANTITY, CARTITEM.CARTITEMCODE, MEMBER.USEREMAIL, MEMBER.USERNAME, MEMBER.USERTEL, MEMBER.POST, MEMBER.ADDRESS, MEMBER.DETAILEADDRESS,
+   PRODUCT.PRODUCTCODE, PRODUCT.PRODUCTPRICE, PRODUCT.PRODUCTNAME, BRAND.BRANDNAME
+FROM 
+   CARTITEM, CART, MEMBER, PRODUCT, BRAND
+WHERE 
+   CARTITEM.PRODUCT = PRODUCT.PRODUCTCODE AND
+   CARTITEM.CART = CART.CARTCODE AND
+   CART.MEMBER = MEMBER.USEREMAIL AND
+   PRODUCT.BRAND = BRAND.BRANDCODE
+   
+// 결제 시 멤버, 물품 정보 넘기기
+@Select({
+    "<script>",
+        "SELECT * FROM PAYMENTLIST ", 
+        "WHERE CARTITEMCODE IN ",
+        " <foreach collection='chks' item='list' open='(' close=')' separator=','> ",
+        "#{list}",
+        " </foreach>",
+    "</script>"})
+public List<Map<String, Object>> selectPaymentInfo(@Param("chks") List<Long> chks);
+```
+
+#### 5. 문제해결
+- 외래키 정보를 통해 각 테이블을 INNER JOIN한 뒤 필요한 데이터를 담은 VIEW를 생성하여 해당 VIEW에서 foreach를 통하여 정보를 찾아 전달
+
+### 최근 5일간의 일일판매량 통계
+#### 1. 문제정의
+- 판매가 이루어지지 않은 날은 통계에 나타나지않음
+
+#### 2. 사실수집
+- PAYHISTORY테이블에서 자료를 수집해오면 판매가 없는 날은 자료 수집이 불가
+- 데이터가 없는 날은 날짜 생성과 더불어 개수 또한 0으로 나타내야함
+
+#### 3. 조사방법결정
+- 최근 5일의 날짜를 저장할 테이블을 생성 및 NVL을 이용해 없는 데이터 표시
+
+#### 4. 조사방법구현
+``` javascript
+// 판매량조회를 위한 날짜 테이블 
+@Update({
+    "UPDATE DUAL SET DUAL_DATE=#{date} WHERE DUAL_ID=#{no}"
+})
+public int InsertDate(@Param("no") long no, @Param("date") Date date);
+
+// 해당일의 최근 5일간의 판매량 조회
+@Select({
+    "SELECT DUAL.DUAL_DATE, (NVL(DATE1.CNT, 0)) AS CNT FROM DUAL ",
+    "LEFT OUTER JOIN DATE1 ON DUAL.DUAL_DATE = DATE1.ORDERDATE ORDER BY DUAL.DUAL_DATE ASC"
+})
+public List<Map<String, Object>> selectSalesRate();
+
+// 5일간의 날짜와 payhistory개수를 리스트로 출력
+// GET 127.0.0.1:8080/REST/api/admin/payhistory/list
+@GetMapping(value = "/admin/payhistory/list")
+public Map<String, Object> payhistoryListGET(@RequestHeader("token") String token) {
     Map<String, Object> map = new HashMap<String, Object>();
     try {
-        String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
-        if (jwtUtil.extractUsername(token.substring(7)).equals(useremail)) {
-            Cart cart1 = cService.findCart(useremail);
-            if(cart1 != null){ // 장바구니가 생성되어 있으면
-                int check = ciService.checkProduct(no, cart1.getCartcode());
-                System.out.println(check);
-                if(check != 0){ // 이미 같은 항목의 물품이 장바구니에 있으니 찾아서 수량을 더해주기
-                    CartItem cartitem1 = ciService.selectCartProductOne(no, cart1.getCartcode());
-                    ciService.updateQuantity(cnt + cartitem1.getQuantity(), cartitem1.getCartitemcode());
-                    map.put("state", "장바구니 물품 수량이 변경되었습니다");
-                    map.put("result", 1L);
-                }else{ // 넣으려는 물품이 장바구니에 없으니 insert
-                    CartItem cartitem = new CartItem();
-                    cartitem.setCart(cart1);
-                    cartitem.setProduct(pService.selectProduct(no));
-                    cartitem.setQuantity(cnt);
-                    ciService.insertCartItem(cartitem);
-                    map.put("state", "장바구니 물품이 추가되었습니다");
-                    map.put("result", 1L);
-                }
-            }
-            else{ // 장바구니가 생성되어 있지 않으면
-                Cart cart = new Cart();
-                cart.setMember(mService.getMemberOne(useremail));
-                cService.insertCart(cart);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date now1 = new Date();
 
-                CartItem cartitem = new CartItem();
-                cartitem.setCart(cart);
-                cartitem.setProduct(pService.selectProduct(no));
-                cartitem.setQuantity(no);
-                ciService.insertCartItem(cartitem);
-                map.put("state", "장바구니 생성 및 물품이 추가되었습니다");
-                map.put("result", 1L);
-            }
+        for(int i=0; i<5; i++){
+            Calendar cal = Calendar.getInstance(); 
+            cal.setTime(now1);
+            cal.add(Calendar.DATE, -i);
+            Date date = df.parse(df.format(cal.getTime()));
+            pService.updateDate(i, date);
         }
-        else{
-            map.put("state", "회원정보 불러오는걸 실패했습니다.");
-            map.put("result", 0L);
-        }
+
+        List<Map<String, Object>> list = pService.selectSaleRate();
+        map.put("list", list);
+        map.put("result", 1);
     } catch (Exception e) {
         e.printStackTrace();
         map.put("result", e.hashCode());
@@ -262,12 +289,134 @@ public Map<String, Object> productInsertPOST(@RequestParam(name = "cnt") long cn
     return map;
 }
 ```
-
 #### 5. 문제해결
-- Transaction을 사용하여 연관 정보들을 Query문을 통해 일괄 처리, 회원의 경우 결제와 같은 중요한 정보를 지니고 있기때문에 탈퇴한다는 날로부터 1년 뒤를 정보삭제날로 지정 후 매일 자정 스케쥴러를 이용해 LeaveCheck가 ture이면서 LeaveDate가 당일인 것들을 삭제
-- 연관정보 중 누적통계에 필요한 결제정보의 경우 외래키인 Member를 ghost라는 임시 계정을 참조하게 하여 회원정보는 사라지고 필요한 통계정보만 남기게함
-- 물품의 경우 결제정보등과 연관이 되어 물품 대표이미지를 null로 변경 후 연관된 정보들은 삭제하여 최소한의 정보만 
+- 반복문을 통해 D-5의 날짜를 테이블에 저장한 후 판매량을 조회
+- LEFT JOIN을 통해 테이터를 합한 후 판매가 없는날은 NVL(DATE1.CNT, 0)를 통해 판매량을 0으로 표시하여 정보를 전달
 
+### 동적Query문에서의 Pagenation처리와 정렬
+#### 1. 문제정의
+- JPA의 Pageable과 같은 것은 동적Query에 없음
+
+#### 2. 사실수집
+- 한 페이지당 나타내는 개수에 맞추어 각 페이지에 나타나는 데이터의 시작번호와 끝번호를 매겨 페이징 처리를 해야함
+
+#### 3. 조사방법결정
+- 페이지당 나타낼 데이터의 개수에 따라 시작번호와 끝번호를 param으로 넘겨 ROWN BETWEEN을 사용하여 페이징 처리
+
+#### 4. 조사방법구현
+``` javascript
+// 문의글 답글여부, 종류별 조회(날짜 기준 정렬)
+// GET 127.0.0.1:8080/REST/api/question/all/selectlist?reply=false&kind=2&page=1
+@GetMapping(value = "/question/all/selectlist", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+public Map<String, Object> AllSelectListGET(@RequestParam(name = "reply") Boolean reply, 
+@RequestParam(name = "kind", defaultValue = "0") long kind, @RequestParam(name = "page", defaultValue = "1") long page) {
+    Map<String, Object> map = new HashMap<>();
+    try {
+        long start, end = 1;
+        int count = qService.selectReplyKindCNT(reply, kind);
+        if(page == 1){
+            start = 1;
+            end = 1*5;
+            List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind, start, end);
+            map.put("list", list);
+            map.put("result", 1);
+        }
+        else{
+            start = (page-1)*5+1;
+            end = page*5; 
+            List<Map<String, Object>> list = qService.selectQuestionDTOList(reply, kind, start, end);
+            map.put("list", list);
+            map.put("result", 1);
+        }
+        map.put("count", count);
+    } catch (Exception e) {
+        e.printStackTrace();
+        map.put("result", e.hashCode());
+    }
+    return map;
+}
+
+ // 답글여부, 문의종류에 따른 리스트 출력(admin)
+@Select({
+    "<script>",
+        "SELECT * FROM(",
+        "SELECT QUESTIONCODE, QUESTIONTITLE, QUESTIONCONTENT, PRODUCTCODE, ",
+        "to_char(QUESTIONDATE,'YYYY-MM-DD') AS QUESTIONDATE, ROW_NUMBER() OVER (ORDER BY QUESTIONDATE",
+        " <if test='reply == true'> DESC  </if>",
+        " <if test='reply == false'> ASC  </if>) ROWN ",
+        "FROM QUESTIONLIST  WHERE QUESTIONREPLY=#{reply}",
+        "<if test='kind != 0'> AND QUESTIONKIND=#{kind} </if>",
+        ") QUESTION WHERE ROWN BETWEEN #{start} AND #{end}",
+    "</script>"    
+})
+public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply, @Param("kind") Long kind, @Param("start") long start, @Param("end") long end);
+```
+#### 5. 문제해결
+- ROWN을 사용하여 번호를 매기고 시작번호와 끝번호를 BETWEEN을 통해 데이터를 수집함 
+- ROWN 사용 시 order by를 이용하면 순서가 뒤죽박죽이 되기때문에 ROW_NUMBER() OVER를 사용하여 정렬을 해줌
+
+### 리뷰등록 가능 여부
+#### 1. 문제정의
+- 작성하려는 물품을 구매하지않은 사람도 리뷰작성이 가능
+
+#### 2. 사실수집
+- 구매한 물품한에서 리뷰 작성이 가능해야하는데 그렇지 않음
+- 결제를 해서 이미 리뷰를 작성한 사람 중 또 해당 물품을 구매하여 리뷰를 쓰려는 경우 리뷰는 한 물품 당 하나만 작성가능하기때문에 오류 발생
+
+#### 3. 조사방법결정
+- 결제내역 확인과 이미 리뷰를 작성했는지 확인
+
+#### 4. 조사방법구현
+``` javascript
+// 결제내역확인을 통해 리뷰작성가능한지 확인
+// GET 127.0.0.1:8080/REST/api/payments/paylist/check?no=14
+@GetMapping(value="/payments/paylist/check")
+public int payhistoryCheckListGET(@RequestParam("no") Long no, @RequestHeader("token") String token) {
+    int i;
+    try{
+        String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+        Map<String, Object> check = phService.checkPayHistory(no, useremail);
+        Long count = (Long)check.get("COUNT(MEMBER)");
+        Boolean review = (Boolean)check.get("MAX(REVIEWCHECK)");
+        if(count >= 1 && review == true){
+            i = 2; // 이미 작성한 리뷰가 있습니다
+        }
+        else if(count >= 1 && review == false){
+            i = 1; // 리뷰 작성 가능
+        }
+        else{
+            i = 0; // 리뷰작성 불가
+        }
+
+    }
+    catch (Exception e) {
+        e.printStackTrace();
+        i = e.hashCode();
+    }
+    return i;
+}
+
+// 결제내역 확인에 필요한 PAYHISTORYLIST VIEW생성
+CREATE VIEW PAYHISTORYLIST AS SELECT 
+   PRODUCT.PRODUCTCODE, PRODUCT.PRODUCTNAME, PRODUCT.PRODUCTPRICE, BRAND.BRANDNAME, 
+   PAYHISTORY.ORDERQUANTITY, PAYHISTORY.ORDERDATE, PAY.MERCHANT_UID, PAYHISTORY.MEMBER, PAYHISTORY.REVIEWCHECK
+FROM 
+   PAYHISTORY, PAY, PRODUCT, BRAND
+WHERE 
+   PAYHISTORY.PAY = PAY.IMP_UID AND
+   PAYHISTORY.PRODUCT = PRODUCT.PRODUCTCODE AND
+   PRODUCT.BRAND = BRAND.BRANDCODE
+
+// 회원과 물품정보에 따른 결제내역 조회(리뷰작성가능한지)
+@Select({
+        "SELECT COUNT(MEMBER), max(REVIEWCHECK) FROM PAYHISTORYLIST  ", 
+        "WHERE MEMBER=#{email} AND PRODUCTCODE=#{no}",
+})
+public Map<String, Object> selectPayHistoryCheck(@Param("no") Long no, @Param("email") String email);
+```
+#### 5. 문제해결
+- 결제내역 확인에 필요한 VIEW를 생성 후 REVIEW를 작성하면 PAYHISTORY에 REVIEWCHEK부분이 TRUE가 
+- ROWN 사용 시 order by를 이용하면 순서가 뒤죽박죽이 되기때문에 ROW_NUMBER() OVER를 사용하여 정렬을 해줌
 ---
 
 ## Fuction / 기능
