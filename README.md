@@ -6,7 +6,7 @@
 1. [요약](#summary--요약)
 2. [서버구조](#server-structure--서버구조)
 3. [ERD 설계](#erd-설계)
-4. [기능](#fuction--기능)
+4. [문제해결](#Problems-and-Solutions--문제-해결)
 5. [특징](#features--특징)
 6. [개발환경](#tech--개발환경)
 7. [API](#Open-API--오픈-api)
@@ -418,12 +418,9 @@ WHERE
 public Map<String, Object> selectPayHistoryCheck(@Param("no") Long no, @Param("email") String email);
 ```
 #### 5. 문제해결
-- 결제내역 확인에 필요한 VIEW를 생성 후 REVIEW를 작성하면 PAYHISTORY에 REVIEWCHEK부분이 TRUE가 
-- ROWN 사용 시 order by를 이용하면 순서가 뒤죽박죽이 되기때문에 ROW_NUMBER() OVER를 사용하여 정렬을 해줌
+- review를 작성하게 되면 해당 주문정보의 reviewCheck부분이 true로 변경되는데 한 물품을 여러번 구매했더라도 max(REVIEWCHECK)를 이용하여 리뷰를 한 번만 작성가능하게 구분
+
 ---
-
-## Fuction / 기능
-
 
 ## Features / 특징
 
