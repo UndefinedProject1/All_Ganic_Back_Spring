@@ -236,6 +236,7 @@ public List<Map<String, Object>> selectPaymentInfo(@Param("chks") List<Long> chk
 #### 5. 문제해결
 - 외래키 정보를 통해 각 테이블을 INNER JOIN한 뒤 필요한 데이터를 담은 VIEW를 생성하여 해당 VIEW에서 foreach를 통하여 정보를 찾아 전달
 
+---
 ### 최근 5일간의 일일판매량 통계
 #### 1. 문제정의
 - 판매가 이루어지지 않은 날은 통계에 나타나지않음
@@ -293,6 +294,7 @@ public Map<String, Object> payhistoryListGET(@RequestHeader("token") String toke
 - 반복문을 통해 D-5의 날짜를 테이블에 저장한 후 판매량을 조회
 - LEFT JOIN을 통해 테이터를 합한 후 판매가 없는날은 NVL(DATE1.CNT, 0)를 통해 판매량을 0으로 표시하여 정보를 전달
 
+---
 ### 동적Query문에서의 Pagenation처리와 정렬
 #### 1. 문제정의
 - JPA의 Pageable과 같은 것은 동적Query에 없음
@@ -355,6 +357,7 @@ public List<Map<String, Object>> selectQuestionDTO(@Param("reply") Boolean reply
 - ROWN을 사용하여 번호를 매기고 시작번호와 끝번호를 BETWEEN을 통해 데이터를 수집함 
 - ROWN 사용 시 order by를 이용하면 순서가 뒤죽박죽이 되기때문에 ROW_NUMBER() OVER를 사용하여 정렬을 해줌
 
+---
 ### 리뷰등록 가능 여부
 #### 1. 문제정의
 - 작성하려는 물품을 구매하지않은 사람도 리뷰작성이 가능
