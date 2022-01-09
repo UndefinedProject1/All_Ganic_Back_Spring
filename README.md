@@ -423,7 +423,212 @@ public Map<String, Object> selectPayHistoryCheck(@Param("no") Long no, @Param("e
 ---
 
 ## Features / 특징
+### 추천물품
+> 실제 사이트의 회원들이 결제한 데이터들을 쌓아 추천물품을 나타내고 싶었습니다. 처음엔 딥러닝과 같은 인공지능이 생각이 났지만 아직 배워보지못한 분야라 다른 방법을 찾았습니다. 
+> 
+> 인공지능의 의미를 생각해보니 사용자들의 데이터들을 쌓아 스스로 학습하는 것이라는 생각에 새로운 방법이 떠올랐습니다. 
+> 
+> 회원들이 결제를 한 내역을 통해 추천물품을 나타나게 하는 것이었습니다. 관심있는 물품을 보러 들어오면 해당 물품코드에 쌓인 데이터들 중 구매회수가 가장 많은 추천물품 코드를 뽑아 나타나게 하는방법이었습니다.
+> 원리는 다음과 같습니다. 관심있는 물품코드가 있고 그 안에 추천물품 코드와 구매회수의 데이터를 쌓는 것이었습니다. 초기의 생각은 물품코드라는 key를 찾고 그 안의 추천물품 코드라는 key와 구매회수라는 value가 있으니 key: {key: value} 즉, Hash Map의 value안에 Hash Map이 있는 것이었습니다. 
+> 
+> 하지만 테이블 컬럼에 HashMap과 배열로 되지않았고 잔머리를 사용해 밑과 같은 구조로 하였습니다.
+``` javascript
+// Recommend 테이블 설정
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@Table(name = "RECOMMEND")
+@SequenceGenerator(name = "SEQ_RECOMMEND_NO", sequenceName = "SEQ_RECOMMEND_NO", initialValue = 1, allocationSize = 1)
+public class Recommend {
 
+    @Id
+    @Column(name = "RECOMMENDCODE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_RECOMMEND_NO")
+    private long recommendcode = 0L;
+
+    @OneToOne // 물품정보
+    @JoinColumn(updatable = false, name = "PRODUCT")
+    private Product product;
+
+    @Column(name = "RECOMMENDKEY")
+    private String recommendkey = null;
+
+    @Column(name = "RECOMMENDVALUE")
+    private String recommendvalue = null;
+}
+```
+
+``` javascript
+// 물품 구매 시 추천물품에 추가
+// PUT 127.0.0.1:8080/REST/api/add/recommended
+@PutMapping(value="/add/recommended")
+public Map<String, Object> addRecommendProduct(@RequestHeader("token") String token, @RequestParam("no") List<Long> no) { // 결제한 물품코드번호
+    Map<String, Object> map = new HashMap<String, Object>();
+    Map<Long, Long> re = new HashMap<Long, Long>();
+    try{
+        String useremail = jwtUtil.extractUsername(token.substring(7)); // token을 통해 회원정보(이메일) 찾기
+        Long product = pService.latestOrder(useremail); // 이전에 결제한 물품번호
+        String key = "";
+        String count = "";
+        String[] st1;
+        String[] st2;
+        if(product != null){
+            Map<String, Object> list = rService.checkRecommend(product);
+            Recommend recommend = rService.findRecommend(product);
+            if(list != null){ // 추천물품에 list가 있다면
+                st1 = recommend.getRecommendkey().split(",");
+                st2 = recommend.getRecommendvalue().split(",");
+                for(int i=0; i<st1.length; i++){
+                    re.put(Long.parseLong(st1[i]), Long.parseLong(st2[i]));
+                }
+                for(int j=0; j<no.size(); j++){
+                    if(re.containsKey(no.get(j)) && product != no.get(j)){ // list안에 구매 물품번호가 있는지
+                        re.put(no.get(j), re.get(no.get(j)) + 1); // 확인 후 +1
+                    }else if(!re.containsKey(no.get(j)) && product != no.get(j)){ // 구매하려는 물품과 같은 코드인지 확인
+                        re.put(no.get(j), 1L); // 물품번호가 없다면 추가
+                    }
+                }
+                for(Entry<Long, Long> elem : re.entrySet()){ 
+                    key += elem.getKey() + ",";
+                    count += elem.getValue() + ","; 
+                }
+                rService.updateKeyValue(key, count, product);
+            }else{ // 추천물품에 list가 없다면 새로 추가
+                for(int j=0; j<no.size(); j++){
+                    key += String.valueOf(no.get(j)) + ",";
+                    count += String.valueOf(1) + ",";
+                }
+                rService.updateKeyValue(key, count, product);
+            }
+            map.put("result", 1);
+            map.put("state", "추천물품 추가완료");
+        }
+        else if(product == null && no.contains(product)){
+            map.put("result", 1);
+            map.put("state", "이력 없음");
+        }
+
+    }
+    catch (Exception e) {
+        e.printStackTrace();
+        map.put("result", e.hashCode());
+    }
+    return map;
+}
+```
+- 처음에 생각한 것과 같이 Hash Map안의 Hash Map의 key와 value들을 컬럼으로 저장하는 것입니다.
+- 물품코드는 OneToOne으로 등록되어있는 모든 물품들을 등록해놓습니다. 그리고 Recommend Key, Recommend Value들에 추천물품코드와 구매회수를 ','를 기준으로 넣어놓고 이를 String으로 변환해 저장하는 것입니다. 이렇게 되면 나중에 spilt 메서드를 통해 각 추천물품코드와 구매회수를 출력할 수 있게됩니다.
+- 회원이 결제를 하면 해당 회원이 이전에 결제한 내역 중 최근의 물품 코드에 쌓여있는 데이터가 있는지 확인하고 있다면 이를 split을 사용하여 배열에 넣고 반복문을 통해 Map에 넣습니다. 
+- Map의 기능인 containsKey와 get을 사용하여 이미 쌓여있는 데이터에 결제한 물품의 데이터가 있는지 확인하고 없다면 1과 함께 추가하고 있다면 쌓여있는 구매회수에 +1을 해줍니다. 
+
+``` javascript
+// 물품상세페이지에 추천물품코드 출력
+// GET 127.0.0.1:8080/REST/api/recommend/product?code=
+@GetMapping(value="/recommend/product")
+public Map<String, Object> getRandom(@RequestParam Long code) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    Map<String, Object> list = rService.checkRecommend(code);
+    try{
+        if(list != null){
+            Map<Long, Integer> re = new HashMap<Long, Integer>();
+            Recommend recommend = rService.findRecommend(code);
+            String[] st1 = recommend.getRecommendkey().split(",");
+            String[] st2 = recommend.getRecommendvalue().split(",");
+            for(int i=0; i<st1.length; i++){
+                re.put(Long.parseLong(st1[i]), Integer.parseInt(st2[i]));
+            }
+            List<Entry<Long, Integer>> list_entries = new ArrayList<Entry<Long, Integer>>(re.entrySet());
+            // 비교함수 Comparator를 사용하여 오름차순으로 정렬
+            Collections.sort(list_entries, new Comparator<Entry<Long, Integer>>() {
+                // compare로 값을 비교
+                public int compare(Entry<Long, Integer> obj1, Entry<Long, Integer> obj2) {
+                    // 오름 차순 정렬
+                    return obj2.getValue().compareTo(obj1.getValue());
+                }
+            });
+            ProductDto product = pService.selectProductOne(list_entries.get(0).getKey());
+            map.put("result", 1);
+            map.put("recommend", product);
+        }else{
+            Long ret = pService.randomProduct(code);
+            ProductDto product = pService.selectProductOne(ret);
+            map.put("result", 2);
+            map.put("recommend", product);
+        }
+    }catch (Exception e) {
+        e.printStackTrace();
+        map.put("result", e.hashCode());
+    }
+    return map;
+}
+```
+- 관심있는 물품을 눌러 상세페이지로 이동하였을 때 해당 물품코드에 저장되어있는 추천물품 데이터들을 찾습니다.
+- 다시 split을 사용해 배열에 넣고 이를 반복문을 통해 map에 넣어준 다음 compare 기능으로 구매회수를 기준으로 오름차순 정렬을 해줍니다. 정렬된 list_entries의 0번째 key 즉, 추천물품코드를 리턴하면 됩니다. 
+- 만약 저장된 추천물품 데이터가 없다면 랜덤으로 물품을 출력하게 되는데 ISBN을 사용한 카테고리코드의 6자리 중 앞 세자리가 같은 카테고리 내에서 물품을 랜덤으로 추천하게 하였습니다.
+---
+
+### 신고기능
+> 다른 사이트들을 사용하다보면 리뷰나 문의를 통해 악의적인 행위를 하는 것을 본적이 있습니다. 
+> 
+> 그래서 저희 사이트에서 이러한 행위를 다른 회원들이 판단하여 신고를 하면 관리자가 판단하여 경고를 하는 등의 행위를 할 수 있도록 신고기능을 넣었습니다.
+> 문의는 관리자만 볼 수 있게 해놓았기 때문에 리뷰를 회원들이 신고할 수 있게 하였고 관리자페이지에서 문의를 보고 관리자가 판단하여 신고할 수 있게 해주었습니다.
+
+``` javascript
+// 물품상세페이지에 추천물품코드 출력
+ @Id
+@Column(name = "REPORTCODE")
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REPORT_NO")
+private long reportcode = 0L;
+
+@OneToOne // 회원정보
+@JoinColumn(updatable = false, name = "MEMBER")
+private Member member;
+
+@Column(name = "REPORTDATE")
+private String reprotdate = null;
+
+@Column(name = "REPORTCOUNT")
+private Long reportcount = 0L;
+```
+-한 회원당 하나의 신고데이터를 가지게 OneToOne으로 해주었고 관리자가 해당 회원이 언제 신고당했는지 알기위해 마찬가지로 date를 ','를 기준으로 String으로 저장했습니다.
+``` javascript
+// 신고하기(리뷰, 문의)
+// POST 127.0.0.1:8080/REST/api/member/report
+@PostMapping(value = "member/report", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+public Map<String, Object> reportPOST(@RequestHeader("token") String token, @RequestBody Map<String, Object> mapobj){
+    Map<String, Object> map = new HashMap<String, Object>();
+    try{
+        String useremail = (String) mapobj.get("useremail");
+        Report report = rServiece.findReport(useremail);
+        String formatDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if(report != null){
+            rServiece.updateDate(report.getReprotdate()+formatDate+",", report.getReportcode());
+        }
+        else{
+            Report report1 = new Report();
+            Member member = mServiece.getMemberOne(useremail);
+            report1.setMember(member);
+            report1.setReprotdate(formatDate+",");
+            rServiece.insertReport(report1);
+        }
+        map.put("result", 1);
+        map.put("state", "신고접수가 완료되었습니다.");
+    }
+    catch (Exception e) {
+        e.printStackTrace();
+        map.put("result", e.hashCode());
+    }
+    return map;
+}
+```
+-
+---
+
+### 메일기능
+
+---
 
 ## Tech / 개발환경
 
