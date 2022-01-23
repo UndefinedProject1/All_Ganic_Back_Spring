@@ -4,12 +4,12 @@
 
 ## 목차
 1. [요약](#summary--요약)
-2. [서버구조](#server-structure--서버구조)
-3. [ERD 설계](#erd-설계)
-4. [문제해결](#Problems-and-Solutions--문제-해결)
-5. [특징](#features--특징)
-6. [개발환경](#tech--개발환경)
-7. [API](#Open-API--오픈-api)
+2. [개발환경](#tech--개발환경)
+3. [API](#Open-API--오픈-api)
+4. [서버구조](#server-structure--서버구조)
+5. [ERD 설계](#erd-설계)
+6. [문제해결](#Problems-and-Solutions--문제-해결)
+7. [특징](#features--특징)
 
 ## Summary / 요약
 - __프로젝트 기간__ : 2021.10.04 - 2021.12.03
@@ -679,7 +679,52 @@ public void mailSend(MailDto mailDto){
 
 ```
 -임시비밀번호 안내가 밑과 같이 도착합니다.
+![2](https://user-images.githubusercontent.com/85853167/150677059-48e9ab07-cffe-4937-a524-c80a016a2864.PNG)
 
+```javascript
+public MailDto createMailAndMalignityMember(String userEmail, String userName){
+    String str = getTempPassword();
+    MailDto dto = new MailDto();
+    dto.setAddress(userEmail);
+    dto.setTitle("악성 리뷰 및 문의로 인한 ALL_GANIC 탈퇴 처리 안내 이메일입니다.");
+    dto.setMessage(userEmail + "님은 악의적인 리뷰 및 문의를 여러번 올려 사이트 내부 지침에 따라 탈퇴처리함을 알려드립니다."  
+    + "<img src=\"https://media.istockphoto.com/vectors/astronaut-in-outer-space-concept-vector-illustration-in-flat-style-vector-id862745000?b=1&k=20&m=862745000&s=170667a&w=0&h=aCl9IvQsbFDqRpvibEeHIABBucC23769h4kuYM-4ae0=\">"
+    );
+    updatePassword(str,userEmail);
+    return dto;
+}
+
+public MailDto createMailAndCounterfeitMember(String userEmail, String userName){
+    String str = getTempPassword();
+    MailDto dto = new MailDto();
+    dto.setAddress(userEmail);
+    dto.setTitle("위조금액 3회 적발로 인한 ALL_GANIC 탈퇴 처리 안내 이메일입니다.");
+    dto.setMessage(userEmail + "님은 결제 시 금액을 위조하려는 행위가 총 3번 적발되었습니다." + " 이에 사이트 내부 지침에 따라 탈퇴처리함을 알려드립니다." 
+    + "<img src=\"https://media.istockphoto.com/vectors/astronaut-in-outer-space-concept-vector-illustration-in-flat-style-vector-id862745000?     b=1&k=20&m=862745000&s=170667a&w=0&h=aCl9IvQsbFDqRpvibEeHIABBucC23769h4kuYM-4ae0=\">"
+    );
+    updatePassword(str,userEmail);
+    return dto;
+}
+
+public void imgMailSend(MailDto mailDto){
+    try {
+        MimeMessage mail = mailSender.createMimeMessage();
+        MimeMessageHelper mailHelper = new MimeMessageHelper(mail, true, "UTF-8");
+
+        mailHelper.setFrom(sendEmailService.FROM_ADDRESS);
+        mailHelper.setTo(mailDto.getAddress());
+        mailHelper.setSubject(mailDto.getTitle());
+        mailHelper.setText(mailDto.getMessage(), true);           
+
+        mailSender.send(mail);
+    } catch(Exception e) {
+        e.printStackTrace();
+    }
+}
+
+```
+-탈퇴 안내가 밑과 같이 도착합니다.
+![캡처](https://user-images.githubusercontent.com/85853167/150677086-1706e2ea-cd64-4732-8c0a-429ca36dd616.PNG)
 ---
 
 ## Tech / 개발환경
