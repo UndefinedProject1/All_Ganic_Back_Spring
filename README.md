@@ -23,10 +23,10 @@
 - ![MyBatis](https://img.shields.io/badge/-MyBatis-C9284D?style=flat-square&&logoColor=white) : DB요청(SQL문)
 - ![JPA](https://img.shields.io/badge/-JPA-D77310?style=flat-square&&logoColor=white) : DB요청
 - ![H2DB](https://img.shields.io/badge/-H2DB-22ADF6?style=flat-square&&logoColor=white) : DB
-- 
+
 ## Open API / 오픈 api
 - [Iamport](https://github.com/iamport/iamport-rest-client-java-hc) : 결제 api
-- 
+
 ## Server Structure / 서버구조
 ![프레젠테이션1](https://user-images.githubusercontent.com/85853167/147995935-a7cb34a9-0699-4763-ba5b-34d71b2becf6.png)
 > Spring MVC를 바탕으로 제작이 되었습니다. View인 Vew에서 Rest API로 백의 Controller에 요청이 오면 Service, ServiceImpl를 통해 DB에 접근하게 됩니다.
