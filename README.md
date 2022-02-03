@@ -16,7 +16,17 @@
 - __백엔드 구성__ : 정지희
 - __메인 개발 환경__ : Spring Boot
 
-
+## Tech / 개발환경
+- ![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=Java&logoColor=white) : 백엔드 메인 개발 환경
+- ![Spring Boot](https://img.shields.io/badge/-Spring%20Boot-6DB33F?style=flat-square&logo=Spring%20Boot&logoColor=white) : 프레임워크
+- ![H2DB](https://img.shields.io/badge/-H2DB-22ADF6?style=flat-square&&logoColor=white) : DB
+- ![MyBatis](https://img.shields.io/badge/-MyBatis-C9284D?style=flat-square&&logoColor=white) : DB요청(SQL문)
+- ![JPA](https://img.shields.io/badge/-JPA-D77310?style=flat-square&&logoColor=white) : DB요청
+- ![H2DB](https://img.shields.io/badge/-H2DB-22ADF6?style=flat-square&&logoColor=white) : DB
+- 
+## Open API / 오픈 api
+- [Iamport](https://github.com/iamport/iamport-rest-client-java-hc) : 결제 api
+- 
 ## Server Structure / 서버구조
 ![프레젠테이션1](https://user-images.githubusercontent.com/85853167/147995935-a7cb34a9-0699-4763-ba5b-34d71b2becf6.png)
 > Spring MVC를 바탕으로 제작이 되었습니다. View인 Vew에서 Rest API로 백의 Controller에 요청이 오면 Service, ServiceImpl를 통해 DB에 접근하게 됩니다.
@@ -727,7 +737,3 @@ public void imgMailSend(MailDto mailDto){
 ![캡처](https://user-images.githubusercontent.com/85853167/150677086-1706e2ea-cd64-4732-8c0a-429ca36dd616.PNG)
 ---
 
-## Tech / 개발환경
-
-## Open API / 오픈 api
-![header](https://capsule-render.vercel.app/api?type=soft&height=300&text=Hello%20World!&desc=Hello%20capsule%20render)
